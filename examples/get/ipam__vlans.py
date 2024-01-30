@@ -1,4 +1,4 @@
-"""Demo NbApi.ipam.vlans.get()."""
+"""Example NbApi.ipam.vlans.get()."""
 import logging
 
 from nbforager import NbApi

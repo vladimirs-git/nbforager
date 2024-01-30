@@ -1,4 +1,4 @@
-"""Demo NbForager.read_cache()."""
+"""Example NbForager.read_cache()."""
 import logging
 from pprint import pprint
 

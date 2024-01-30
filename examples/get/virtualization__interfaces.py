@@ -1,4 +1,4 @@
-"""Demo NbApi.virtualization.interfaces.get()."""
+"""Example NbApi.virtualization.interfaces.get()."""
 import logging
 
 from nbforager import NbApi

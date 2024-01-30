@@ -1,4 +1,4 @@
-"""Demo NbApi.extras.tags.get()."""
+"""Example NbApi.extras.tags.get()."""
 import logging
 
 from nbforager import NbApi

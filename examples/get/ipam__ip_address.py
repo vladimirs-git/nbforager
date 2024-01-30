@@ -1,4 +1,4 @@
-"""Demo NbApi.ipam.ip_addresses.get()."""
+"""Example NbApi.ipam.ip_addresses.get()."""
 import logging
 
 from nbforager import NbApi

@@ -1,4 +1,4 @@
-"""Demo NbApi.extras.content_types.get()."""
+"""Example NbApi.extras.content_types.get()."""
 import logging
 
 from nbforager import NbApi

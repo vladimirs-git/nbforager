@@ -1,4 +1,4 @@
-"""Demo of how to set default get parameters."""
+"""Example of how to set default get parameters."""
 import logging
 
 from nbforager import NbApi

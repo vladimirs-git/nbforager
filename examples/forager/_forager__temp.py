@@ -1,4 +1,4 @@
-"""Demo NbForager super_prefix, sub_prefixes."""
+"""Example NbForager super_prefix, sub_prefixes."""
 import logging
 
 from nbforager import NbForager

@@ -1,4 +1,4 @@
-"""Demo NbApi.tenancy.tenants.get()."""
+"""Example NbApi.tenancy.tenants.get()."""
 import logging
 
 from nbforager import NbApi

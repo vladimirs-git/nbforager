@@ -1,4 +1,4 @@
-"""Demo NbApi.dcim.racks.get()."""
+"""Example NbApi.dcim.racks.get()."""
 import logging
 
 from nbforager import NbApi

@@ -1,4 +1,4 @@
-"""Demo NbApi.ipam.roles.get()."""
+"""Example NbApi.ipam.roles.get()."""
 import logging
 
 from nbforager import NbApi

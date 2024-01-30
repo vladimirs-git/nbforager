@@ -1,4 +1,4 @@
-"""Demo NbApi.dcim.device_roles.get()."""
+"""Example NbApi.dcim.device_roles.get()."""
 import logging
 
 from nbforager import NbApi

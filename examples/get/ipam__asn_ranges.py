@@ -1,4 +1,4 @@
-"""Demo NbApi.ipam.asn_ranges.get()."""
+"""Example NbApi.ipam.asn_ranges.get()."""
 import logging
 
 from nbforager import NbApi

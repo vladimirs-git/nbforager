@@ -1,4 +1,4 @@
-"""Demo NbApi.dcim.console_ports.get()."""
+"""Example NbApi.dcim.console_ports.get()."""
 import logging
 
 from nbforager import NbApi

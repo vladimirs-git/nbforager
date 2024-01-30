@@ -1,4 +1,4 @@
-"""Demo NbApi.ipam.vlan_groups.get()."""
+"""Example NbApi.ipam.vlan_groups.get()."""
 import logging
 
 from nbforager import NbApi

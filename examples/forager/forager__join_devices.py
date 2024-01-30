@@ -1,4 +1,4 @@
-"""Demo NbForager.join_tree() join devices."""
+"""Example NbForager.join_tree() join devices."""
 from pprint import pprint
 
 from nbforager import NbForager

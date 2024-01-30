@@ -1,4 +1,4 @@
-"""Demo of how to set loners."""
+"""Example of how to set loners."""
 import logging
 
 from nbforager import NbApi

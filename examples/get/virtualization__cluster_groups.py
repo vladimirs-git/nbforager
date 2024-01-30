@@ -1,4 +1,4 @@
-"""Demo NbApi.virtualization.cluster_groups.get()."""
+"""Example NbApi.virtualization.cluster_groups.get()."""
 import logging
 
 from nbforager import NbApi

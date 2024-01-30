@@ -1,4 +1,4 @@
-"""Demo NbForager.join_tree() bulk of objects."""
+"""Example NbForager.join_tree() bulk of objects."""
 import logging
 from datetime import datetime
 

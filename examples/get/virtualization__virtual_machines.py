@@ -1,4 +1,4 @@
-"""Demo NbApi.virtualization.virtual_machines.get()."""
+"""Example NbApi.virtualization.virtual_machines.get()."""
 import logging
 
 from nbforager import NbApi

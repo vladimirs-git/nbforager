@@ -1,4 +1,4 @@
-"""Demo NbBranch."""
+"""Example NbBranch."""
 
 from nbforager import NbApi, NbBranch
 

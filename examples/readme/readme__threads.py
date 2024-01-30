@@ -1,4 +1,4 @@
-"""Demo for README."""
+"""Example for README."""
 import logging
 from datetime import datetime
 

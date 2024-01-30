@@ -1,4 +1,4 @@
-"""Demo NbApi.ipam.route_targets.get()."""
+"""Example NbApi.ipam.route_targets.get()."""
 import logging
 
 from nbforager import NbApi

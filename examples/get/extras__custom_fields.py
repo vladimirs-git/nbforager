@@ -1,4 +1,4 @@
-"""Demo NbApi.extras.custom_fields.get()."""
+"""Example NbApi.extras.custom_fields.get()."""
 import logging
 
 from nbforager import NbApi

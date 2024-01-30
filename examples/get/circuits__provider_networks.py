@@ -1,4 +1,4 @@
-"""Demo NbApi.circuits.provider_networks.get()."""
+"""Example NbApi.circuits.provider_networks.get()."""
 import logging
 
 from nbforager import NbApi

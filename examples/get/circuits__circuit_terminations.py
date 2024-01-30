@@ -1,4 +1,4 @@
-"""Demo NbApi.circuits.circuit_terminations.get()."""
+"""Example NbApi.circuits.circuit_terminations.get()."""
 import logging
 
 from nbforager import NbApi

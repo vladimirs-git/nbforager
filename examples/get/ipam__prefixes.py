@@ -1,4 +1,4 @@
-"""Demo NbApi.ipam.prefixes.get()."""
+"""Example NbApi.ipam.prefixes.get()."""
 import logging
 
 from nbforager import NbApi

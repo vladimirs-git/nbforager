@@ -1,4 +1,4 @@
-"""Demo, How to create super_prefix, sub_prefixes for ipam objects.
+"""Example to create super_prefix, sub_prefixes for ipam objects.
 
 Add key/values ipv4, aggregate super_prefix, sub_prefixes to the following objects:
 

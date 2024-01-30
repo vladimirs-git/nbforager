@@ -1,4 +1,4 @@
-"""Demo for README: create, update, delete ip address object."""
+"""Example for README: create, update, delete ip address object."""
 import logging
 
 from nbforager import NbApi

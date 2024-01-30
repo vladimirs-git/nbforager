@@ -1,4 +1,4 @@
-"""Demo NbApi.dcim.cables.get()."""
+"""Example NbApi.dcim.cables.get()."""
 import logging
 
 from nbforager import NbApi

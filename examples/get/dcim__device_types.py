@@ -1,4 +1,4 @@
-"""Demo NbApi.dcim.device_types.get()."""
+"""Example NbApi.dcim.device_types.get()."""
 import logging
 
 from nbforager import NbApi

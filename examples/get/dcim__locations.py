@@ -1,4 +1,4 @@
-"""Demo NbApi.dcim.locations.get()."""
+"""Example NbApi.dcim.locations.get()."""
 import logging
 
 from nbforager import NbApi

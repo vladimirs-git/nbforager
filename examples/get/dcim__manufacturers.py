@@ -1,4 +1,4 @@
-"""Demo NbApi.dcim.manufacturers.get()."""
+"""Example NbApi.dcim.manufacturers.get()."""
 import logging
 
 from nbforager import NbApi
