@@ -343,8 +343,12 @@ URL = [
 PLATFORM_D: DAny = {
     "url": "/api/dcim/devices/",
     "primary_ip4": {"address": "10.0.0.1/24"},
-    "platform": {"slug": "platform1"},
+    "platform": {"name": "Cisco IOS", "slug": "cisco_ios"},
 }
+PLATFORM_D_W_VALID_NAME = deepcopy(PLATFORM_D)
+PLATFORM_D_W_VALID_NAME["platform"]["name"] = "cisco_ios"
+PLATFORM_D_W_VALID_SLUG = deepcopy(PLATFORM_D)
+PLATFORM_D_W_VALID_SLUG["platform"]["slug"] = "cisco-ios"
 PLATFORM_D_WO_URL = deepcopy(PLATFORM_D)
 del PLATFORM_D_WO_URL["url"]
 PLATFORM_D_W_INVALID_ADDRESS = deepcopy(PLATFORM_D)
@@ -359,7 +363,9 @@ PLATFORM_D_WO_PLATFORM = deepcopy(PLATFORM_D)
 del PLATFORM_D_WO_PLATFORM["platform"]
 
 PLATFORM_SLUG = [
-    (PLATFORM_D, "platform1"),
+    (PLATFORM_D, "cisco_ios"),
+    (PLATFORM_D_W_VALID_NAME, "cisco_ios"),
+    (PLATFORM_D_W_VALID_SLUG, "cisco_ios"),
     ({}, NbBranchError),
     (PLATFORM_D_WO_URL, NbBranchError),
     (PLATFORM_D_W_INVALID_ADDRESS, NbBranchError),

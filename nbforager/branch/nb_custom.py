@@ -2,11 +2,12 @@
 
 """NbCustom."""
 import re
+import string
 
 from vhelpers import vlist, vre
 
 from nbforager.branch.nb_value import NbValue, RE_PREFIX
-from nbforager.types_ import SStr, T2Str
+from nbforager.types_ import SStr, T2Str, LStr
 
 
 class NbCustom(NbValue):
@@ -36,7 +37,12 @@ class NbCustom(NbValue):
         self.strict = True
         _ = self.is_dcim("devices")
         _ = self.primary_ip4()
-        device_type = super().platform_slug()
+        device_type = self.str("platform", "name")
+        required: str = string.ascii_lowercase + "_-"
+        chars_invalid: LStr = [s for s in device_type if s not in required]
+        if chars_invalid:
+            device_type = super().platform_slug()
+        device_type = device_type.replace("-", "_")
         self.strict = strict_actual
         return device_type
 
