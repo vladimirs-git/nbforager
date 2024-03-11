@@ -106,7 +106,6 @@ def _get_app_models() -> DAny:
     return data
 
 
-
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.INFO)
     logging.getLogger().addHandler(logging.StreamHandler())

@@ -9,4 +9,4 @@ Examples
     NbApi models get<https://github.com/vladimirs-git/nbforager/tree/main/examples/get>
     NbApi <https://github.com/vladimirs-git/nbforager/tree/main/examples/api>
     NbForager <https://github.com/vladimirs-git/nbforager/tree/main/examples/forager>
-    NbBranch <https://github.com/vladimirs-git/nbforager/tree/main/examples/branch>
+    NbParser <https://github.com/vladimirs-git/nbforager/tree/main/examples/parser>

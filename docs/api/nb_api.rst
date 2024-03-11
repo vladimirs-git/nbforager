@@ -46,9 +46,8 @@ Extended filtering parameters
 -----------------------------
 The mapped filtering parameters are identical to those in the web interface filter form and simplify
 the searching in Netbox. How it works? NbApi need be initialized with ``extended_get=True``
-(default).  When you are filtering by ``{parameter}``, the first step is for NbApi to request all
-objects of the interested model, and then translate the interested ``{parameter}`` to
-``{parameter}_id`` for the second request.
+(default).  When you are filtering by ``{parameter}``, NbApi request all objects of the interested model,
+and then translate the interested ``{parameter}`` to ``{parameter}_id`` for the second request.
 
 .. note::
 
