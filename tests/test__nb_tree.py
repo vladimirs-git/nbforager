@@ -1,5 +1,3 @@
-# pylint: disable=E0237,E1101,W0212
-
 """Unittests nb_tree.py."""
 from typing import Any
 

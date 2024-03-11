@@ -1,126 +1,124 @@
-# pylint: disable=protected-access
-
-"""Unittests nb_branch.py."""
+"""Unittests nb_parser.py."""
 from typing import Any
 
 import pytest
 
-from nbforager.branch.nb_branch import NbBranch
+from nbforager.parser.nb_parser import NbParser
 from nbforager.types_ import LStr
-from tests import params__nb_branch as p
+from tests.parser_ import params__nb_parser as p
 
 
 @pytest.mark.parametrize("keys, data, strict, expected", p.ANY)
 def test__any(keys: LStr, data: dict, strict: bool, expected: Any):
-    """NbBranch.any()."""
-    branch = NbBranch(data=data, strict=strict)
-    actual = branch.any(*keys)
+    """NbParser.any()."""
+    parser = NbParser(data=data, strict=strict)
+    actual = parser.any(*keys)
     assert actual == expected
+
+
+@pytest.mark.parametrize("keys, data, strict, expected", p.BOOL)
+def test__bool(keys: LStr, data: dict, strict: bool, expected: Any):
+    """NbParser.bool()."""
+    parser = NbParser(data=data, strict=strict)
+    if isinstance(expected, bool):
+        actual = parser.bool(*keys)
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            parser.bool(*keys)
 
 
 @pytest.mark.parametrize("keys, data, strict, expected", p.DICT)
 def test__dict(keys: LStr, data: dict, strict: bool, expected: Any):
-    """NbBranch.dict()."""
-    branch = NbBranch(data=data, strict=strict)
+    """NbParser.dict()."""
+    parser = NbParser(data=data, strict=strict)
     if isinstance(expected, dict):
-        actual = branch.dict(*keys)
+        actual = parser.dict(*keys)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            branch.dict(*keys)
+            parser.dict(*keys)
 
 
 @pytest.mark.parametrize("keys, data, strict, expected", p.INT)
 def test__int(keys: LStr, data: dict, strict: bool, expected: Any):
-    """NbBranch.int()."""
-    branch = NbBranch(data=data, strict=strict)
+    """NbParser.int()."""
+    parser = NbParser(data=data, strict=strict)
     if isinstance(expected, int):
-        actual = branch.int(*keys)
+        actual = parser.int(*keys)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            branch.int(*keys)
+            parser.int(*keys)
 
 
 @pytest.mark.parametrize("keys, data, strict, expected", p.LIST)
 def test__list(keys: LStr, data: dict, strict: bool, expected: Any):
-    """NbBranch.list()."""
-    branch = NbBranch(data=data, strict=strict)
+    """NbParser.list()."""
+    parser = NbParser(data=data, strict=strict)
     if isinstance(expected, list):
-        actual = branch.list(*keys)
+        actual = parser.list(*keys)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            branch.list(*keys)
+            parser.list(*keys)
 
 
 @pytest.mark.parametrize("keys, data, strict, expected", p.STR)
 def test__str(keys: LStr, data: dict, strict: bool, expected: Any):
-    """NbBranch.str()."""
-    branch = NbBranch(data=data, strict=strict)
+    """NbParser.str()."""
+    parser = NbParser(data=data, strict=strict)
     if isinstance(expected, str):
-        actual = branch.str(*keys)
+        actual = parser.str(*keys)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            branch.str(*keys)
+            parser.str(*keys)
 
 
 @pytest.mark.parametrize("keys, data, strict, expected", p.STRICT_DICT)
 def test__strict_dict(keys: LStr, data: dict, strict: bool, expected: Any):
-    """NbBranch.strict_dict()."""
-    branch = NbBranch(data=data, strict=strict)
+    """NbParser.strict_dict()."""
+    parser = NbParser(data=data, strict=strict)
     if isinstance(expected, dict):
-        actual = branch.strict_dict(*keys)
+        actual = parser.strict_dict(*keys)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            branch.strict_dict(*keys)
+            parser.strict_dict(*keys)
 
 
 @pytest.mark.parametrize("keys, data, strict, expected", p.STRICT_INT)
 def test__strict_int(keys: LStr, data: dict, strict: bool, expected: Any):
-    """NbBranch.strict_int()."""
-    branch = NbBranch(data=data, strict=strict)
+    """NbParser.strict_int()."""
+    parser = NbParser(data=data, strict=strict)
     if isinstance(expected, int):
-        actual = branch.strict_int(*keys)
+        actual = parser.strict_int(*keys)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            branch.strict_int(*keys)
+            parser.strict_int(*keys)
 
 
 @pytest.mark.parametrize("keys, data, strict, expected", p.STRICT_LIST)
 def test__strict_list(keys: LStr, data: dict, strict: bool, expected: Any):
-    """NbBranch.strict_list()."""
-    branch = NbBranch(data=data, strict=strict)
+    """NbParser.strict_list()."""
+    parser = NbParser(data=data, strict=strict)
     if isinstance(expected, list):
-        actual = branch.strict_list(*keys)
+        actual = parser.strict_list(*keys)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            branch.strict_list(*keys)
+            parser.strict_list(*keys)
 
 
 @pytest.mark.parametrize("keys, data, strict, expected", p.STRICT_STR)
 def test__strict_str(keys: LStr, data: dict, strict: bool, expected: Any):
-    """NbBranch.strict_str()."""
-    branch = NbBranch(data=data, strict=strict)
+    """NbParser.strict_str()."""
+    parser = NbParser(data=data, strict=strict)
     if isinstance(expected, str):
-        actual = branch.strict_str(*keys)
+        actual = parser.strict_str(*keys)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            branch.strict_str(*keys)
-
-
-@pytest.mark.parametrize("data, strict, expected", p.TAGS)
-def test__tags(data: dict, strict: bool, expected: Any):
-    """NbValue.tags()."""
-    branch = NbBranch(data=data, strict=strict)
-    if isinstance(expected, list):
-        actual = branch.tags()
-        assert actual == expected
-    else:
-        with pytest.raises(expected):
-            branch.tags()
+            parser.strict_str(*keys)

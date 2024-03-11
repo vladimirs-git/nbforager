@@ -33,6 +33,7 @@ LONERS: DLStr = {
     "dcim/devices/": ["airflow"],
     "ipam/aggregates/": ["prefix"],
     "ipam/prefixes/": ["within_include"],
+    "ipam/vlan-groups/": ["site"],
     "extras/content-types/": ["id", "app_label", "model"],
 }
 
@@ -187,8 +188,13 @@ class BaseC:
 
     @property
     def url(self) -> str:
-        """Base URL with the application and model path."""
+        """URL to the API endpoint of the Netbox object."""
         return f"{self.url_base}{self.path}"
+
+    @property
+    def url_ui(self) -> str:
+        """URL to the UI endpoint to the Netbox object."""
+        return self.url.replace("/api/", "/", 1)
 
     @property
     def url_base(self) -> str:
@@ -509,6 +515,7 @@ class BaseC:
         """
         params_d: DList = _lists_wo_dupl(kwargs)
         params_d = self._change_params_name_to_id(params_d)
+        params_d = self._change_params_exceptions(params_d)
         params_ld: LDList = h.make_combinations(self._loners, params_d)
         params_ld = h.change_params_or(params_ld)
         params_ld = h.join_params(params_ld, self._default_get)
@@ -614,6 +621,9 @@ class BaseC:
         """Change parameter with name to parameter with id.
 
         Request all related objects from the Netbox, find the name, and replace it with the ID.
+
+        Described in: nb_api.rst Extended filtering parameters
+
         :param params_d: Parameters that need to update.
         :return: Updated parameters.
         """
@@ -638,6 +648,27 @@ class BaseC:
 
         params_d_: DList = {k: v for k, v in params_d.items() if k not in need_delete}
         params_d_.update(need_add)
+        return params_d_
+
+    def _change_params_exceptions(self, params_d: DList) -> DList:
+        """Process exceptions that work differently than
+
+        Described in: nb_api.rst Extended filtering parameters
+
+        ipam/vlan-groups/ need site=1 instead of site_id=1.
+
+        :param params_d: Parameters that need to update.
+        :return: Updated parameters.
+        """
+        if self.extended_get is False:
+            return params_d
+
+        params_d_: DList = {}
+        for key, params in params_d.items():
+            if self.path == "ipam/vlan-groups/":
+                if key == "site_id":
+                    key = "site"
+            params_d_[key] = params
         return params_d_
 
     @staticmethod

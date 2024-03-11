@@ -1,5 +1,3 @@
-# pylint: disable=E1101,W0212,R0801,W0621
-
 """Unittests forager.py."""
 from typing import Any, Tuple
 

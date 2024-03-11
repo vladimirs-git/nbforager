@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nbforager"
-version = "0.1.14"
+version = "0.2.0"
 description = "Python package designed to assist in working with the Netbox REST API. The filter parameters are identical to those in the Web UI filter form. It replaces brief data with full information, and Netbox objects are represented as a recursive multidimensional dictionary."
 authors = ["Vladimirs Prusakovs <vladimir.prusakovs@gmail.com>"]
 readme = "README.rst"
@@ -18,11 +18,12 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.8"
 ciscoconfparse = "^1.9"
+netports = "^0.12.1"
 pydantic = "^2"
+pynetbox = "^7.3.3"
 requests = "^2"
 tomli = "2.0.1"
 vhelpers = "^0.1"
-netports = "^0.12.1"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.6.1"
@@ -52,11 +53,35 @@ test = ["pytest"]
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/vladimirs-git/nbforager/issues"
-"Download URL" = "https://github.com/vladimirs-git/nbforager/archive/refs/tags/0.1.14.tar.gz"
+"Download URL" = "https://github.com/vladimirs-git/nbforager/archive/refs/tags/0.2.0.tar.gz"
 
+[tool.pylint]
+max-line-length = 100
+disable = "fixme"
+
+#[tool.pylint.message_control]
+#enable = ["too-many-public-methods"]
+#max-public-methods = 50
+
+[tool.pylint."tests.*"]
+disable = [
+    "assigning-non-slot",
+    "duplicate-code",
+    "no-member",
+    "protected-access",
+    "redefined-builtin",
+    "redefined-outer-name",
+    "too-many-statements",
+    "unused-import",
+    "use-dict-literal",
+]
 
 [tool.mypy]
 python_version = "3.8"
+
+[[tool.mypy.overrides]]
+module = "pynetbox.*"
+ignore_missing_imports = true
 
 [tool.ruff]
 exclude = [

@@ -1,5 +1,3 @@
-# pylint: disable=W0212,R0801,W0621
-
 """Unittests connector.py."""
 import json
 from typing import Any

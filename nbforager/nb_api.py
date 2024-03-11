@@ -15,7 +15,7 @@ from nbforager.api.tenancy import TenancyAC
 from nbforager.api.users import UsersAC
 from nbforager.api.virtualization import VirtualizationAC
 from nbforager.api.wireless import WirelessAC
-from nbforager.branch.nb_branch import NbBranch
+from nbforager.parser.nb_parser import NbParser
 from nbforager.types_ import ODLStr, ODDAny, DAny
 
 
@@ -59,7 +59,7 @@ class NbApi:
         sleep: int = 10,
         strict: bool = False,
         # Settings
-        extended_get: bool = False,
+        extended_get: bool = True,
         default_get: ODDAny = None,
         loners: ODLStr = None,
         **kwargs,
@@ -183,5 +183,5 @@ class NbApi:
         :return: Netbox version, if version >= 3, otherwise empty string.
         """
         status_d: DAny = self.status.get()
-        version = NbBranch(status_d).str("netbox-version")
+        version = NbParser(status_d).str("netbox-version")
         return version

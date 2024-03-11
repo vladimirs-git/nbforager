@@ -1,7 +1,7 @@
 """Example NbForager.join_tree() join devices."""
 from pprint import pprint
 
-from nbforager import NbForager, NbBranch
+from nbforager import NbForager, NbParser
 
 HOST = "demo.netbox.dev"
 TOKEN = "1234567890123456789012345678901234567890"
@@ -53,6 +53,6 @@ pprint(device)
 region = device["site"]["region"]["name"]
 print(f"{region=}")  # region="North Carolina"
 
-# Use NbBranch to ensure the data type if any dictionary in the chain is missing.
-region = NbBranch(device).str("site", "region", "name")
+# Use NbParser to ensure the data type if any dictionary in the chain is missing.
+region = NbParser(device).str("site", "region", "name")
 print(f"{region=}")  # region="North Carolina"

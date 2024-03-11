@@ -4,13 +4,14 @@ from nbforager import helpers as h
 from nbforager.api import ConnectorA
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
+from nbforager.py_tree import PyTree
 from nbforager.types_ import LStr
 
 
 class BaseAF:
     """Base for Application Foragers."""
 
-    def __init__(self, api: NbApi, root: NbTree, tree: NbTree):
+    def __init__(self, api: NbApi, root: NbTree, tree: NbTree, pynb: PyTree):
         """Init BaseAF.
 
         :param root: Dictionary where data from Netbox needs to be saved.
@@ -18,6 +19,7 @@ class BaseAF:
         self.api = api
         self.root: NbTree = root
         self.tree: NbTree = tree
+        self.pynb: PyTree = pynb
         self.app: str = h.attr_name(self)
         self.connector: ConnectorA = getattr(api, self.app)  # connector to application
 
