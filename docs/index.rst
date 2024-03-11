@@ -9,7 +9,7 @@ Python package designed to help work with the `Netbox`_ REST API.
 
 - **NbApi** Request data from Netbox using filter parameters identical to those in the Web UI filter form. Filter parameters use the ``OR`` operator.
 - **NbForager** The REST API returns objects that contain a brief representation of related objects. NbForager replaces brief data with full and objects look like a recursive multidimensional dictionary.
-- **NbBranch** Extract typed values from a Netbox object dictionary by using a chain of keys.
+- **NbParser** Extract typed values from a Netbox object dictionary by using a chain of keys.
 
 Checked with Python >= 3.8, Netbox >= v3.6.
 This project on `GitHub`_.
@@ -23,8 +23,10 @@ This project on `GitHub`_.
 
     NbApi <api/nb_api.rst>
     NbForager <foragers/nb_forager.rst>
-    NbBranch <branch/nb_branch.rst>
-    NbValue <branch/nb_value.rst>
+    NbTree <foragers/nb_tree.rst>
+    PyTree <foragers/py_tree.rst>
+    NbParser <parser/nb_parser.rst>
+    NbValue <parser/nb_value.rst>
     Examples <examples.rst>
 
 
@@ -97,7 +99,7 @@ Request objects using filtering parameters. Assemble multidimensional dictionary
 
     from pprint import pprint
 
-    from nbforager import NbForager, NbBranch
+    from nbforager import NbForager, NbParser
 
     HOST = "demo.netbox.dev"
     TOKEN = "1234567890123456789012345678901234567890"
@@ -149,8 +151,8 @@ Request objects using filtering parameters. Assemble multidimensional dictionary
     region = device["site"]["region"]["name"]
     print(f"{region=}")  # region="North Carolina"
 
-    # Use NbBranch to ensure the data type if any dictionary in the chain is missing.
-    region = NbBranch(device).str("site", "region", "name")
+    # Use NbParser to ensure the data type if any dictionary in the chain is missing.
+    region = NbParser(device).str("site", "region", "name")
     print(f"{region=}")  # region="North Carolina"
 
 

@@ -13,10 +13,11 @@ from urllib.parse import urlparse, parse_qs
 from vhelpers import vlist, vstr
 
 from nbforager import helpers as h
-from nbforager.branch.nb_branch import NbBranch
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree, missed_urls
-from nbforager.types_ import LDAny, DiDAny, LStr, LT2StrDAny, DList, LDList, TLists
+from nbforager.parser.nb_parser import NbParser
+from nbforager.py_tree import PyTree
+from nbforager.types_ import LDAny, DiDAny, LStr, LT2StrDAny, DList, LDList, TLists, DiAny
 
 
 class Forager:
@@ -39,6 +40,7 @@ class Forager:
         self.root_d: DiDAny = getattr(getattr(self.root, app), model)
         self.tree: NbTree = forager_a.tree
         self.tree_d: DiDAny = getattr(getattr(self.tree, app), model)
+        self.pynb: PyTree = forager_a.pynb
 
     def __repr__(self) -> str:
         """__repr__."""
@@ -316,6 +318,17 @@ class Forager:
             model_d: DiDAny = self._get_root_data(path)
             model_d[int(digit)] = data
 
+    def _get_pynb_data(self, path: str) -> DiAny:
+        """Get data in self pynb by app/model path.
+
+        :param path: The app/model path.
+
+        :return: The model data.
+        """
+        app, model = h.path_to_attrs(path)
+        data = getattr(getattr(self.pynb, app), model)
+        return data
+
     def _get_root_data(self, path: str) -> DiDAny:
         """Get data in self root by app/model path.
 
@@ -353,7 +366,7 @@ def _find(objects: LDAny, **kwargs) -> LDAny:
             if vlist.is_in(values_, values):
                 objects_.append(data)
         else:
-            value_ = NbBranch(data).any(*keys)
+            value_ = NbParser(data).any(*keys)
             if value_ in values:
                 objects_.append(data)
 

@@ -1,5 +1,3 @@
-# pylint: disable=W0212,W0621
-
 """Unittests foragers."""
 
 import pytest

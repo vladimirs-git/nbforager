@@ -15,9 +15,9 @@ nbf = NbForager(host=HOST, token=TOKEN, threads=10)
 # Get the objects from Netbox using nested mode to requests all related objects.
 start = datetime.now()
 nbf.dcim.devices.get(nested=True)
-nbf.ipam.aggregates.get(nested=True)
-nbf.ipam.prefixes.get(nested=True)
-nbf.ipam.ip_addresses.get(nested=True)
+nbf.ipam.aggregates.get(family=4, nested=True)
+nbf.ipam.prefixes.get(status="active", family=4, nested=True)
+nbf.ipam.ip_addresses.get(status="active", family=4, nested=True)
 nbf.circuits.circuits.get(nested=True)
 nbf.circuits.circuit_terminations.get(nested=True)
 seconds = (datetime.now() - start).seconds

@@ -32,14 +32,3 @@ Forager methods
     find_tree,
     get,
   :class-doc-from: class
-
-----------------------------------------------------------------------------------------
-
-
-NbTree
-======
-
-todo documentation
-
-.. autoclass:: nbforager.NbTree
-  :members:

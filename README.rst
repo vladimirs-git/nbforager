@@ -9,7 +9,7 @@ Python package designed to help work with the `Netbox`_ REST API.
 
 - `NbApi`_ Request data from Netbox using filter parameters identical to those in the Web UI filter form. Filter parameters use the ``OR`` operator.
 - `NbForager`_ The REST API returns objects that contain a brief representation of related objects. NbForager replaces brief data with full and objects look like a recursive multidimensional dictionary.
-- `NbBranch`_ Extract typed values from a Netbox object dictionary by using a chain of keys.
+- `NbParser`_ Extract typed values from a Netbox object dictionary by using a chain of keys.
 
 Checked with Python >= 3.8, Netbox >= v3.6.
 Fully documented on `Read the Docs`_.
@@ -84,7 +84,7 @@ Request objects using filtering parameters. Assemble multidimensional dictionary
 
     from pprint import pprint
 
-    from nbforager import NbForager, NbBranch
+    from nbforager import NbForager, NbParser
 
     HOST = "demo.netbox.dev"
     TOKEN = "1234567890123456789012345678901234567890"
@@ -136,8 +136,8 @@ Request objects using filtering parameters. Assemble multidimensional dictionary
     region = device["site"]["region"]["name"]
     print(f"{region=}")  # region="North Carolina"
 
-    # Use NbBranch to ensure the data type if any dictionary in the chain is missing.
-    region = NbBranch(device).str("site", "region", "name")
+    # Use NbParser to ensure the data type if any dictionary in the chain is missing.
+    region = NbParser(device).str("site", "region", "name")
     print(f"{region=}")  # region="North Carolina"
 
 
@@ -196,4 +196,4 @@ Create, get, update and delete ip-addresses.
 .. _`Read the Docs`: https://nbforager.readthedocs.io/en/latest/
 .. _`NbApi`: https://nbforager.readthedocs.io/en/latest/api/nb_api.html#nbapi
 .. _`NbForager`: https://nbforager.readthedocs.io/en/latest/foragers/nb_forager.html#nbforager
-.. _`NbBranch`: https://nbforager.readthedocs.io/en/latest/branch/nb_branch.html#nbbranch
+.. _`NbParser`: https://nbforager.readthedocs.io/en/latest/parser/nb_parser.html#nbparser

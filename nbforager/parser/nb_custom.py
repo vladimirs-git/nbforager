@@ -1,50 +1,24 @@
-# pylint: disable=R0904
-
 """NbCustom."""
 import re
 import string
 
 from vhelpers import vlist, vre
 
-from nbforager.branch.nb_value import NbValue, RE_PREFIX
-from nbforager.types_ import SStr, T2Str, LStr
+from nbforager.parser.nb_value import NbValue, RE_PREFIX
+from nbforager.types_ import SStr, T2Str, LStr, LInt
 
 
 class NbCustom(NbValue):
-    """Extracts a value from a Netbox object using a chain of keys."""
+    """Custom field parser.
 
-    def name(self) -> str:
-        """dcim/devices/name, dcim/vlans/name.
+    Dictionary parser for extracting values from a Netbox object using a chain of keys.
 
-        :return: Name value.
+    Netbox object may have None instead of a dictionary when a related object is absent,
+    requiring constant data type checks. NbParser ensures the desired value is returned
+    with the correct data type, even if the data is missing.
 
-        :raise NbBranchError: if object has no name.
-        """
-        strict_actual = self.strict
-        self.strict = True
-        name = super().name()
-        self.strict = strict_actual
-        return name
-
-    def platform_slug(self) -> str:
-        """dcim/devices/platform/slug.
-
-        :return: Platform slug.
-
-        :raise NbBranchError: if device has no: hostname, version platform.
-        """
-        strict_actual = self.strict
-        self.strict = True
-        _ = self.is_dcim("devices")
-        _ = self.primary_ip4()
-        device_type = self.str("platform", "name")
-        required: str = string.ascii_lowercase + "_-"
-        chars_invalid: LStr = [s for s in device_type if s not in required]
-        if chars_invalid:
-            device_type = super().platform_slug()
-        device_type = device_type.replace("-", "_")
-        self.strict = strict_actual
-        return device_type
+    Raises NbParserError if strict=True and some keys are missing.
+    """
 
     # ========================== custom_fields ===========================
 
@@ -61,6 +35,18 @@ class NbCustom(NbValue):
         """ipam/prefixes/custom_fields/env/label."""
         return self.str("custom_fields", "env")
 
+    def cf_recommended_vlans(self) -> LInt:
+        """ipam/roles/custom_fields/recommended_vlans."""
+        value = self.str("custom_fields", "recommended_vlans")
+        vids: LInt = [int(s) for s in value.split(",") if s]
+        vids = [i for i in vids if i]
+        vids = vlist.no_dupl(vids)
+        return vids
+
+    def cf_required_env(self) -> bool:
+        """ipam/roles/custom_fields/required_env."""
+        return self.bool("custom_fields", "required_env")
+
     def cf_super_aggr(self) -> T2Str:
         """ipam/aggregates/custom_fields/super_aggregate/value."""
         value = self.str("custom_fields", "super_aggregate")
@@ -75,6 +61,45 @@ class NbCustom(NbValue):
     def cf_sw_version(self) -> str:
         """dcim/devices/custom_fields/sw_version."""
         return self.str("custom_fields", "sw_version")
+
+    # ========================= specific values ==========================
+
+    def name(self) -> str:
+        """dcim/devices/name, dcim/vlans/name.
+
+        :return: Name value.
+
+        :raise NbParserError: if object has no name.
+        """
+        strict_actual = self.strict
+        self.strict = True
+        name = super().name()
+        self.strict = strict_actual
+        return name
+
+    def overlapped(self) -> str:
+        """ipam/prefixes/overlapped."""
+        return self.str("overlapped")
+
+    def platform_slug(self) -> str:
+        """dcim/devices/platform/slug.
+
+        :return: Platform slug.
+
+        :raise NbParserError: if device has no: hostname, version platform.
+        """
+        strict_actual = self.strict
+        self.strict = True
+        _ = self.is_dcim("devices")
+        _ = self.primary_ip4()
+        device_type = self.str("platform", "name")
+        required: str = string.ascii_lowercase + "_-"
+        chars_invalid: LStr = [s for s in device_type if s not in required]
+        if chars_invalid:
+            device_type = super().platform_slug()
+        device_type = device_type.replace("-", "_")
+        self.strict = strict_actual
+        return device_type
 
     # ========================== custom values ===========================
 

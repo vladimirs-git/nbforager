@@ -1,7 +1,7 @@
 """Params."""
 from copy import deepcopy
 
-from nbforager.exceptions import NbBranchError
+from nbforager.exceptions import NbParserError
 from nbforager.types_ import DAny
 
 PREFIX = "10.0.0.0/24"
@@ -43,11 +43,31 @@ ANY = [
     (["a", "b", "c"], {"a": {"b": {"c": {"k": "C"}}}}, False, {"k": "C"}),
 ]
 
+# test__bool
+BOOL = [
+    (["a"], {"a": None}, True, NbParserError),
+    (["a"], {"a": None}, False, False),
+    (["a"], {"a": 1}, True, NbParserError),
+    (["a"], {"a": 1}, False, False),
+    (["a"], {"a": True}, True, True),
+    (["a"], {"a": True}, False, True),
+    (["a"], {"a": False}, True, False),
+    (["a"], {"a": False}, False, False),
+    (["a", "b"], {"a": {"b": True}}, True, True),
+    (["a", "b"], {"a": {"b": True}}, False, True),
+    (["a", "b"], {"a": {"b": None}}, True, NbParserError),
+    (["a", "b"], {"a": {"b": None}}, False, False),
+    (["a", "b", "c"], {"a": {"b": {"c": True}}}, True, True),
+    (["a", "b", "c"], {"a": {"b": {"c": True}}}, False, True),
+    (["a", "b", "c"], {"a": {"b": {"c": None}}}, True, NbParserError),
+    (["a", "b", "c"], {"a": {"b": {"c": None}}}, False, False),
+]
+
 # test__dict
 DICT = [
-    (["a"], {"a": None}, True, NbBranchError),
+    (["a"], {"a": None}, True, NbParserError),
     (["a"], {"a": None}, False, {}),
-    (["a"], {"a": 1}, True, NbBranchError),
+    (["a"], {"a": 1}, True, NbParserError),
     (["a"], {"a": 1}, False, {}),
     (["a"], {"a": {}}, True, {}),
     (["a"], {"a": {}}, False, {}),
@@ -69,23 +89,23 @@ INT = [
     (["id"], {"id": "0"}, False, 0),
     (["a", "b"], {"a": {"b": 1}}, True, 1),
     (["a", "b"], {"a": {"b": 1}}, False, 1),
-    (["a", "b"], {"a": {"b": None}}, True, NbBranchError),
+    (["a", "b"], {"a": {"b": None}}, True, NbParserError),
     (["a", "b"], {"a": {"b": None}}, False, 0),
     (["a", "b"], {"a": {"b": "1"}}, True, 1),
     (["a", "b"], {"a": {"b": "1"}}, False, 1),
     (["a", "b", "c"], {"a": {"b": {"c": 3}}}, True, 3),
     (["a", "b", "c"], {"a": {"b": {"c": "3"}}}, True, 3),
-    (["a", "b", "c"], {"a": {"b": {"c": None}}}, True, NbBranchError),
+    (["a", "b", "c"], {"a": {"b": {"c": None}}}, True, NbParserError),
     (["a", "b", "c"], {"a": {"b": {"c": None}}}, False, 0),
-    (["id"], None, True, NbBranchError),
+    (["id"], None, True, NbParserError),
     (["id"], None, False, 0),
 ]
 
 # test__list
 LIST = [
-    (["a"], {"a": None}, True, NbBranchError),
+    (["a"], {"a": None}, True, NbParserError),
     (["a"], {"a": None}, False, []),
-    (["a"], {"a": 1}, True, NbBranchError),
+    (["a"], {"a": 1}, True, NbParserError),
     (["a"], {"a": 1}, False, []),
     (["a"], {"a": ["A"]}, True, ["A"]),
     (["a"], {"a": ["A"]}, False, ["A"]),
@@ -93,19 +113,19 @@ LIST = [
     (["a"], {"a": [""]}, False, [""]),
     (["a", "b"], {"a": {"b": ["B"]}}, True, ["B"]),
     (["a", "b"], {"a": {"b": ["B"]}}, False, ["B"]),
-    (["a", "b"], {"a": {"b": None}}, True, NbBranchError),
+    (["a", "b"], {"a": {"b": None}}, True, NbParserError),
     (["a", "b"], {"a": {"b": None}}, False, []),
     (["a", "b", "c"], {"a": {"b": {"c": ["C"]}}}, True, ["C"]),
     (["a", "b", "c"], {"a": {"b": {"c": ["C"]}}}, False, ["C"]),
-    (["a", "b", "c"], {"a": {"b": {"c": None}}}, True, NbBranchError),
+    (["a", "b", "c"], {"a": {"b": {"c": None}}}, True, NbParserError),
     (["a", "b", "c"], {"a": {"b": {"c": None}}}, False, []),
 ]
 
 # test__str
 STR = [
-    (["a"], {"a": None}, True, NbBranchError),
+    (["a"], {"a": None}, True, NbParserError),
     (["a"], {"a": None}, False, ""),
-    (["a"], {"a": 1}, True, NbBranchError),
+    (["a"], {"a": 1}, True, NbParserError),
     (["a"], {"a": 1}, False, ""),
     (["a"], {"a": "A"}, True, "A"),
     (["a"], {"a": "A"}, False, "A"),
@@ -113,11 +133,11 @@ STR = [
     (["a"], {"a": ""}, False, ""),
     (["a", "b"], {"a": {"b": "B"}}, True, "B"),
     (["a", "b"], {"a": {"b": "B"}}, False, "B"),
-    (["a", "b"], {"a": {"b": None}}, True, NbBranchError),
+    (["a", "b"], {"a": {"b": None}}, True, NbParserError),
     (["a", "b"], {"a": {"b": None}}, False, ""),
     (["a", "b", "c"], {"a": {"b": {"c": "C"}}}, True, "C"),
     (["a", "b", "c"], {"a": {"b": {"c": "C"}}}, False, "C"),
-    (["a", "b", "c"], {"a": {"b": {"c": None}}}, True, NbBranchError),
+    (["a", "b", "c"], {"a": {"b": {"c": None}}}, True, NbParserError),
     (["a", "b", "c"], {"a": {"b": {"c": None}}}, False, ""),
 ]
 
@@ -125,40 +145,40 @@ STR = [
 STRICT_DICT = [
     (["a"], {"a": {"k": "v"}}, True, {"k": "v"}),
     (["a"], {"a": {"k": "v"}}, False, {"k": "v"}),
-    (["a"], {"a": 0}, True, NbBranchError),
-    (["a"], {"a": 0}, False, NbBranchError),
-    (["a"], {"url": "https://"}, True, NbBranchError),
-    (["a"], {"url": "https://"}, False, NbBranchError),
+    (["a"], {"a": 0}, True, NbParserError),
+    (["a"], {"a": 0}, False, NbParserError),
+    (["a"], {"url": "https://"}, True, NbParserError),
+    (["a"], {"url": "https://"}, False, NbParserError),
 ]
 
 # test__strict_int
 STRICT_INT = [
     (["a"], {"a": 1}, True, 1),
     (["a"], {"a": 1}, False, 1),
-    (["a"], {"a": 0}, True, NbBranchError),
-    (["a"], {"a": 0}, False, NbBranchError),
-    (["a"], {"url": "https://"}, True, NbBranchError),
-    (["a"], {"url": "https://"}, False, NbBranchError),
+    (["a"], {"a": 0}, True, NbParserError),
+    (["a"], {"a": 0}, False, NbParserError),
+    (["a"], {"url": "https://"}, True, NbParserError),
+    (["a"], {"url": "https://"}, False, NbParserError),
 ]
 
 # test__strict_list
 STRICT_LIST = [
     (["a"], {"a": ["A"]}, True, ["A"]),
     (["a"], {"a": ["A"]}, False, ["A"]),
-    (["a"], {"a": []}, True, NbBranchError),
-    (["a"], {"a": []}, False, NbBranchError),
-    (["a"], {"url": "https://"}, True, NbBranchError),
-    (["a"], {"url": "https://"}, False, NbBranchError),
+    (["a"], {"a": []}, True, NbParserError),
+    (["a"], {"a": []}, False, NbParserError),
+    (["a"], {"url": "https://"}, True, NbParserError),
+    (["a"], {"url": "https://"}, False, NbParserError),
 ]
 
 # test__strict_str
 STRICT_STR = [
     (["a"], {"a": "A"}, True, "A"),
     (["a"], {"a": "A"}, False, "A"),
-    (["a"], {"a": ""}, True, NbBranchError),
-    (["a"], {"a": ""}, False, NbBranchError),
-    (["a"], {"url": "https://"}, True, NbBranchError),
-    (["a"], {"url": "https://"}, False, NbBranchError),
+    (["a"], {"a": ""}, True, NbParserError),
+    (["a"], {"a": ""}, False, NbParserError),
+    (["a"], {"url": "https://"}, True, NbParserError),
+    (["a"], {"url": "https://"}, False, NbParserError),
 ]
 
 # ============================= methods ==============================
@@ -171,7 +191,7 @@ ID_ = [
     (["id"], {"id": 0}, False, 0),
     (["id"], {"id": "0"}, True, 0),
     (["id"], {"id": "0"}, False, 0),
-    (["id"], None, True, NbBranchError),
+    (["id"], None, True, NbParserError),
     (["id"], None, False, 0),
 ]
 
@@ -179,13 +199,13 @@ ID_ = [
 ADDRESS = [
     ({"address": PREFIX}, True, PREFIX),
     ({"address": PREFIX}, False, PREFIX),
-    ({"address": "10.0.0.1"}, True, NbBranchError),
+    ({"address": "10.0.0.1"}, True, NbParserError),
     ({"address": "10.0.0.1"}, False, "10.0.0.1"),
-    ({"address": None}, True, NbBranchError),
+    ({"address": None}, True, NbParserError),
     ({"address": None}, False, ""),
-    ({"address": 1}, True, NbBranchError),
+    ({"address": 1}, True, NbParserError),
     ({"address": 1}, False, ""),
-    (None, True, NbBranchError),
+    (None, True, NbParserError),
     (None, False, ""),
 ]
 
@@ -193,11 +213,11 @@ ADDRESS = [
 GROUP_NAME = [
     ({"group": {"name": NAME}}, True, NAME),
     ({"group": {"name": NAME}}, False, NAME),
-    ({"group": {"name": ""}}, True, NbBranchError),
+    ({"group": {"name": ""}}, True, NbParserError),
     ({"group": {"name": ""}}, False, ""),
-    ({"group": None}, True, NbBranchError),
+    ({"group": None}, True, NbParserError),
     ({"group": None}, False, ""),
-    (None, True, NbBranchError),
+    (None, True, NbParserError),
     (None, False, ""),
 ]
 
@@ -205,21 +225,21 @@ GROUP_NAME = [
 NAME_ = [
     ({"name": NAME}, True, NAME),
     ({"name": NAME}, False, NAME),
-    ({"name": ""}, True, NbBranchError),
+    ({"name": ""}, True, NbParserError),
     ({"name": ""}, False, ""),
-    (None, True, NbBranchError),
+    (None, True, NbParserError),
     (None, False, ""),
 ]
 
 # test__assigned_device
-ASSIGNED_DEVICE = [
+ASSIGNED_DEVICE_NAME = [
     ({"assigned_object": {"device": {"name": NAME}}}, True, NAME),
     ({"assigned_object": {"device": {"name": NAME}}}, False, NAME),
-    ({"assigned_object": {"device": None}}, True, NbBranchError),
+    ({"assigned_object": {"device": None}}, True, NbParserError),
     ({"assigned_object": {"device": None}}, False, ""),
-    ({"assigned_object": None}, True, NbBranchError),
+    ({"assigned_object": None}, True, NbParserError),
     ({"assigned_object": None}, False, ""),
-    (None, True, NbBranchError),
+    (None, True, NbParserError),
     (None, False, ""),
 ]
 
@@ -227,11 +247,11 @@ ASSIGNED_DEVICE = [
 PREFIX_ = [
     ({"prefix": PREFIX}, True, PREFIX),
     ({"prefix": PREFIX}, False, PREFIX),
-    ({"prefix": "10.0.0.0"}, True, NbBranchError),
+    ({"prefix": "10.0.0.0"}, True, NbParserError),
     ({"prefix": "10.0.0.0"}, False, "10.0.0.0"),
-    ({"prefix": None}, True, NbBranchError),
+    ({"prefix": None}, True, NbParserError),
     ({"prefix": None}, False, ""),
-    (None, True, NbBranchError),
+    (None, True, NbParserError),
     (None, False, ""),
 ]
 
@@ -241,13 +261,13 @@ PRIMARY_IP4 = [
     ({"primary_ip4": {"address": IP32}}, False, IP32),
     ({"primary_ip4": {"address": IP0}}, True, IP0),
     ({"primary_ip4": {"address": IP0}}, False, IP0),
-    ({"primary_ip4": {"address": f"{IP0}_32"}}, True, NbBranchError),
+    ({"primary_ip4": {"address": f"{IP0}_32"}}, True, NbParserError),
     ({"primary_ip4": {"address": f"{IP0}_32"}}, False, f"{IP0}_32"),
-    ({"primary_ip4": {"address": ""}}, True, NbBranchError),
+    ({"primary_ip4": {"address": ""}}, True, NbParserError),
     ({"primary_ip4": {"address": ""}}, False, ""),
-    ({"primary_ip4": {"address": None}}, True, NbBranchError),
+    ({"primary_ip4": {"address": None}}, True, NbParserError),
     ({"primary_ip4": {"address": None}}, False, ""),
-    ({"primary_ip4": None}, True, NbBranchError),
+    ({"primary_ip4": None}, True, NbParserError),
     ({"primary_ip4": None}, False, ""),
 ]
 
@@ -257,13 +277,13 @@ PRIMARY_IP = [
     ({"primary_ip4": {"address": IP32}}, False, IP0),
     ({"primary_ip4": {"address": IP0}}, True, IP0),
     ({"primary_ip4": {"address": IP0}}, False, IP0),
-    ({"primary_ip4": {"address": f"{IP0}_32"}}, True, NbBranchError),
+    ({"primary_ip4": {"address": f"{IP0}_32"}}, True, NbParserError),
     ({"primary_ip4": {"address": f"{IP0}_32"}}, False, f"{IP0}_32"),
-    ({"primary_ip4": {"address": ""}}, True, NbBranchError),
+    ({"primary_ip4": {"address": ""}}, True, NbParserError),
     ({"primary_ip4": {"address": ""}}, False, ""),
-    ({"primary_ip4": {"address": None}}, True, NbBranchError),
+    ({"primary_ip4": {"address": None}}, True, NbParserError),
     ({"primary_ip4": {"address": None}}, False, ""),
-    ({"primary_ip4": None}, True, NbBranchError),
+    ({"primary_ip4": None}, True, NbParserError),
     ({"primary_ip4": None}, False, ""),
 ]
 
@@ -273,13 +293,13 @@ SITE_NAME = [
     ({"site": {"name": NAME}}, True, False, NAME.lower()),
     ({"site": {"name": NAME}}, False, True, NAME.upper()),
     ({"site": {"name": NAME}}, False, False, NAME.lower()),
-    ({"site": {"name": ""}}, True, True, NbBranchError),
-    ({"site": {"name": ""}}, True, False, NbBranchError),
+    ({"site": {"name": ""}}, True, True, NbParserError),
+    ({"site": {"name": ""}}, True, False, NbParserError),
     ({"site": {"name": ""}}, False, True, ""),
     ({"site": {"name": ""}}, False, False, ""),
-    ({"site": None}, True, False, NbBranchError),
+    ({"site": None}, True, False, NbParserError),
     ({"site": None}, False, False, ""),
-    (None, True, False, NbBranchError),
+    (None, True, False, NbParserError),
     (None, False, False, ""),
 ]
 
@@ -291,12 +311,12 @@ GET_VID = [
     ({"vid": 0}, False, 0),
     ({"vid": "0"}, True, 0),
     ({"vid": "0"}, False, 0),
-    (None, True, NbBranchError),
+    (None, True, NbParserError),
     (None, False, 0),
 ]
 
 # test__vlan
-GET_VLAN = [
+GET_VLAN_VID = [
     ({"vlan": {"vid": 1}}, True, 1),
     ({"vlan": {"vid": 1}}, False, 1),
     ({"vlan": {"vid": "1"}}, True, 1),
@@ -305,11 +325,11 @@ GET_VLAN = [
     ({"vlan": {"vid": 0}}, False, 0),
     ({"vlan": {"vid": "0"}}, True, 0),
     ({"vlan": {"vid": "0"}}, False, 0),
-    ({"vlan": {"vid": None}}, True, NbBranchError),
+    ({"vlan": {"vid": None}}, True, NbParserError),
     ({"vlan": {"vid": None}}, False, 0),
-    ({"vlan": None}, True, NbBranchError),
+    ({"vlan": None}, True, NbParserError),
     ({"vlan": None}, False, 0),
-    (None, True, NbBranchError),
+    (None, True, NbParserError),
     (None, False, 0),
 ]
 
@@ -317,15 +337,15 @@ GET_VLAN = [
 TAGS = [
     ({"tags": [{"slug": NAME}, {"slug": "tag2"}]}, True, [NAME, "tag2"]),
     ({"tags": [{"slug": NAME}, {"slug": "tag2"}]}, False, [NAME, "tag2"]),
-    ({"tags": [{"slug": None}]}, True, NbBranchError),
+    ({"tags": [{"slug": None}]}, True, NbParserError),
     ({"tags": [{"slug": None}]}, False, []),
-    ({"tags": [None]}, True, NbBranchError),
+    ({"tags": [None]}, True, NbParserError),
     ({"tags": [None]}, False, []),
     ({"tags": []}, True, []),
     ({"tags": []}, False, []),
-    ({"tags": None}, True, NbBranchError),
+    ({"tags": None}, True, NbParserError),
     ({"tags": None}, False, []),
-    (None, True, NbBranchError),
+    (None, True, NbParserError),
     (None, False, []),
 ]
 
@@ -333,9 +353,9 @@ TAGS = [
 URL = [
     ({"url": NAME}, True, NAME),
     ({"url": NAME}, False, NAME),
-    ({"url": ""}, True, NbBranchError),
+    ({"url": ""}, True, NbParserError),
     ({"url": ""}, False, ""),
-    (None, True, NbBranchError),
+    (None, True, NbParserError),
     (None, False, ""),
 ]
 
@@ -366,13 +386,13 @@ PLATFORM_SLUG = [
     (PLATFORM_D, "cisco_ios"),
     (PLATFORM_D_W_VALID_NAME, "cisco_ios"),
     (PLATFORM_D_W_VALID_SLUG, "cisco_ios"),
-    ({}, NbBranchError),
-    (PLATFORM_D_WO_URL, NbBranchError),
-    (PLATFORM_D_W_INVALID_ADDRESS, NbBranchError),
-    (PLATFORM_D_WO_ADDRESS, NbBranchError),
-    (PLATFORM_D_WO_PRIMARY_IP4, NbBranchError),
-    (PLATFORM_D_WO_SLUG, NbBranchError),
-    (PLATFORM_D_WO_PLATFORM, NbBranchError),
+    ({}, NbParserError),
+    (PLATFORM_D_WO_URL, NbParserError),
+    (PLATFORM_D_W_INVALID_ADDRESS, NbParserError),
+    (PLATFORM_D_WO_ADDRESS, NbParserError),
+    (PLATFORM_D_WO_PRIMARY_IP4, NbParserError),
+    (PLATFORM_D_WO_SLUG, NbParserError),
+    (PLATFORM_D_WO_PLATFORM, NbParserError),
 ]
 
 # test__hosts_in_cf_firewalls
@@ -402,7 +422,7 @@ HOSTS_IN_AGGR_DESCR = [
     ({"description": "a", "tags": [{"slug": TAG}]}, False, set()),
     ({"description": "", "tags": [{"slug": TAG}]}, True, set()),
     ({"description": "", "tags": [{"slug": TAG}]}, False, set()),
-    ({"description": "", "tags": [None]}, True, NbBranchError),
+    ({"description": "", "tags": [None]}, True, NbParserError),
     ({"description": "", "tags": [None]}, False, set()),
 ]
 
@@ -433,7 +453,7 @@ IS_IPAM = [
     ({"url": "/api/ipam/aggregates/"}, False, "aggregates", True),
     ({"url": "/api/ipam/ip-addresses/"}, True, "ip-addresses", True),
     ({"url": "/api/ipam/ip-addresses/"}, False, "ip-addresses", True),
-    ({"url": None}, True, "prefixes", NbBranchError),
+    ({"url": None}, True, "prefixes", NbParserError),
     ({"url": None}, False, "prefixes", False),
 ]
 
@@ -443,7 +463,7 @@ IS_DCIM = [
     ({"url": "/api/dcim/devices/"}, False, "devices", True),
     ({"url": "/api/dcim/devices/"}, True, "aggregates", False),
     ({"url": "/api/dcim/devices/"}, False, "aggregates", False),
-    ({"url": None}, True, "devices", NbBranchError),
+    ({"url": None}, True, "devices", NbParserError),
     ({"url": None}, False, "devices", False),
 ]
 

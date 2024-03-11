@@ -179,7 +179,16 @@ class WirelessM(BaseTree):
 
 
 class NbTree(BaseModel):
-    """Base for Netbox models tree."""
+    """Structure that holds Netbox objects as dictionaries.
+
+    Model: NbTree.{app}.{model}[id] = data.
+    Example: NbTree.{app}.{model}[id] = data.
+
+    {app} - Attribute representing application name.
+    {model} - Attribute representing model name.
+    [id] - Unique identifier of Netbox object.
+    data - Netbox object data as a dictionary.
+    """
 
     circuits: CircuitsM = Field(default=CircuitsM())
     core: CoreM = Field(default=CoreM())

@@ -1,5 +1,3 @@
-# pylint: disable=W0212,R0801,W0621
-
 """Unittests base_c.py."""
 from typing import Any
 
@@ -48,6 +46,7 @@ def mock_session(status_code: int, content: str = ""):
     return mock
 
 
+# noinspection PyTestUnpassedFixture
 @pytest.mark.parametrize("params, expected", [
     ({"host": "netbox"}, "https://netbox/api/circuits/circuit-terminations/"),
     ({"host": "netbox", "scheme": "http"}, "http://netbox/api/circuits/circuit-terminations/"),
@@ -72,6 +71,32 @@ def test__url(params, expected):
     assert actual == expected
 
 
+# noinspection PyTestUnpassedFixture
+@pytest.mark.parametrize("params, expected", [
+    ({"host": "netbox"}, "https://netbox/circuits/circuit-terminations/"),
+    ({"host": "netbox", "scheme": "http"}, "http://netbox/circuits/circuit-terminations/"),
+    ({"host": "netbox", "scheme": "http", "port": 80},
+     "http://netbox/circuits/circuit-terminations/"),
+    ({"host": "netbox", "scheme": "http", "port": 1},
+     "http://netbox:1/circuits/circuit-terminations/"),
+    ({"host": "netbox", "scheme": "https"}, "https://netbox/circuits/circuit-terminations/"),
+    ({"host": "netbox", "scheme": "https", "port": 443},
+     "https://netbox/circuits/circuit-terminations/"),
+    ({"host": "netbox", "scheme": "https", "port": 1},
+     "https://netbox:1/circuits/circuit-terminations/"),
+])
+def test__url_ui(params, expected):
+    """BaseC.url_ui."""
+    api = NbApi(**params)
+    actual = api.circuits.circuit_terminations.url_ui
+    assert actual == expected
+
+    nbf = NbForager(**params)
+    actual = nbf.api.circuits.circuit_terminations.url_ui
+    assert actual == expected
+
+
+# noinspection PyTestUnpassedFixture
 @pytest.mark.parametrize("params, expected", [
     ({"host": "netbox"}, "https://netbox/api/"),
     ({"host": "netbox", "scheme": "http"}, "http://netbox/api/"),
@@ -94,6 +119,7 @@ def test__url_base(params, expected):
 
 # ============================== helper ==============================
 
+# noinspection PyTestUnpassedFixture
 @pytest.mark.parametrize("default_get, expected", [
     ({}, {}),
     ({"ipam/prefixes/": {"family": 4}}, {"family": [4]}),
@@ -122,6 +148,7 @@ def test__loners(api: NbApi):
     assert api.ipam.ip_addresses._loners == ["q"]
 
 
+# noinspection PyTestUnpassedFixture
 @pytest.mark.parametrize("loners, expected", [
     ({}, ["q", "prefix"]),
     ({"any": ["a1"], "ipam/aggregates/": ["a2"], "ipam/prefixes/": ["a3"]}, ["a1", "a2"]),
@@ -197,6 +224,23 @@ def test__change_params_name_to_id(
     """BaseC._change_params_name_to_id()."""
     api = NbApi(host="netbox", extended_get=extended_get)
     actual = api.ipam.ip_addresses._change_params_name_to_id(params_d=params_d)
+    assert actual == expected
+
+
+@pytest.mark.parametrize("extended_get, params_d, expected", [
+    (True, {"site_id": [1], "region_id": [2]}, {"site": [1], "region_id": [2]}),
+    (False, {"site_id": [1], "region_id": [2]}, {"site_id": [1], "region_id": [2]}),
+])
+def test__change_params_exceptions(
+        api: NbApi,
+        mock_requests_vrf: Mocker,  # pylint: disable=unused-argument
+        extended_get,
+        params_d: DAny,
+        expected: DAny,
+):
+    """BaseC._change_params_exceptions()."""
+    api = NbApi(host="netbox", extended_get=extended_get)
+    actual = api.ipam.vlan_groups._change_params_exceptions(params_d=params_d)
     assert actual == expected
 
 

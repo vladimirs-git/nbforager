@@ -1,5 +1,3 @@
-# pylint: disable=E1101,W0212,R0801,R0915,W0621
-
 """Unittests foragers."""
 import inspect
 from pathlib import Path
@@ -272,7 +270,8 @@ def test__join_tree(nbf_r: NbForager):
     assert nbf_r.tree.ipam.prefixes == {}
     assert nbf_r.tree.ipam.ip_addresses == {}
 
-    tree: NbTree = nbf_r.join_tree(extra=False)
+    nbf_r.join_tree(extra=False)
+    tree: NbTree = nbf_r.tree
 
     aggregate = tree.ipam.aggregates[1]
     assert aggregate["tenant"]["tags"][0]["name"] == "TAG1"
@@ -286,7 +285,8 @@ def test__join_tree(nbf_r: NbForager):
     device = tree.dcim.devices[1]
     assert device.get("interfaces") is None
 
-    tree = nbf_r.join_tree(extra=True)
+    nbf_r.join_tree(extra=True)
+    tree = nbf_r.tree
 
     aggregate = tree.ipam.aggregates[1]
     assert aggregate["tenant"]["tags"][0]["name"] == "TAG1"
