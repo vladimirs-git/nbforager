@@ -1,4 +1,4 @@
-"""Unittests py_tree.py."""
+"""Tests py_tree.py."""
 
 from nbforager.py_tree import PyTree
 

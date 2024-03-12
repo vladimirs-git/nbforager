@@ -1,4 +1,4 @@
-"""Unittests connector.py."""
+"""Tests connector.py."""
 import json
 from typing import Any
 

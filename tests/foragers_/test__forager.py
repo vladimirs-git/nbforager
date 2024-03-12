@@ -1,4 +1,4 @@
-"""Unittests forager.py."""
+"""Tests forager.py."""
 from typing import Any, Tuple
 
 import pytest

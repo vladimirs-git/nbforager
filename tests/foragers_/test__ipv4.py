@@ -1,4 +1,4 @@
-"""Unittests ipv4.py."""
+"""Tests ipv4.py."""
 import pytest
 
 from nbforager.foragers.ipv4 import IPv4

@@ -1,4 +1,4 @@
-"""Unittests foragers."""
+"""Tests foragers."""
 import inspect
 from pathlib import Path
 from unittest.mock import Mock

@@ -1,4 +1,4 @@
-"""Unittests nb_tree.py."""
+"""Tests nb_tree.py."""
 from typing import Any
 
 import pytest

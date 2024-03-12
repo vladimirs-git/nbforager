@@ -1,4 +1,4 @@
-"""Unittests extended_get.py."""
+"""Tests extended_get.py."""
 import pytest
 
 from nbforager.api import extended_get

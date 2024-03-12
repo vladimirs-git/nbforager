@@ -1,4 +1,4 @@
-"""Unittests foragers."""
+"""Tests foragers."""
 
 import pytest
 

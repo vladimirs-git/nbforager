@@ -1,4 +1,4 @@
-"""Unittests base_fa.py."""
+"""Tests base_fa.py."""
 import pytest
 
 from nbforager import NbForager

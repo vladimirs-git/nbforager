@@ -1,4 +1,4 @@
-"""Unittests nb_pai.py."""
+"""Tests nb_pai.py."""
 import inspect
 
 import pytest
