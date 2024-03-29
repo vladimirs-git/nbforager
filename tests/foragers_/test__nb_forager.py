@@ -270,9 +270,8 @@ def test__join_tree(nbf_r: NbForager):
     assert nbf_r.tree.ipam.prefixes == {}
     assert nbf_r.tree.ipam.ip_addresses == {}
 
-    nbf_r.join_tree(extra=False)
+    nbf_r.join_tree()
     tree: NbTree = nbf_r.tree
-
     aggregate = tree.ipam.aggregates[1]
     assert aggregate["tenant"]["tags"][0]["name"] == "TAG1"
     assert aggregate.get("sub_prefixes") is None
@@ -285,9 +284,13 @@ def test__join_tree(nbf_r: NbForager):
     device = tree.dcim.devices[1]
     assert device.get("interfaces") is None
 
-    nbf_r.join_tree(extra=True)
+    nbf_r.join_tree(dcim=True)
     tree = nbf_r.tree
+    device = tree.dcim.devices[1]
+    assert device["interfaces"]["GigabitEthernet1/0/1"]["name"] == "GigabitEthernet1/0/1"
 
+    nbf_r.join_tree(ipam=True)
+    tree = nbf_r.tree
     aggregate = tree.ipam.aggregates[1]
     assert aggregate["tenant"]["tags"][0]["name"] == "TAG1"
     assert aggregate["sub_prefixes"][0]["prefix"] == "10.0.0.0/24"
@@ -297,8 +300,6 @@ def test__join_tree(nbf_r: NbForager):
     ip_address = tree.ipam.ip_addresses[1]
     assert ip_address["tenant"]["tags"][0]["name"] == "TAG1"
     assert ip_address["super_prefix"]["prefix"] == "10.0.0.0/24"
-    device = tree.dcim.devices[1]
-    assert device["interfaces"]["GigabitEthernet1/0/1"]["name"] == "GigabitEthernet1/0/1"
 
 
 @pytest.mark.parametrize("version, expected", [

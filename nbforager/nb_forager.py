@@ -276,13 +276,13 @@ class NbForager:
                     data = getattr(getattr(self.pynb, app), model)
                     data[id_] = obj
 
-    def join_tree(self, extra=True) -> None:
+    def join_tree(self, dcim: bool = False, ipam: bool = False) -> None:
         """Assemble Netbox objects in NbForager.tree within itself.
 
         The Netbox objects are represented as a multidimensional dictionary.
 
-        :param extra: True - Create additional keys to represent Netbox objects
-            similar to the WEB UI. False - Only join objects that are present in the API response.
+        :param dcim: True - Create additional keys to represent Netbox dcim objects.
+            False - Only join objects that are present in the API response.
 
             In dcim.devices:
 
@@ -296,6 +296,9 @@ class NbForager:
             - ``power_outlets``
             - ``power_ports``
             - ``rear_ports``
+
+        :param ipam: True - Create additional keys to represent Netbox ipam objects.
+            False - Only join objects that are present in the API response.
 
             In ipam.aggregate, ipam.prefixes, ipam.ip_addresses:
 
@@ -311,9 +314,10 @@ class NbForager:
         """
         tree: NbTree = nb_tree.join_tree(self.root)
         nb_tree.insert_tree(src=tree, dst=self.tree)
-        if extra:
-            joiner = Joiner(tree=self.tree)
+        joiner = Joiner(tree=self.tree)
+        if dcim:
             joiner.join_dcim_devices()
+        if ipam:
             joiner.join_ipam_ipv4()
 
     def read_cache(self) -> None:
