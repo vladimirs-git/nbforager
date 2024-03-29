@@ -216,16 +216,20 @@ class NbForager:
 
     # =========================== method =============================
 
-    def clear(self) -> None:
+    def clear(self, root: bool = True, tree: bool = True) -> None:
         """Clear objects by resetting the NbForager.root and NbForager.tree.
 
+        :param root: If True, clear data in NbForager.root.
+        :param tree: If True, reset NbForager.tree.
         :return: None. Update self object.
         """
-        for app in self.root.apps():
-            for model in getattr(self.root, app).models():
-                data: dict = getattr(getattr(self.root, app), model)
-                data.clear()
-        self.tree = NbTree()
+        if root:
+            for app in self.root.apps():
+                for model in getattr(self.root, app).models():
+                    data: dict = getattr(getattr(self.root, app), model)
+                    data.clear()
+        if tree:
+            self.tree = NbTree()
 
     def copy(self) -> NbForager:
         """Copy data in the NbForager.root and NbForager.tree.

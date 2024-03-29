@@ -203,13 +203,16 @@ def test__clear(nbf: NbForager):
     assert [d["id"] for d in nbf.root.ipam.vrfs.values()] == [1]
     assert [d["id"] for d in nbf.tree.ipam.vrfs.values()] == [1]
 
-    nbf.clear()
-    assert [d["id"] for d in nbf.root.ipam.vrfs.values()] == []
+    nbf.clear(root=False, tree=False)
+    assert [d["id"] for d in nbf.root.ipam.vrfs.values()] == [1]
+    assert [d["id"] for d in nbf.tree.ipam.vrfs.values()] == [1]
+
+    nbf.clear(root=False)
+    assert [d["id"] for d in nbf.root.ipam.vrfs.values()] == [1]
     assert [d["id"] for d in nbf.tree.ipam.vrfs.values()] == []
 
-    nbf.root.ipam.vrfs.update(objects.vrf_d([1]))
-    assert [d["id"] for d in nbf.root.ipam.vrfs.values()] == [1]
-    assert [d["id"] for d in nbf.ipam.vrfs.root_d.values()] == [1]
+    nbf.clear(tree=False)
+    assert [d["id"] for d in nbf.root.ipam.vrfs.values()] == []
     assert [d["id"] for d in nbf.tree.ipam.vrfs.values()] == []
 
 
