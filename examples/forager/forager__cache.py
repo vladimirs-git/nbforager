@@ -16,12 +16,26 @@ nbf = NbForager(host=HOST, token=TOKEN, cache=CACHE)
 # Get objects from Netbox and save objects to the cache.
 nbf.get_status()
 nbf.ipam.aggregates.get()
-nbf.tenancy.tenant_groups.get()
-print(f"{nbf}")  # <NbForager: ipam=4, tenancy=6>
+nbf.ipam.prefixes.get()
+nbf.join_tree()
+
 pprint(nbf.root.ipam.aggregates)
 # {1: {"id": 1,
 #      "prefix": "10.0.0.0/8",
-#      "url": "https://demo.netbox.dev/api/ipam/aggregates/1/"},
+#      ...
+
+pprint(nbf.tree.ipam.aggregates)
+# {1: {"prefix": "10.0.0.0/8",
+#      "ipv4": <IPv4Obj 10.0.0.0/8>,
+# "sub_prefixes": [{"prefix": "10.112.0.0/15",
+#                   "ipv4": <IPv4Obj 10.112.0.0/15>,
+#                   "aggregate": <Recursion on dict with id=2625332189056>,
+#                   "super_prefix": {},
+#                   "sub_prefixes": [{"prefix": "10.112.0.0/17",
+#                                     "ipv4": <IPv4Obj 10.112.0.0/17>,
+#                                     "aggregate": <Recursion on dict with id=2625332189056>,
+#                                     "super_prefix": <Recursion on dict with id=2625332190912>,
+#                                     "sub_prefixes": [],
 #      ...
 
 # Write cache to pickle file

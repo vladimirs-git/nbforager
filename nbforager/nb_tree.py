@@ -182,12 +182,11 @@ class NbTree(BaseModel):
     """Structure that holds Netbox objects as dictionaries.
 
     Model: NbTree.{app}.{model}[id] = data.
-    Example: NbTree.{app}.{model}[id] = data.
 
-    {app} - Attribute representing application name.
-    {model} - Attribute representing model name.
-    [id] - Unique identifier of Netbox object.
-    data - Netbox object data as a dictionary.
+    - ``{app}`` - Attribute representing application name.
+    - ``{model}`` - Attribute representing model name.
+    - ``id`` - Unique identifier of Netbox object.
+    - ``data`` - Netbox object data as a dictionary.
     """
 
     circuits: CircuitsM = Field(default=CircuitsM())
@@ -286,6 +285,14 @@ def missed_urls(urls: LStr, tree: NbTree) -> LStr:
         if not data:
             urls_.append(url)
     return urls_
+
+
+def delete_branches(tree: NbTree) -> NbTree:
+    """Delete data in multidimensional dictionaries."""
+
+def restore_branches(tree: NbTree) -> NbTree:
+    """Restore data in multidimensional dictionaries."""
+
 
 
 # ============================= helpers ==============================

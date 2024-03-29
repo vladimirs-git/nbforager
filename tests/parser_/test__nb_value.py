@@ -45,6 +45,18 @@ def test__id_(keys: LStr, data: dict, strict: bool, expected: Any):
             parser.id_()
 
 
+@pytest.mark.parametrize("data, strict, expected", p.FAMILY_VALUE)
+def test__family_value(data: dict, strict: bool, expected: Any):
+    """NbValue.family_value()."""
+    parser = NbValue(data=data, strict=strict)
+    if isinstance(expected, int):
+        actual = parser.family_value()
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            parser.family_value()
+
+
 @pytest.mark.parametrize("data, strict, expected", p.GROUP_NAME)
 def test__group_name(data: dict, strict: bool, expected: Any):
     """NbValue.group_name()."""

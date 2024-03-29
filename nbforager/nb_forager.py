@@ -282,13 +282,28 @@ class NbForager:
         The Netbox objects are represented as a multidimensional dictionary.
 
         :param extra: True - Create additional keys to represent Netbox objects
-            similar to the WEB UI:
-            console_ports, console_server_ports, device_bays, front_ports, interfaces,
-            inventory_items, module_bays, power_outlets, power_ports, rear_ports
-            in dcim.devices;
-            ipv4, aggregate, super_prefix, sub_prefixes, ip_addresses
-            in ipam.aggregate, ipam.prefixes, ipam.ip_addresses.
-            False - Only join objects that are present in the API response.
+            similar to the WEB UI. False - Only join objects that are present in the API response.
+
+            In dcim.devices:
+
+            - ``console_ports``
+            - ``console_server_ports``
+            - ``device_bays``
+            - ``front_ports``
+            - ``interfaces``
+            - ``inventory_items``
+            - ``module_bays``
+            - ``power_outlets``
+            - ``power_ports``
+            - ``rear_ports``
+
+            In ipam.aggregate, ipam.prefixes, ipam.ip_addresses:
+
+            - ``ipv4`` IPv4 object, child of ciscoconfparse.IPv4Obj
+            - ``aggregate`` Aggregate data for ipam.prefixes and ipam.ip_addresses
+            - ``super_prefix`` Related parent prefix data for ipam.prefixes and ipam.ip_addresses
+            - ``sub_prefixes`` Related child prefixes data for ipam.prefixes and ipam.ip_addresses
+            - ``ip_addresses`` Related IP addresses data for ipam.aggregates and ipam.prefixes
 
         :return: NbTree object with the joined Netbox objects.
 

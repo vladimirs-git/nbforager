@@ -324,9 +324,9 @@ class NbValue(NbParser):
         return self.str("face", "value")
 
     @check_strict
-    def family_value(self) -> str:
+    def family_value(self) -> int:
         """ipam/prefixes/family/value."""
-        return self.str("family", "value")
+        return self.int("family", "value")
 
     @check_strict
     def group_name(self) -> str:

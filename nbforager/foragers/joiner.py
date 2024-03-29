@@ -4,6 +4,7 @@ from operator import itemgetter
 from netports import Intf
 from vhelpers import vlist
 
+from nbforager.parser.nb_value import NbValue
 from nbforager.api.base_c import BaseC
 from nbforager.foragers.ipv4 import IPv4
 from nbforager.nb_tree import NbTree
@@ -25,9 +26,18 @@ class Joiner:
     def join_dcim_devices(self) -> None:
         """Create additional keys to represent dcim.devices similar to the WEB UI.
 
-        Add console_ports, console_server_ports, device_bays, front_ports, interfaces,
-        inventory_items, module_bays, power_outlets, power_ports, rear_ports
-        in dcim.devices.
+            In dcim.devices:
+
+            - ``console_ports``
+            - ``console_server_ports``
+            - ``device_bays``
+            - ``front_ports``
+            - ``interfaces``
+            - ``inventory_items``
+            - ``module_bays``
+            - ``power_outlets``
+            - ``power_ports``
+            - ``rear_ports``
 
         :return: None. Update NbTree object.
         """
@@ -47,6 +57,7 @@ class Joiner:
         """Create additional keys to represent devices/VM similar to the WEB UI.
 
         :param app: Application name: "dcim", "virtualization"
+
         :return: None. Update NbTree object.
         """
         model = "devices"
@@ -86,8 +97,13 @@ class Joiner:
     def join_ipam_ipv4(self) -> None:
         """Create additional keys to represent ipam similar to the WEB UI.
 
-            Add ipv4, aggregate, super_prefix, sub_prefixes, ip_addresses
-            in ipam.aggregate, ipam.prefixes, ipam.ip_addresses.
+            Add new attributes in ipam.aggregate, ipam.prefixes, ipam.ip_addresses:
+
+            - ``ipv4`` IPv4 object, child of ciscoconfparse.IPv4Obj
+            - ``aggregate`` Aggregate data for ipam.prefixes and ipam.ip_addresses
+            - ``super_prefix`` Related parent prefix data for ipam.prefixes and ipam.ip_addresses
+            - ``sub_prefixes`` Related child prefixes data for ipam.prefixes and ipam.ip_addresses
+            - ``ip_addresses`` Related IP addresses data for ipam.aggregates and ipam.prefixes
 
         :return: None. Update NbTree object.
         """
@@ -106,12 +122,16 @@ class Joiner:
         ]:
             objects: DiDAny = getattr(self.tree.ipam, model)
             for data in objects.values():
+                nbv = NbValue(data=data)
+                family: int = nbv.family_value()
+                if family != 4:
+                    continue
                 snet = data[key]
                 data["ipv4"] = IPv4(snet, strict=strict)
-                data["aggregate"] = {}
-                data["super_prefix"] = {}
-                data["sub_prefixes"] = []
-                data["ip_addresses"] = []
+                data["aggregate"] = {}  # DAny
+                data["super_prefix"] = {}  # DAny
+                data["sub_prefixes"] = []  # LDAny
+                data["ip_addresses"] = []  # LDAny
 
     def _join_ipam_aggregates(self) -> None:
         """Add prefixes to tree.ipam.aggregates.sub_prefixes."""

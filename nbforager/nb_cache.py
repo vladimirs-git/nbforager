@@ -96,9 +96,9 @@ class NbCache:
         if not self.cache:
             return
         path = Path(self.cache)
-        root = path.resolve().parent
-        if not root.is_dir():
-            root.mkdir(parents=True, exist_ok=True)
+        root_dir = path.resolve().parent
+        if not root_dir.is_dir():
+            root_dir.mkdir(parents=True, exist_ok=True)
 
     def _create_file(self) -> None:
         """Create pickl file for cache with write permissions 666.

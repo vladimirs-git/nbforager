@@ -221,6 +221,19 @@ GROUP_NAME = [
     (None, False, ""),
 ]
 
+# test__family_value
+FAMILY_VALUE = [
+    ({"family": {"value": 4}}, True, 4),
+    ({"family": {"value": "4"}}, True, 4),
+    ({"family": {"value": 4}}, False, 4),
+    ({"family": {"value": 0}}, True, NbParserError),
+    ({"family": {"value": 0}}, False, 0),
+    ({"family": None}, True, NbParserError),
+    ({"family": None}, False, 0),
+    (None, True, NbParserError),
+    (None, False, 0),
+]
+
 # test__name
 NAME_ = [
     ({"name": NAME}, True, NAME),
