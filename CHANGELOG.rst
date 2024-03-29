@@ -4,10 +4,12 @@
 CHANGELOG
 =========
 
-0.3.0 (2024-03-29)
+0.2.1 (2024-03-29)
 ------------------
 
-**Changed:** NbParser.join_tree)
+**Fixed:** BaseC._slice_params_counters()
+**Changed:** NbForager.clear(root, tree)
+**Changed:** NbForager.join_tree(dcim, ipam)
 
 
 0.2.0 (2024-03-11)

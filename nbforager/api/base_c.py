@@ -559,9 +559,6 @@ class BaseC:
             params_d = result["params_d"]
             if not result["count"]:
                 continue
-            if count <= self.limit:
-                params.append(params_d)
-                continue
             params_: LDAny = h.generate_offsets(count, self.limit, params_d)
             params.extend(params_)
         return params

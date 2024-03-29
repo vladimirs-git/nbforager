@@ -306,6 +306,18 @@ def test__msg_status_code__none(api: NbApi):
     assert actual == ""
 
 
+@pytest.mark.parametrize("results, expected", [
+    ([], []),
+    ([{"count": 1, "params_d": {}}], [{"limit": 1000, "offset": 0}]),
+    ([{"count": 1001, "params_d": {}}],
+     [{"limit": 1000, "offset": 0}, {"limit": 1000, "offset": 1000}]),
+])
+def test__slice_params_counters(api: NbApi, results: LDAny, expected: LDAny):
+    """BaseC._slice_params_counters()."""
+    actual = api.ipam.ip_addresses._slice_params_counters(results=results)
+    assert actual == expected
+
+
 @pytest.mark.parametrize("kwargs, expected", [
     ({}, ValueError),
     ({"host": ""}, ValueError),
