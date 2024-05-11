@@ -52,6 +52,7 @@ class BaseC:
         "cid",
         "vid",
         "asn",
+        "device_id",
     ]
     _init_params = [
         "host",
