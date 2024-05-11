@@ -482,7 +482,7 @@ ASN2: DAny = {
     "rir": {"id": 2, "url": "/api/ipam/rirs/2", "name": "RFC 6996"},
     "tenant": {"id": 1, "url": "/api/tenancy/tenants/1", "name": "TENANT1"},
 }
-IP_ADDRESS1: DAny = {  # global private
+IP_ADDRESS1: DAny = {  # global private, device
     "id": 1,
     "url": "/api/ipam/ip-addresses/1",
     "address": "10.0.0.1/24",
@@ -516,6 +516,8 @@ IP_ADDRESS2: DAny = {  # global public
     "tenant": None,
     "vrf": None,
     "role": {"label": "Secondary", "value": "secondary"},
+    "assigned_object_type": "dcim.interface",
+    "assigned_object_id": None,
     "assigned_object": None,
 }
 IP_ADDRESS3: DAny = {  # vrf private
@@ -526,13 +528,34 @@ IP_ADDRESS3: DAny = {  # vrf private
     "family": {"value": 4},
     "status": {"value": "active"},
     "nat_inside": None,
-    "nat_outside": None,
+    "nat_outside": [],
     "tenant": {"id": 1, "url": "/api/tenancy/tenants/1", "name": "TENANT1"},
     "vrf": {"id": 1, "url": "/api/ipam/vrfs/1", "name": "VRF1"},
     "role": None,
     "assigned_object_type": "dcim.interface",
     "assigned_object_id": 1,
     "assigned_object": None,
+}
+IP_ADDRESS4: DAny = {  # global private, vm
+    "id": 4,
+    "url": "/api/ipam/ip-addresses/4",
+    "address": "10.0.0.4/24",
+    "tags": [],
+    "family": {"value": 4},
+    "status": {"value": "active"},
+    "nat_inside": None,
+    "nat_outside": [],
+    "tenant": {"id": 1, "url": "/api/tenancy/tenants/1", "name": "TENANT1"},
+    "vrf": {"id": 1, "url": "/api/ipam/vrfs/1", "name": "VRF1"},
+    "role": None,
+    "assigned_object_type": "virtualization.vminterface",
+    "assigned_object_id": 1,
+    "assigned_object": {
+        "id": 1,
+        "url": "/api/virtualization/interfaces/1",
+        "name": "VIRTUAL_INTERFACE1",
+        "virtual_machine": {"id": 1, "url": "/api/dcim/devices/1", "name": "VIRTUAL MACHINE1"},
+    },
 }
 PREFIX1: DAny = {  # global private
     "id": 1,
@@ -746,7 +769,7 @@ CLUSTER1: DAny = {
 VIRTUAL_INTERFACE1: DAny = {
     "id": 1,
     "url": "/api/virtualization/interfaces/1",
-    "name": "INTERFACE1",
+    "name": "VIRTUAL_INTERFACE1",
     "tags": [{"id": 1, "url": "/api/extras/tags/1", "name": "TAG1"}],
     "virtual_machine": {
         "id": 1,
@@ -859,7 +882,7 @@ def full_tree() -> NbTree:
             asns={d["id"]: d for d in [ASN1, ASN2]},
             fhrp_group_assignments={},
             fhrp_groups={},
-            ip_addresses={d["id"]: d for d in [IP_ADDRESS1, IP_ADDRESS2, IP_ADDRESS3]},
+            ip_addresses={d["id"]: d for d in [IP_ADDRESS1, IP_ADDRESS2, IP_ADDRESS3, IP_ADDRESS4]},
             ip_ranges={},
             l2vpn_terminations={},
             l2vpns={},

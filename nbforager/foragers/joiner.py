@@ -39,6 +39,10 @@ class Joiner:
             - ``_power_ports``
             - ``_rear_ports``
 
+            In dcim.interfaces:
+
+            - ``_ip_addresses``
+
         :return: None. Update NbTree object.
         """
         self._join_dcim_devices(app="dcim")
@@ -47,11 +51,18 @@ class Joiner:
     def join_virtualization_virtual_machines(self) -> None:
         """Create additional keys to represent virtualization.virtual_machines.
 
-        Add interfaces in virtualization.virtual_machines.
+            In virtualization.virtual_machines:
+
+            - ``_interfaces``
+
+            In virtualization.interfaces:
+
+            - ``_ip_addresses``
 
         :return: None. Update NbTree object.
         """
         self._join_dcim_devices(app="virtualization")
+        self._join_dcim_interfaces(app="virtualization")
 
     # noinspection PyProtectedMember
     def _join_dcim_devices(self, app: str) -> None:
@@ -68,13 +79,13 @@ class Joiner:
             key = "virtualization/virtual-machines/"
         reserved_keys: LStr = BaseC._reserved_keys[key]  # pylint: disable=W0212
 
-        # init extra keys
+        # init keys
         devices_d: DiDAny = getattr(getattr(self.tree, app), model)
         for device in devices_d.values():
             for _key in reserved_keys:
                 device[_key] = {}
 
-        # set extra values
+        # set values
         key = "device"
         if app == "virtualization":
             key = "virtual_machine"
@@ -104,42 +115,38 @@ class Joiner:
 
         :return: None. Update NbTree object.
         """
-        return
         model = "interfaces"
         key = "dcim/interfaces/"
+        assigned_object_type = "dcim.interface"
         if app == "virtualization":
-            model = "virtual_machines"
             key = "virtualization/interfaces/"
-        models: LStr = BaseC._reserved_keys[key]  # pylint: disable=W0212
+            assigned_object_type = "virtualization.vminterface"
+        reserved_keys: LStr = BaseC._reserved_keys[key]  # pylint: disable=W0212
 
-        # init extra keys
-        devices_d: DiDAny = getattr(getattr(self.tree, app), model)
-        for device in devices_d.values():
-            for model in models:
-                device[f"_{model}"] = {}
+        # init keys
+        interfaces_d: DiDAny = getattr(getattr(self.tree, app), model)
+        for interfaces in interfaces_d.values():
+            for _key in reserved_keys:
+                interfaces[_key] = {}
 
-        # set extra values
-        key = "device"
-        if app == "virtualization":
-            key = "virtual_machine"
+        # set values
+        app = "ipam"
+        model = "ip_addresses"
+        _key = f"_{model}"
+        addresses_d: DiDAny = getattr(getattr(self.tree, app), model)
+        addresses: LDAny = list(addresses_d.values())
+        addresses.sort(key=itemgetter("address"))
 
-        for model in models:
-            ports_d: DiDAny = getattr(getattr(self.tree, app), model)
-            ports: LDAny = list(ports_d.values())
-
-            # sort by interface idx
-            ports_lt = [(Intf(d["name"]), d) for d in ports]
-            ports_lt.sort(key=itemgetter(0))
-            ports = [dict(t[1]) for t in ports_lt]
-
-            for port in ports:
-                name = port["name"]
-                id_ = port[key]["id"]
-                device_: DAny = devices_d.get(id_, {})  # pylint: disable=E1101
-                _model = f"_{model}"
-                if _model in device_:
-                    device_[_model][name] = port
-
+        for address_d in addresses:
+            address = address_d["address"]
+            assigned_object_id = address_d["assigned_object_id"]
+            if not assigned_object_id:
+                continue
+            if address_d["assigned_object_type"] != assigned_object_type:
+                continue
+            interface_d: DAny = interfaces_d.get(assigned_object_id, {})  # pylint: disable=E1101
+            if _key in interface_d:
+                interface_d[_key][address] = address_d
 
     def join_ipam_ipv4(self) -> None:
         """Create additional keys to represent ipam similar to the WEB UI.

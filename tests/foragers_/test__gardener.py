@@ -23,25 +23,39 @@ def test__join_dcim_devices(joiner: Joiner):
     """Joiner.join_dcim_devices()."""
     joiner.join_dcim_devices()
 
-    device = joiner.tree.dcim.devices[1]
+    # device
+    device_d = joiner.tree.dcim.devices[1]
     reserved_keys = BaseC._reserved_keys["dcim/devices/"]
     for key in reserved_keys:
-        isinstance(device[key], dict)
+        isinstance(device_d[key], dict)
+    assert device_d["_interfaces"]["GigabitEthernet1/0/1"]["name"] == "GigabitEthernet1/0/1"
+    assert device_d["_console_ports"]["CONSOLE PORT1"]["name"] == "CONSOLE PORT1"
 
-    assert device["_interfaces"]["GigabitEthernet1/0/1"]["name"] == "GigabitEthernet1/0/1"
-    assert device["_console_ports"]["CONSOLE PORT1"]["name"] == "CONSOLE PORT1"
+    # interface
+    interface_d = joiner.tree.dcim.interfaces[1]
+    reserved_keys = BaseC._reserved_keys["dcim/interfaces/"]
+    for key in reserved_keys:
+        isinstance(interface_d[key], dict)
+    assert interface_d["_ip_addresses"]["10.0.0.1/24"]["address"] == "10.0.0.1/24"
 
 
 def test__join_virtualization_virtual_machines(joiner: Joiner):
     """Joiner.join_virtualization_virtual_machines()."""
     joiner.join_virtualization_virtual_machines()
 
-    machine = joiner.tree.virtualization.virtual_machines[1]
+    # vm
+    machine_d = joiner.tree.virtualization.virtual_machines[1]
     reserved_keys = BaseC._reserved_keys["virtualization/virtual-machines/"]
     for key in reserved_keys:
-        isinstance(machine[key], dict)
+        isinstance(machine_d[key], dict)
+    assert machine_d["_interfaces"]["VIRTUAL_INTERFACE1"]["name"] == "VIRTUAL_INTERFACE1"
 
-    assert machine["_interfaces"]["INTERFACE1"]["name"] == "INTERFACE1"
+    # interface
+    interface_d = joiner.tree.virtualization.interfaces[1]
+    reserved_keys = BaseC._reserved_keys["virtualization/interfaces/"]
+    for key in reserved_keys:
+        isinstance(interface_d[key], dict)
+    assert interface_d["_ip_addresses"]["10.0.0.4/24"]["address"] == "10.0.0.4/24"
 
 
 def test__join_ipam_ipv4(joiner: Joiner):
@@ -199,7 +213,7 @@ def test__get_ip_addresses_ip4(joiner: Joiner):
     """Joiner._get_ip_addresses_ip4()."""
     joiner._init_ipam_keys()
     unsorted = [d["address"] for d in joiner.tree.ipam.ip_addresses.values()]
-    assert unsorted == ["10.0.0.1/24", "1.0.0.1/24", "10.0.0.3/24"]
+    assert unsorted == ["10.0.0.1/24", "1.0.0.1/24", "10.0.0.3/24", "10.0.0.4/24"]
 
     ip_addresses = joiner._get_ip_addresses_ip4()
     actual = [d["address"] for d in ip_addresses]

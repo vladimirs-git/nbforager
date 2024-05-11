@@ -288,29 +288,33 @@ class NbForager:
         :param dcim: True - Create additional keys to represent Netbox dcim objects.
             False - Only join objects that are present in the API response.
 
-            In dcim.devices:
+            In dcim.devices, virtualization.virtual_machines:
 
-            - ``console_ports``
-            - ``console_server_ports``
-            - ``device_bays``
-            - ``front_ports``
-            - ``interfaces``
-            - ``inventory_items``
-            - ``module_bays``
-            - ``power_outlets``
-            - ``power_ports``
-            - ``rear_ports``
+            - ``_console_ports``
+            - ``_console_server_ports``
+            - ``_device_bays``
+            - ``_front_ports``
+            - ``_interfaces``
+            - ``_inventory_items``
+            - ``_module_bays``
+            - ``_power_outlets``
+            - ``_power_ports``
+            - ``_rear_ports``
+
+            In dcim.interfaces, virtualization.interfaces:
+
+            - ``_ip_addresses``
 
         :param ipam: True - Create additional keys to represent Netbox ipam objects.
             False - Only join objects that are present in the API response.
 
             In ipam.aggregate, ipam.prefixes, ipam.ip_addresses:
 
-            - ``ipv4`` IPv4 object, child of ciscoconfparse.IPv4Obj
-            - ``aggregate`` Aggregate data for ipam.prefixes and ipam.ip_addresses
-            - ``super_prefix`` Related parent prefix data for ipam.prefixes and ipam.ip_addresses
-            - ``sub_prefixes`` Related child prefixes data for ipam.prefixes and ipam.ip_addresses
-            - ``ip_addresses`` Related IP addresses data for ipam.aggregates and ipam.prefixes
+            - ``_ipv4`` IPv4 object, child of ciscoconfparse.IPv4Obj
+            - ``_aggregate`` Aggregate data for ipam.prefixes and ipam.ip_addresses
+            - ``_super_prefix`` Related parent prefix data for ipam.prefixes and ipam.ip_addresses
+            - ``_sub_prefixes`` Related child prefixes data for ipam.prefixes and ipam.ip_addresses
+            - ``_ip_addresses`` Related IP addresses data for ipam.aggregates and ipam.prefixes
 
         :return: NbTree object with the joined Netbox objects.
 

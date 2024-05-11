@@ -96,8 +96,14 @@ class BaseC:
             "_device_bays",
             "_inventory_items",
         ],
+        "dcim/interfaces/": [
+            "_ip_addresses",
+        ],
         "virtualization/virtual-machines/": [
             "_interfaces",
+        ],
+        "virtualization/interfaces/": [
+            "_ip_addresses",
         ],
     }
 

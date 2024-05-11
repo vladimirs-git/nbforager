@@ -331,11 +331,11 @@ def test__devices_primary_ip4(nbf_r: NbForager):
 def test__set_addresses_mask_32(nbf_r: NbForager):
     """NbForager.set_addresses_mask_32()."""
     actual = [d["address"] for d in nbf_r.root.ipam.ip_addresses.values()]
-    assert actual == ["10.0.0.1/24", "1.0.0.1/24", "10.0.0.3/24"]
+    assert actual == ["10.0.0.1/24", "1.0.0.1/24", "10.0.0.3/24", "10.0.0.4/24"]
 
     nbf_r._set_ipam_ip_addresses_mask_32()
     actual = [d["address"] for d in nbf_r.root.ipam.ip_addresses.values()]
-    assert actual == ["10.0.0.1/32", "1.0.0.1/32", "10.0.0.3/32"]
+    assert actual == ["10.0.0.1/32", "1.0.0.1/32", "10.0.0.3/32", "10.0.0.4/32"]
 
 
 def test__print_warnings(nbf_r: NbForager, caplog):
