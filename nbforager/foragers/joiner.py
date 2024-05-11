@@ -23,6 +23,43 @@ class Joiner:
         """
         self.tree = tree
 
+    # noinspection PyProtectedMember
+    def init_extra_keys(self) -> None:
+        """Init extra keys to represent Netbox objects similar to the WEB UI.
+
+        :return: None. Update NbTree object.
+        """
+        for app, model in [
+            ("dcim", "devices"),
+            ("dcim", "interfaces"),
+            ("virtualization", "virtual_machines"),
+            ("virtualization", "interfaces"),
+        ]:
+            key = f"{app}/{model}/".replace("_", "-")
+            reserved_keys: LStr = BaseC._reserved_keys[key]  # pylint: disable=W0212
+            objects_d: DiDAny = getattr(getattr(self.tree, app), model)
+            for object_d in objects_d.values():
+                for _key in reserved_keys:
+                    object_d[_key] = {}
+
+        for model, key, strict in [
+            ("aggregates", "prefix", True),
+            ("prefixes", "prefix", True),
+            ("ip_addresses", "address", False),
+        ]:
+            objects: DiDAny = getattr(self.tree.ipam, model)
+            for data in objects.values():
+                nbv = NbValue(data=data)
+                family: int = nbv.family_value()
+                if family != 4:
+                    continue
+                snet = data[key]
+                data["_ipv4"] = IPv4(snet, strict=strict)
+                data["_aggregate"] = {}  # DAny
+                data["_super_prefix"] = {}  # DAny
+                data["_sub_prefixes"] = []  # LDAny
+                data["_ip_addresses"] = []  # LDAny
+
     def join_dcim_devices(self) -> None:
         """Create additional keys to represent dcim.devices similar to the WEB UI.
 
@@ -78,12 +115,7 @@ class Joiner:
             model = "virtual_machines"
             key = "virtualization/virtual-machines/"
         reserved_keys: LStr = BaseC._reserved_keys[key]  # pylint: disable=W0212
-
-        # init keys
         devices_d: DiDAny = getattr(getattr(self.tree, app), model)
-        for device in devices_d.values():
-            for _key in reserved_keys:
-                device[_key] = {}
 
         # set values
         key = "device"
@@ -100,13 +132,13 @@ class Joiner:
             ports_lt.sort(key=itemgetter(0))
             ports = [dict(t[1]) for t in ports_lt]
 
-            for port in ports:
-                name = port["name"]
-                id_ = port[key]["id"]
-                device_: DAny = devices_d.get(id_, {})  # pylint: disable=E1101
+            for port_d in ports:
+                name = port_d["name"]
+                id_ = port_d[key]["id"]
+                device_d: DAny = devices_d.get(id_, {})  # pylint: disable=E1101
                 _key = f"_{model}"
-                if _key in device_:
-                    device_[_key][name] = port
+                if _key in device_d:
+                    device_d[_key][name] = port_d
 
     def _join_dcim_interfaces(self, app: str) -> None:
         """Create additional keys to represent dcim/interfaces with assigned ipam/ip-addresses.
@@ -116,20 +148,9 @@ class Joiner:
         :return: None. Update NbTree object.
         """
         model = "interfaces"
-        key = "dcim/interfaces/"
-        assigned_object_type = "dcim.interface"
-        if app == "virtualization":
-            key = "virtualization/interfaces/"
-            assigned_object_type = "virtualization.vminterface"
-        reserved_keys: LStr = BaseC._reserved_keys[key]  # pylint: disable=W0212
-
-        # init keys
+        object_type = "virtualization.vminterface" if app == "virtualization" else "dcim.interface"
         interfaces_d: DiDAny = getattr(getattr(self.tree, app), model)
-        for interfaces in interfaces_d.values():
-            for _key in reserved_keys:
-                interfaces[_key] = {}
 
-        # set values
         app = "ipam"
         model = "ip_addresses"
         _key = f"_{model}"
@@ -142,7 +163,7 @@ class Joiner:
             assigned_object_id = address_d["assigned_object_id"]
             if not assigned_object_id:
                 continue
-            if address_d["assigned_object_type"] != assigned_object_type:
+            if address_d["assigned_object_type"] != object_type:
                 continue
             interface_d: DAny = interfaces_d.get(assigned_object_id, {})  # pylint: disable=E1101
             if _key in interface_d:
@@ -161,31 +182,10 @@ class Joiner:
 
         :return: None. Update NbTree object.
         """
-        self._init_ipam_keys()
         self._join_ipam_aggregates()
         self._join_ipam_prefixes()
         self._join_ipam_ip_addresses()
         self._join_update_sub_prefixes()
-
-    def _init_ipam_keys(self) -> None:
-        """Init extra keys that are required for aggregates, prefixes, ip_addresses."""
-        for model, key, strict in [
-            ("aggregates", "prefix", True),
-            ("prefixes", "prefix", True),
-            ("ip_addresses", "address", False),
-        ]:
-            objects: DiDAny = getattr(self.tree.ipam, model)
-            for data in objects.values():
-                nbv = NbValue(data=data)
-                family: int = nbv.family_value()
-                if family != 4:
-                    continue
-                snet = data[key]
-                data["_ipv4"] = IPv4(snet, strict=strict)
-                data["_aggregate"] = {}  # DAny
-                data["_super_prefix"] = {}  # DAny
-                data["_sub_prefixes"] = []  # LDAny
-                data["_ip_addresses"] = []  # LDAny
 
     def _join_ipam_aggregates(self) -> None:
         """Add prefixes to tree.ipam.aggregates._sub_prefixes."""

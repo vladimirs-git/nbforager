@@ -12,6 +12,7 @@ from pathlib import Path
 import pynetbox
 from pynetbox.core.endpoint import Endpoint
 from vhelpers import vstr
+from copy import deepcopy
 
 from nbforager import nb_tree
 from nbforager.foragers.circuits import CircuitsAF
@@ -320,13 +321,17 @@ class NbForager:
 
         :rtype: NbTree
         """
-        tree: NbTree = nb_tree.join_tree(self.root)
+        tree: NbTree = deepcopy(self.root)
+        if dcim or ipam:
+            Joiner(tree).init_extra_keys()
+
+        tree = nb_tree.join_tree(tree)
         nb_tree.insert_tree(src=tree, dst=self.tree)
-        joiner = Joiner(tree=self.tree)
+
         if dcim:
-            joiner.join_dcim_devices()
+            Joiner(self.tree).join_dcim_devices()
         if ipam:
-            joiner.join_ipam_ipv4()
+            Joiner(self.tree).join_ipam_ipv4()
 
     def read_cache(self) -> None:
         """Read cached data from a pickle file.

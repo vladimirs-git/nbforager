@@ -16,7 +16,23 @@ def joiner() -> Joiner:
     tree: NbTree = objects.full_tree()
     tree = nb_tree.join_tree(tree)
     joiner_ = Joiner(tree=tree)
+    joiner_.init_extra_keys()
     return joiner_
+
+
+@pytest.mark.parametrize("model, network", [
+    ("aggregates", "10.0.0.0/16"),
+    ("prefixes", "10.0.0.0/24"),
+    ("ip_addresses", "10.0.0.1/24"),
+])
+def test__init_extra_keys(joiner: Joiner, model, network):
+    """Joiner.init_extra_keys()."""
+    data = getattr(joiner.tree.ipam, model)[1]
+    assert data["_ipv4"] == IPv4(network)
+    assert data.get("_aggregate") == {}
+    assert data.get("_super_prefix") == {}
+    assert data.get("_sub_prefixes") == []
+    assert data.get("_ip_addresses") == []
 
 
 def test__join_dcim_devices(joiner: Joiner):
@@ -41,6 +57,7 @@ def test__join_dcim_devices(joiner: Joiner):
 
 def test__join_virtualization_virtual_machines(joiner: Joiner):
     """Joiner.join_virtualization_virtual_machines()."""
+    joiner.init_extra_keys()
     joiner.join_virtualization_virtual_machines()
 
     # vm
@@ -103,31 +120,8 @@ def test__join_ipam_ipv4(joiner: Joiner):
     assert ip_address["_ip_addresses"] == []
 
 
-@pytest.mark.parametrize("model, network", [
-    ("aggregates", "10.0.0.0/16"),
-    ("prefixes", "10.0.0.0/24"),
-    ("ip_addresses", "10.0.0.1/24"),
-])
-def test__init_ipam_keys(joiner: Joiner, model, network):
-    """Joiner._init_ipam_keys()."""
-    data = getattr(joiner.tree.ipam, model)[1]
-    assert data.get("_ipv4") is None
-    assert data.get("_aggregate") is None
-    assert data.get("_super_prefix") is None
-    assert data.get("_super_prefix") is None
-    assert data.get("_ip_addresses") is None
-
-    joiner._init_ipam_keys()
-    assert data["_ipv4"] == IPv4(network)
-    assert data.get("_aggregate") == {}
-    assert data.get("_super_prefix") == {}
-    assert data.get("_sub_prefixes") == []
-    assert data.get("_ip_addresses") == []
-
-
 def test__join_ipam_aggregates(joiner: Joiner):
     """Joiner._join_ipam_aggregates()."""
-    joiner._init_ipam_keys()
     joiner._join_ipam_aggregates()
 
     for idx, network, sub_prefixes in [
@@ -155,7 +149,6 @@ def test__join_ipam_aggregates(joiner: Joiner):
 
 def test__extra__join_ipam_ip_addresses(joiner: Joiner):
     """Joiner._join_ipam_ip_addresses()."""
-    joiner._init_ipam_keys()
     joiner._join_ipam_aggregates()
     joiner._join_ipam_prefixes()
     joiner._join_ipam_ip_addresses()
@@ -176,7 +169,6 @@ def test__extra__join_ipam_ip_addresses(joiner: Joiner):
 
 def test__join_ipam_prefixes(joiner: Joiner):
     """Joiner._join_ipam_prefixes()."""
-    joiner._init_ipam_keys()
     joiner._join_ipam_aggregates()
     joiner._join_ipam_prefixes()
 
@@ -200,7 +192,6 @@ def test__join_ipam_prefixes(joiner: Joiner):
 
 def test__get_aggregates_ip4(joiner: Joiner):
     """Joiner._get_aggregates_ip4()."""
-    joiner._init_ipam_keys()
     unsorted = [d["prefix"] for d in joiner.tree.ipam.aggregates.values()]
     assert unsorted == ["10.0.0.0/16", "1.0.0.0/16"]
 
@@ -211,7 +202,6 @@ def test__get_aggregates_ip4(joiner: Joiner):
 
 def test__get_ip_addresses_ip4(joiner: Joiner):
     """Joiner._get_ip_addresses_ip4()."""
-    joiner._init_ipam_keys()
     unsorted = [d["address"] for d in joiner.tree.ipam.ip_addresses.values()]
     assert unsorted == ["10.0.0.1/24", "1.0.0.1/24", "10.0.0.3/24", "10.0.0.4/24"]
 
@@ -222,7 +212,6 @@ def test__get_ip_addresses_ip4(joiner: Joiner):
 
 def test__get_prefixes_ip4(joiner: Joiner):
     """Joiner._get_prefixes_ip4()."""
-    joiner._init_ipam_keys()
     unsorted = [d["prefix"] for d in joiner.tree.ipam.prefixes.values()]
     assert unsorted == ["10.0.0.0/24", "1.0.0.0/24", "10.0.0.0/24", "10.0.0.0/31", "10.0.0.0/32"]
 
@@ -233,7 +222,6 @@ def test__get_prefixes_ip4(joiner: Joiner):
 
 def test__get_prefixes_ip4_d(joiner: Joiner):
     """Joiner._get_prefixes_ip4_d()."""
-    joiner._init_ipam_keys()
     unsorted = [d["prefix"] for d in joiner.tree.ipam.prefixes.values()]
     assert unsorted == ["10.0.0.0/24", "1.0.0.0/24", "10.0.0.0/24", "10.0.0.0/31", "10.0.0.0/32"]
 
