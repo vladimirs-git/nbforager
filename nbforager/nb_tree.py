@@ -287,14 +287,6 @@ def missed_urls(urls: LStr, tree: NbTree) -> LStr:
     return urls_
 
 
-def delete_branches(tree: NbTree) -> NbTree:
-    """Delete data in multidimensional dictionaries."""
-
-def restore_branches(tree: NbTree) -> NbTree:
-    """Restore data in multidimensional dictionaries."""
-
-
-
 # ============================= helpers ==============================
 
 

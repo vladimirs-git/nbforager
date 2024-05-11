@@ -1,16 +1,22 @@
 """Example NbForager.join_tree() join devices."""
+import logging
 from pprint import pprint
 
 from nbforager import NbForager
+
+# Enable logging DEBUG mode
+logging.getLogger().setLevel(logging.DEBUG)
+logging.getLogger().addHandler(logging.StreamHandler())
 
 HOST = "demo.netbox.dev"
 TOKEN = "1234567890123456789012345678901234567890"
 nbf = NbForager(host=HOST, token=TOKEN)
 
-# Get only 3 devices and sites from Netbox.
+# SITE
+# Get only 1 device and site from Netbox.
 # Note that the site in the device only contains basic data and
 # does not include tags, region and other extended data.
-nbf.dcim.devices.get(max_limit=3)
+nbf.dcim.devices.get(max_limit=1)
 nbf.dcim.sites.get()
 pprint(nbf.root.dcim.devices)
 # {88: {"id": 88,
@@ -20,8 +26,8 @@ pprint(nbf.root.dcim.devices)
 
 # Assemble objects within self.
 # Note that the device now includes site region and all other data.
-tree = nbf.join_tree()
-pprint(tree.dcim.devices)
+nbf.join_tree()
+pprint(nbf.tree.dcim.devices)
 # {88: {"id": 88,
 #       "name": "PP:B117",
 #       "site": {"id": 21,
@@ -31,4 +37,25 @@ pprint(tree.dcim.devices)
 #      ...
 
 # You can access any site attribute through a device.
-print(list(tree.dcim.devices.values())[0]["site"]["region"]["name"])  # North Carolina
+print(list(nbf.tree.dcim.devices.values())[0]["site"]["region"]["name"])  # North Carolina
+
+
+# Get devices with site data using nested=True.
+nbf.clear()
+nbf.dcim.devices.get(max_limit=1, nested=True)
+nbf.join_tree()
+print(list(nbf.tree.dcim.devices.values())[0]["site"]["region"]["name"])  # North Carolina
+
+
+# INTERFACES
+# Get only 1 device and related interfaces from Netbox.
+device_id = 5393
+nbf.dcim.devices.get(id=device_id)
+nbf.dcim.interfaces.get(device_id=device_id)
+nbf.join_tree(dcim=True)
+pprint(nbf.tree.dcim.devices)
+# {5393: {"id": 5393,
+#       "name": "rix3-03-p015-cnx",
+#       "interfaces": {"Ethernet1/1": {"id": 66510, "name": "Ethernet1/1", ... }
+#                      "Ethernet1/2": {"id": 66511, "name": "Ethernet1/2", ... }
+#      ...

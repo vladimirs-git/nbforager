@@ -8,7 +8,9 @@ CHANGELOG
 ------------------
 
 **Fixed:** BaseC._slice_params_counters()
+
 **Changed:** NbForager.clear(root, tree)
+
 **Changed:** NbForager.join_tree(dcim, ipam)
 
 
