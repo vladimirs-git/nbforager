@@ -277,32 +277,32 @@ def test__join_tree(nbf_r: NbForager):
     tree: NbTree = nbf_r.tree
     aggregate = tree.ipam.aggregates[1]
     assert aggregate["tenant"]["tags"][0]["name"] == "TAG1"
-    assert aggregate.get("sub_prefixes") is None
+    assert aggregate.get("_sub_prefixes") is None
     prefix = tree.ipam.prefixes[1]
     assert prefix["tenant"]["tags"][0]["name"] == "TAG1"
-    assert prefix.get("sub_prefixes") is None
+    assert prefix.get("_sub_prefixes") is None
     ip_address = tree.ipam.ip_addresses[1]
     assert ip_address["tenant"]["tags"][0]["name"] == "TAG1"
-    assert ip_address.get("super_prefix") is None
+    assert ip_address.get("_super_prefix") is None
     device = tree.dcim.devices[1]
-    assert device.get("interfaces") is None
+    assert device.get("_interfaces") is None
 
     nbf_r.join_tree(dcim=True)
     tree = nbf_r.tree
     device = tree.dcim.devices[1]
-    assert device["interfaces"]["GigabitEthernet1/0/1"]["name"] == "GigabitEthernet1/0/1"
+    assert device["_interfaces"]["GigabitEthernet1/0/1"]["name"] == "GigabitEthernet1/0/1"
 
     nbf_r.join_tree(ipam=True)
     tree = nbf_r.tree
     aggregate = tree.ipam.aggregates[1]
     assert aggregate["tenant"]["tags"][0]["name"] == "TAG1"
-    assert aggregate["sub_prefixes"][0]["prefix"] == "10.0.0.0/24"
+    assert aggregate["_sub_prefixes"][0]["prefix"] == "10.0.0.0/24"
     prefix = tree.ipam.prefixes[1]
     assert prefix["tenant"]["tags"][0]["name"] == "TAG1"
-    assert prefix["sub_prefixes"][0]["prefix"] == "10.0.0.0/31"
+    assert prefix["_sub_prefixes"][0]["prefix"] == "10.0.0.0/31"
     ip_address = tree.ipam.ip_addresses[1]
     assert ip_address["tenant"]["tags"][0]["name"] == "TAG1"
-    assert ip_address["super_prefix"]["prefix"] == "10.0.0.0/24"
+    assert ip_address["_super_prefix"]["prefix"] == "10.0.0.0/24"
 
 
 @pytest.mark.parametrize("version, expected", [

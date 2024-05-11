@@ -24,12 +24,12 @@ def test__join_dcim_devices(joiner: Joiner):
     joiner.join_dcim_devices()
 
     device = joiner.tree.dcim.devices[1]
-    models = BaseC._reserved_keys["dcim/devices/"]
-    for model in models:
-        isinstance(device[model], dict)
+    reserved_keys = BaseC._reserved_keys["dcim/devices/"]
+    for key in reserved_keys:
+        isinstance(device[key], dict)
 
-    assert device["interfaces"]["GigabitEthernet1/0/1"]["name"] == "GigabitEthernet1/0/1"
-    assert device["console_ports"]["CONSOLE PORT1"]["name"] == "CONSOLE PORT1"
+    assert device["_interfaces"]["GigabitEthernet1/0/1"]["name"] == "GigabitEthernet1/0/1"
+    assert device["_console_ports"]["CONSOLE PORT1"]["name"] == "CONSOLE PORT1"
 
 
 def test__join_virtualization_virtual_machines(joiner: Joiner):
@@ -37,11 +37,11 @@ def test__join_virtualization_virtual_machines(joiner: Joiner):
     joiner.join_virtualization_virtual_machines()
 
     machine = joiner.tree.virtualization.virtual_machines[1]
-    models = BaseC._reserved_keys["virtualization/virtual-machines/"]
-    for model in models:
-        isinstance(machine[model], dict)
+    reserved_keys = BaseC._reserved_keys["virtualization/virtual-machines/"]
+    for key in reserved_keys:
+        isinstance(machine[key], dict)
 
-    assert machine["interfaces"]["INTERFACE1"]["name"] == "INTERFACE1"
+    assert machine["_interfaces"]["INTERFACE1"]["name"] == "INTERFACE1"
 
 
 def test__join_ipam_ipv4(joiner: Joiner):
@@ -50,43 +50,43 @@ def test__join_ipam_ipv4(joiner: Joiner):
 
     aggregate = joiner.tree.ipam.aggregates[1]
     assert aggregate["prefix"] == "10.0.0.0/16"
-    assert aggregate["ipv4"] == IPv4("10.0.0.0/16")
-    assert aggregate["aggregate"] == {}
-    assert aggregate["super_prefix"] == {}
-    assert [d["prefix"] for d in aggregate["sub_prefixes"]] == ["10.0.0.0/24"]
-    assert aggregate["ip_addresses"] == []
+    assert aggregate["_ipv4"] == IPv4("10.0.0.0/16")
+    assert aggregate["_aggregate"] == {}
+    assert aggregate["_super_prefix"] == {}
+    assert [d["prefix"] for d in aggregate["_sub_prefixes"]] == ["10.0.0.0/24"]
+    assert aggregate["_ip_addresses"] == []
 
     prefix = joiner.tree.ipam.prefixes[1]
     assert prefix["prefix"] == "10.0.0.0/24"
-    assert prefix["ipv4"] == IPv4("10.0.0.0/24")
-    assert prefix["aggregate"]["prefix"] == "10.0.0.0/16"
-    assert prefix["super_prefix"] == {}
-    assert [d["prefix"] for d in prefix["sub_prefixes"]] == ["10.0.0.0/31"]
-    assert [d["address"] for d in prefix["ip_addresses"]] == ["10.0.0.1/24"]
+    assert prefix["_ipv4"] == IPv4("10.0.0.0/24")
+    assert prefix["_aggregate"]["prefix"] == "10.0.0.0/16"
+    assert prefix["_super_prefix"] == {}
+    assert [d["prefix"] for d in prefix["_sub_prefixes"]] == ["10.0.0.0/31"]
+    assert [d["address"] for d in prefix["_ip_addresses"]] == ["10.0.0.1/24"]
 
     prefix = joiner.tree.ipam.prefixes[4]
     assert prefix["prefix"] == "10.0.0.0/31"
-    assert prefix["ipv4"] == IPv4("10.0.0.0/31")
-    assert prefix["aggregate"]["prefix"] == "10.0.0.0/16"
-    assert prefix["super_prefix"]["prefix"] == "10.0.0.0/24"
-    assert [d["prefix"] for d in prefix["sub_prefixes"]] == ["10.0.0.0/32"]
-    assert prefix["ip_addresses"] == []
+    assert prefix["_ipv4"] == IPv4("10.0.0.0/31")
+    assert prefix["_aggregate"]["prefix"] == "10.0.0.0/16"
+    assert prefix["_super_prefix"]["prefix"] == "10.0.0.0/24"
+    assert [d["prefix"] for d in prefix["_sub_prefixes"]] == ["10.0.0.0/32"]
+    assert prefix["_ip_addresses"] == []
 
     prefix = joiner.tree.ipam.prefixes[5]
     assert prefix["prefix"] == "10.0.0.0/32"
-    assert prefix["ipv4"] == IPv4("10.0.0.0/32")
-    assert prefix["aggregate"]["prefix"] == "10.0.0.0/16"
-    assert prefix["super_prefix"]["prefix"] == "10.0.0.0/31"
-    assert prefix["sub_prefixes"] == []
-    assert prefix["ip_addresses"] == []
+    assert prefix["_ipv4"] == IPv4("10.0.0.0/32")
+    assert prefix["_aggregate"]["prefix"] == "10.0.0.0/16"
+    assert prefix["_super_prefix"]["prefix"] == "10.0.0.0/31"
+    assert prefix["_sub_prefixes"] == []
+    assert prefix["_ip_addresses"] == []
 
     ip_address = joiner.tree.ipam.ip_addresses[1]
     assert ip_address["address"] == "10.0.0.1/24"
-    assert ip_address["ipv4"] == IPv4("10.0.0.1/24")
-    assert ip_address["aggregate"]["prefix"] == "10.0.0.0/16"
-    assert ip_address["super_prefix"]["prefix"] == "10.0.0.0/24"
-    assert ip_address["sub_prefixes"] == []
-    assert ip_address["ip_addresses"] == []
+    assert ip_address["_ipv4"] == IPv4("10.0.0.1/24")
+    assert ip_address["_aggregate"]["prefix"] == "10.0.0.0/16"
+    assert ip_address["_super_prefix"]["prefix"] == "10.0.0.0/24"
+    assert ip_address["_sub_prefixes"] == []
+    assert ip_address["_ip_addresses"] == []
 
 
 @pytest.mark.parametrize("model, network", [
@@ -97,18 +97,18 @@ def test__join_ipam_ipv4(joiner: Joiner):
 def test__init_ipam_keys(joiner: Joiner, model, network):
     """Joiner._init_ipam_keys()."""
     data = getattr(joiner.tree.ipam, model)[1]
-    assert data.get("ipv4") is None
-    assert data.get("aggregate") is None
-    assert data.get("super_prefix") is None
-    assert data.get("super_prefix") is None
-    assert data.get("ip_addresses") is None
+    assert data.get("_ipv4") is None
+    assert data.get("_aggregate") is None
+    assert data.get("_super_prefix") is None
+    assert data.get("_super_prefix") is None
+    assert data.get("_ip_addresses") is None
 
     joiner._init_ipam_keys()
-    assert data["ipv4"] == IPv4(network)
-    assert data.get("aggregate") == {}
-    assert data.get("super_prefix") == {}
-    assert data.get("sub_prefixes") == []
-    assert data.get("ip_addresses") == []
+    assert data["_ipv4"] == IPv4(network)
+    assert data.get("_aggregate") == {}
+    assert data.get("_super_prefix") == {}
+    assert data.get("_sub_prefixes") == []
+    assert data.get("_ip_addresses") == []
 
 
 def test__join_ipam_aggregates(joiner: Joiner):
@@ -121,11 +121,11 @@ def test__join_ipam_aggregates(joiner: Joiner):
         (2, "1.0.0.0/16", ["1.0.0.0/24"]),
     ]:
         data = joiner.tree.ipam.aggregates[idx]
-        assert data["ipv4"] == IPv4(network)
-        assert data["aggregate"] == {}
-        assert data["super_prefix"] == {}
-        assert [d["prefix"] for d in data["sub_prefixes"]] == sub_prefixes
-        assert data["ip_addresses"] == []
+        assert data["_ipv4"] == IPv4(network)
+        assert data["_aggregate"] == {}
+        assert data["_super_prefix"] == {}
+        assert [d["prefix"] for d in data["_sub_prefixes"]] == sub_prefixes
+        assert data["_ip_addresses"] == []
 
     for idx, prefix, aggregate in [
         (1, "10.0.0.0/24", "10.0.0.0/16"),
@@ -136,7 +136,7 @@ def test__join_ipam_aggregates(joiner: Joiner):
     ]:
         data = joiner.tree.ipam.prefixes[idx]
         assert data["prefix"] == prefix
-        assert data["aggregate"].get("prefix") == aggregate
+        assert data["_aggregate"].get("prefix") == aggregate
 
 
 def test__extra__join_ipam_ip_addresses(joiner: Joiner):
@@ -152,11 +152,11 @@ def test__extra__join_ipam_ip_addresses(joiner: Joiner):
         (3, "10.0.0.3/24", None, None, True),
     ]:
         data = joiner.tree.ipam.ip_addresses[idx]
-        assert data["ipv4"] == IPv4(network)
-        assert data["aggregate"].get("prefix") == aggregate
-        assert data["super_prefix"].get("prefix") == super_prefix
-        assert [d["prefix"] for d in data["sub_prefixes"]] == []
-        assert data["ip_addresses"] == []
+        assert data["_ipv4"] == IPv4(network)
+        assert data["_aggregate"].get("prefix") == aggregate
+        assert data["_super_prefix"].get("prefix") == super_prefix
+        assert [d["prefix"] for d in data["_sub_prefixes"]] == []
+        assert data["_ip_addresses"] == []
         assert bool(data["vrf"]) is vrf
 
 
@@ -174,11 +174,11 @@ def test__join_ipam_prefixes(joiner: Joiner):
         (5, "10.0.0.0/32", "10.0.0.0/16", "10.0.0.0/31", [], False),
     ]:
         data = joiner.tree.ipam.prefixes[idx]
-        assert data["ipv4"] == IPv4(network)
-        assert data["aggregate"].get("prefix") == aggregate
-        assert data["super_prefix"].get("prefix") == super_prefix
-        assert [d["prefix"] for d in data["sub_prefixes"]] == sub_prefixes
-        assert data["ip_addresses"] == []
+        assert data["_ipv4"] == IPv4(network)
+        assert data["_aggregate"].get("prefix") == aggregate
+        assert data["_super_prefix"].get("prefix") == super_prefix
+        assert [d["prefix"] for d in data["_sub_prefixes"]] == sub_prefixes
+        assert data["_ip_addresses"] == []
         assert bool(data["vrf"]) is vrf
 
 

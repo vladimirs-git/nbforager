@@ -170,8 +170,9 @@ def test__init_loners(loners, expected):
 
 @pytest.mark.parametrize("items, expected", [
     ([], None),
-    ([{"url": "ipam/prefixes/", "aggregate": {}}], NbApiError),
+    ([{"url": "ipam/prefixes/", "aggregate": {}}], None),
     ([{"url": "ipam/prefixes/", "id": 1}], None),
+    ([{"url": "ipam/prefixes/", "_aggregate": {}}], NbApiError),
 ])
 def test__check_reserved_keys__ipam_prefixes(api: NbApi, items, expected: Any):
     """BaseC._check_reserved_keys() ipam/prefixes/."""
@@ -184,8 +185,9 @@ def test__check_reserved_keys__ipam_prefixes(api: NbApi, items, expected: Any):
 
 @pytest.mark.parametrize("items, expected", [
     ([], None),
-    ([{"url": "dcim/devices/", "interfaces": {}}], NbApiError),
     ([{"url": "dcim/devices/", "id": 1}], None),
+    ([{"url": "dcim/devices/", "interfaces": {}}], None),
+    ([{"url": "dcim/devices/", "_interfaces": {}}], NbApiError),
 ])
 def test__check_reserved_keys__dcim_devices(api: NbApi, items, expected: Any):
     """BaseC._check_reserved_keys(). dcim/devices/"""

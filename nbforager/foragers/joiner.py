@@ -28,20 +28,21 @@ class Joiner:
 
             In dcim.devices:
 
-            - ``console_ports``
-            - ``console_server_ports``
-            - ``device_bays``
-            - ``front_ports``
-            - ``interfaces``
-            - ``inventory_items``
-            - ``module_bays``
-            - ``power_outlets``
-            - ``power_ports``
-            - ``rear_ports``
+            - ``_console_ports``
+            - ``_console_server_ports``
+            - ``_device_bays``
+            - ``_front_ports``
+            - ``_interfaces``
+            - ``_inventory_items``
+            - ``_module_bays``
+            - ``_power_outlets``
+            - ``_power_ports``
+            - ``_rear_ports``
 
         :return: None. Update NbTree object.
         """
-        self._join_devices(app="dcim")
+        self._join_dcim_devices(app="dcim")
+        self._join_dcim_interfaces(app="dcim")
 
     def join_virtualization_virtual_machines(self) -> None:
         """Create additional keys to represent virtualization.virtual_machines.
@@ -50,10 +51,10 @@ class Joiner:
 
         :return: None. Update NbTree object.
         """
-        self._join_devices(app="virtualization")
+        self._join_dcim_devices(app="virtualization")
 
     # noinspection PyProtectedMember
-    def _join_devices(self, app: str) -> None:
+    def _join_dcim_devices(self, app: str) -> None:
         """Create additional keys to represent devices/VM similar to the WEB UI.
 
         :param app: Application name: "dcim", "virtualization"
@@ -65,13 +66,57 @@ class Joiner:
         if app == "virtualization":
             model = "virtual_machines"
             key = "virtualization/virtual-machines/"
+        reserved_keys: LStr = BaseC._reserved_keys[key]  # pylint: disable=W0212
+
+        # init extra keys
+        devices_d: DiDAny = getattr(getattr(self.tree, app), model)
+        for device in devices_d.values():
+            for _key in reserved_keys:
+                device[_key] = {}
+
+        # set extra values
+        key = "device"
+        if app == "virtualization":
+            key = "virtual_machine"
+
+        models = [s.lstrip("_") for s in reserved_keys]
+        for model in models:
+            ports_d: DiDAny = getattr(getattr(self.tree, app), model)
+            ports: LDAny = list(ports_d.values())
+
+            # sort by interface idx
+            ports_lt = [(Intf(d["name"]), d) for d in ports]
+            ports_lt.sort(key=itemgetter(0))
+            ports = [dict(t[1]) for t in ports_lt]
+
+            for port in ports:
+                name = port["name"]
+                id_ = port[key]["id"]
+                device_: DAny = devices_d.get(id_, {})  # pylint: disable=E1101
+                _key = f"_{model}"
+                if _key in device_:
+                    device_[_key][name] = port
+
+    def _join_dcim_interfaces(self, app: str) -> None:
+        """Create additional keys to represent dcim/interfaces with assigned ipam/ip-addresses.
+
+        :param app: Application name: "dcim", "virtualization"
+
+        :return: None. Update NbTree object.
+        """
+        return
+        model = "interfaces"
+        key = "dcim/interfaces/"
+        if app == "virtualization":
+            model = "virtual_machines"
+            key = "virtualization/interfaces/"
         models: LStr = BaseC._reserved_keys[key]  # pylint: disable=W0212
 
         # init extra keys
         devices_d: DiDAny = getattr(getattr(self.tree, app), model)
         for device in devices_d.values():
             for model in models:
-                device[model] = {}
+                device[f"_{model}"] = {}
 
         # set extra values
         key = "device"
@@ -91,19 +136,21 @@ class Joiner:
                 name = port["name"]
                 id_ = port[key]["id"]
                 device_: DAny = devices_d.get(id_, {})  # pylint: disable=E1101
-                if model in device_:
-                    device_[model][name] = port
+                _model = f"_{model}"
+                if _model in device_:
+                    device_[_model][name] = port
+
 
     def join_ipam_ipv4(self) -> None:
         """Create additional keys to represent ipam similar to the WEB UI.
 
             Add new attributes in ipam.aggregate, ipam.prefixes, ipam.ip_addresses:
 
-            - ``ipv4`` IPv4 object, child of ciscoconfparse.IPv4Obj
-            - ``aggregate`` Aggregate data for ipam.prefixes and ipam.ip_addresses
-            - ``super_prefix`` Related parent prefix data for ipam.prefixes and ipam.ip_addresses
-            - ``sub_prefixes`` Related child prefixes data for ipam.prefixes and ipam.ip_addresses
-            - ``ip_addresses`` Related IP addresses data for ipam.aggregates and ipam.prefixes
+            - ``_ipv4`` IPv4 object, child of ciscoconfparse.IPv4Obj
+            - ``_aggregate`` Aggregate data for ipam.prefixes and ipam.ip_addresses
+            - ``_super_prefix`` Related parent prefix data for ipam.prefixes and ipam.ip_addresses
+            - ``_sub_prefixes`` Related child prefixes data for ipam.prefixes and ipam.ip_addresses
+            - ``_ip_addresses`` Related IP addresses data for ipam.aggregates and ipam.prefixes
 
         :return: None. Update NbTree object.
         """
@@ -127,14 +174,14 @@ class Joiner:
                 if family != 4:
                     continue
                 snet = data[key]
-                data["ipv4"] = IPv4(snet, strict=strict)
-                data["aggregate"] = {}  # DAny
-                data["super_prefix"] = {}  # DAny
-                data["sub_prefixes"] = []  # LDAny
-                data["ip_addresses"] = []  # LDAny
+                data["_ipv4"] = IPv4(snet, strict=strict)
+                data["_aggregate"] = {}  # DAny
+                data["_super_prefix"] = {}  # DAny
+                data["_sub_prefixes"] = []  # LDAny
+                data["_ip_addresses"] = []  # LDAny
 
     def _join_ipam_aggregates(self) -> None:
-        """Add prefixes to tree.ipam.aggregates.sub_prefixes."""
+        """Add prefixes to tree.ipam.aggregates._sub_prefixes."""
         aggregates: LDAny = self._get_aggregates_ip4()
         prefixes_d: DiLDAny = self._get_prefixes_ip4_d()
         for aggregate in aggregates:
@@ -142,13 +189,13 @@ class Joiner:
                 for prefix in prefixes:
                     _aggregate = aggregate["prefix"]
                     _prefix = prefix["prefix"]
-                    if prefix["ipv4"] in aggregate["ipv4"]:
-                        prefix["aggregate"] = aggregate
+                    if prefix["_ipv4"] in aggregate["_ipv4"]:
+                        prefix["_aggregate"] = aggregate
                         if depth == 0:
-                            aggregate["sub_prefixes"].append(prefix)
+                            aggregate["_sub_prefixes"].append(prefix)
 
     def _join_ipam_ip_addresses(self) -> None:
-        """Add prefixes to tree.ipam.ip-addresses.super_prefix."""
+        """Add prefixes to tree.ipam.ip-addresses._super_prefix."""
         ip_addresses: LDAny = self._get_ip_addresses_ip4()
         prefixes_d: DiLDAny = self._get_prefixes_ip4_d()
         depths: LInt = list(prefixes_d)
@@ -160,18 +207,18 @@ class Joiner:
             prefixes: LDAny = prefixes_d.get(depth, [])
             for ip_address in ip_addresses_:
                 for prefix in prefixes:
-                    if ip_address["ipv4"] not in prefix["ipv4"]:
+                    if ip_address["_ipv4"] not in prefix["_ipv4"]:
                         continue
                     if ip_address in added_addresses:
                         continue
-                    ip_address["aggregate"] = prefix["aggregate"]
-                    ip_address["super_prefix"] = prefix
-                    prefix["ip_addresses"].append(ip_address)
+                    ip_address["_aggregate"] = prefix["_aggregate"]
+                    ip_address["_super_prefix"] = prefix
+                    prefix["_ip_addresses"].append(ip_address)
                     added_addresses.append(ip_address)
             ip_addresses = [d for d in ip_addresses if d not in added_addresses]
 
     def _join_ipam_prefixes(self) -> None:
-        """Add prefixes to tree.ipam.prefixes.sub_prefixes, super_prefix"""
+        """Add prefixes to tree.ipam.prefixes._sub_prefixes, _super_prefix"""
         super_prefixes = []
         prefixes_d: DiLDAny = self._get_prefixes_ip4_d()
         for depth, sub_prefixes in enumerate(prefixes_d.values()):
@@ -179,31 +226,31 @@ class Joiner:
                 super_prefixes = sub_prefixes
                 continue
             for super_prefix in super_prefixes:
-                if super_prefix["ipv4"].prefixlen == 32:
+                if super_prefix["_ipv4"].prefixlen == 32:
                     continue
                 for sub_prefix in sub_prefixes:
-                    if sub_prefix["ipv4"] in (super_prefix["ipv4"]):
-                        super_prefix["sub_prefixes"].append(sub_prefix)
-                        sub_prefix["super_prefix"] = super_prefix
+                    if sub_prefix["_ipv4"] in (super_prefix["_ipv4"]):
+                        super_prefix["_sub_prefixes"].append(sub_prefix)
+                        sub_prefix["_super_prefix"] = super_prefix
             super_prefixes = sub_prefixes
 
     def _join_update_sub_prefixes(self) -> None:
-        """Update sub_prefixes in ipam.aggregates and ipam.prefixes.
+        """Update _sub_prefixes in ipam.aggregates and ipam.prefixes.
 
         Remove duplicates, remove objects with improper depth, sort by IPv4.
         """
         aggregates = self._get_aggregates_ip4()
         for aggregate in aggregates:
-            sub_prefixes = vlist.no_dupl(aggregate["sub_prefixes"])
-            sub_prefixes = [d for d in sub_prefixes if not d["super_prefix"]]
-            aggregate["sub_prefixes"] = sorted(sub_prefixes, key=itemgetter("ipv4"))
+            sub_prefixes = vlist.no_dupl(aggregate["_sub_prefixes"])
+            sub_prefixes = [d for d in sub_prefixes if not d["_super_prefix"]]
+            aggregate["_sub_prefixes"] = sorted(sub_prefixes, key=itemgetter("_ipv4"))
 
         prefixes = self._get_prefixes_ip4()
         for prefix in prefixes:
-            sub_prefixes = vlist.no_dupl(prefix["sub_prefixes"])
-            prefix["sub_prefixes"] = sorted(sub_prefixes, key=itemgetter("ipv4"))
-            ip_addresses = vlist.no_dupl(prefix["ip_addresses"])
-            prefix["ip_addresses"] = sorted(ip_addresses, key=itemgetter("ipv4"))
+            sub_prefixes = vlist.no_dupl(prefix["_sub_prefixes"])
+            prefix["_sub_prefixes"] = sorted(sub_prefixes, key=itemgetter("_ipv4"))
+            ip_addresses = vlist.no_dupl(prefix["_ip_addresses"])
+            prefix["_ip_addresses"] = sorted(ip_addresses, key=itemgetter("_ipv4"))
 
     # ============================= helpers ==============================
 
@@ -211,19 +258,19 @@ class Joiner:
         """Return ipam.aggregates family=4 sorted by IPv4."""
         aggregates: LDAny = list(self.tree.ipam.aggregates.values())
         aggregates = [d for d in aggregates if d["family"]["value"] == 4]
-        return sorted(aggregates, key=itemgetter("ipv4"))
+        return sorted(aggregates, key=itemgetter("_ipv4"))
 
     def _get_ip_addresses_ip4(self) -> LDAny:
         """Return ipam.ip_addresses family=4 sorted by IPv4."""
         ip_addresses: LDAny = list(self.tree.ipam.ip_addresses.values())
         ip_addresses = [d for d in ip_addresses if d["family"]["value"] == 4 and d["vrf"] is None]
-        return sorted(ip_addresses, key=itemgetter("ipv4"))
+        return sorted(ip_addresses, key=itemgetter("_ipv4"))
 
     def _get_prefixes_ip4(self) -> LDAny:
         """Return ipam.prefixes family=4 sorted by IPv4."""
         prefixes: LDAny = list(self.tree.ipam.prefixes.values())
         prefixes = [d for d in prefixes if d["family"]["value"] == 4 and d["vrf"] is None]
-        return sorted(prefixes, key=itemgetter("ipv4"))
+        return sorted(prefixes, key=itemgetter("_ipv4"))
 
     def _get_prefixes_ip4_d(self) -> DiLDAny:
         """Split prefixes by depth.

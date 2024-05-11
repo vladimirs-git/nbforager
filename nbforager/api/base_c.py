@@ -73,11 +73,11 @@ class BaseC:
     _reserved_keys: DLStr = {
         "ipam/": [
             # ipam aggregates, prefixes, ip_addresses
-            "ipv4",
-            "aggregate",
-            "super_prefix",
-            "sub_prefixes",
-            "ip_addresses",
+            "_ipv4",
+            "_aggregate",
+            "_super_prefix",
+            "_sub_prefixes",
+            "_ip_addresses",
             # evonetbox
             "overlapped",
             "warnings",
@@ -85,19 +85,19 @@ class BaseC:
             "nbnets__subnets",
         ],
         "dcim/devices/": [
-            "interfaces",
-            "front_ports",
-            "rear_ports",
-            "console_ports",
-            "console_server_ports",
-            "power_ports",
-            "power_outlets",
-            "module_bays",
-            "device_bays",
-            "inventory_items",
+            "_interfaces",
+            "_front_ports",
+            "_rear_ports",
+            "_console_ports",
+            "_console_server_ports",
+            "_power_ports",
+            "_power_outlets",
+            "_module_bays",
+            "_device_bays",
+            "_inventory_items",
         ],
         "virtualization/virtual-machines/": [
-            "interfaces",
+            "_interfaces",
         ],
     }
 
