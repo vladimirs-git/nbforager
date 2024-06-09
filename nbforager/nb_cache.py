@@ -61,8 +61,7 @@ class NbCache:
         tree = NbTree(**tree_d)
         status = dict(cached.get("status") or {})
 
-        msg = f"Cache loaded from path={self.cache}."
-        logging.debug(msg)
+        logging.debug(str(f"Cache loaded from path={self.cache}."))
         return tree, status
 
     def write_cache(self) -> None:
@@ -79,12 +78,10 @@ class NbCache:
             error = f"{type(ex).__name__}: {ex}"
             path = (re.findall(r"(\'.+\')$", str(ex)) or [self.cache])[0]
             cmd = f'"sudo chmod o+rw {path}"'
-            msg = f"{error}. Please change permissions by command: {cmd}."
-            logging.error(msg)
+            logging.error(str(f"{error}. Please change permissions by command: {cmd}."))
             raise type(ex)(*ex.args)
 
-        msg = f"Cache saved to path={self.cache}."
-        logging.debug(msg)
+        logging.debug(str(f"Cache saved to path={self.cache}."))
 
     # ====================== helpers ======================
 
