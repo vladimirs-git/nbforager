@@ -69,7 +69,7 @@ class NbForager:
 
         :param cache: Path to cache. If the value ends with .pickle,
             it is the path to a file; otherwise, it is the path to a directory.
-            The default value is NbCache.{hostname}.pickle.
+            The default value is NbCache.{host}.pickle.
 
         NbApi parameters:
 
