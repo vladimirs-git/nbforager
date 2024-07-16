@@ -27,8 +27,8 @@ print(f"{len(nbf.root.extras.tags)=}")
 
 # Assemble objects within self.
 # Note that the device includes all other objects as multidimensional dictionary.
-tree = nbf.join_tree()
-pprint(list(tree.dcim.devices.values())[0])
+nbf.join_tree()
+pprint(list(nbf.tree.dcim.devices.values())[0])
 # {"id": 1,
 #  "name": "dmi01-akron-rtr01",
 #  "rack": {"id": 1,

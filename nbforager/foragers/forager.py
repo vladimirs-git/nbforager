@@ -10,14 +10,14 @@ from queue import Queue
 from threading import Thread
 from urllib.parse import urlparse, parse_qs
 
-from vhelpers import vlist, vstr
+from vhelpers import vstr
 
 from nbforager import helpers as h
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree, missed_urls
-from nbforager.parser.nb_parser import NbParser
+from nbforager.parser.nb_parser import find_objects
 from nbforager.py_tree import PyTree
-from nbforager.types_ import LDAny, DiDAny, LStr, LT2StrDAny, DList, LDList, TLists, DiAny
+from nbforager.types_ import LDAny, DiDAny, LStr, LT2StrDAny, DList, LDList, DiAny
 
 
 class Forager:
@@ -134,7 +134,7 @@ class Forager:
 
         :return: Filtered Netbox objects.
         """
-        return _find(objects=list(self.root_d.values()), **kwargs)
+        return find_objects(objects=list(self.root_d.values()), **kwargs)
 
     def find_rse(self, role: str = "", site: str = "", env: str = "", **kwargs) -> LDAny:
         """Find Netbox objects in NbForager.tree by Role-Sile-Env finding parameters.
@@ -155,7 +155,7 @@ class Forager:
         }
         params = {k: v for k, v in params.items() if v}
         kwargs.update(params)
-        return _find(objects=list(self.tree_d.values()), **kwargs)
+        return find_objects(objects=list(self.tree_d.values()), **kwargs)
 
     def find_tree(self, **kwargs) -> LDAny:
         """Find Netbox objects in NbForager.tree by extended finding parameters.
@@ -167,7 +167,7 @@ class Forager:
 
         :return: Filtered Netbox objects.
         """
-        return _find(objects=list(self.tree_d.values()), **kwargs)
+        return find_objects(objects=list(self.tree_d.values()), **kwargs)
 
     # ============================= helpers ==============================
 
@@ -339,37 +339,3 @@ class Forager:
         app, model = h.path_to_attrs(path)
         data = getattr(getattr(self.root, app), model)
         return data
-
-
-def _find(objects: LDAny, **kwargs) -> LDAny:
-    """Find Netbox objects in tree by extended finding parameters.
-
-    :param objects: Netbox objects where searching is required using kwargs.
-    :param kwargs: Extended filtering parameters.
-    :return: Filtered Netbox objects.
-    """
-    if not kwargs:
-        return objects
-    (key, values), *key_values = list(kwargs.items())
-    if not isinstance(values, TLists):
-        values = [values]
-
-    objects_: LDAny = []
-    for data in objects:
-        keys = key.split("__")
-        if len(keys) <= 1:
-            keys = [key]
-        if keys[0] == "tags":
-            if len(keys) != 2:
-                raise ValueError(f"{keys=} {len(keys)=} expected 2.")
-            values_ = [d[keys[1]] for d in data["tags"]]
-            if vlist.is_in(values_, values):
-                objects_.append(data)
-        else:
-            value_ = NbParser(data).any(*keys)
-            if value_ in values:
-                objects_.append(data)
-
-    if key_values:
-        objects_ = _find(objects=objects_, **dict(key_values))
-    return objects_

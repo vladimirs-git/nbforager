@@ -4,10 +4,11 @@ from operator import itemgetter
 from netports import Intf
 from vhelpers import vlist
 
-from nbforager.parser.nb_value import NbValue
 from nbforager.api.base_c import BaseC
+from nbforager.foragers.forager import find_objects
 from nbforager.foragers.ipv4 import IPv4
 from nbforager.nb_tree import NbTree
+from nbforager.parser.nb_value import NbValue
 from nbforager.types_ import LDAny, DAny, LStr, DiDAny, LInt, DiLDAny
 
 
@@ -60,7 +61,7 @@ class Joiner:
                 data["_sub_prefixes"] = []  # LDAny
                 data["_ip_addresses"] = []  # LDAny
 
-    def join_dcim_devices(self) -> None:
+    def join_dcim_devices(self, **kwargs) -> None:
         """Create additional keys to represent dcim.devices similar to the WEB UI.
 
             In dcim.devices:
@@ -80,12 +81,15 @@ class Joiner:
 
             - ``_ip_addresses``
 
+        :param kwargs: Filtering parameters.
+
         :return: None. Update NbTree object.
         """
-        self._join_dcim_devices(app="dcim")
-        self._join_dcim_interfaces(app="dcim")
+        intf_ids: LInt = self._join_dcim_devices(app="dcim", **kwargs)
+        params = {"id": intf_ids} if kwargs else {}
+        self._join_dcim_interfaces(app="dcim", **params)
 
-    def join_virtualization_virtual_machines(self) -> None:
+    def join_virtualization_virtual_machines(self, **kwargs) -> None:
         """Create additional keys to represent virtualization.virtual_machines.
 
             In virtualization.virtual_machines:
@@ -96,18 +100,24 @@ class Joiner:
 
             - ``_ip_addresses``
 
+        :param kwargs: Filtering parameters.
+
         :return: None. Update NbTree object.
         """
-        self._join_dcim_devices(app="virtualization")
-        self._join_dcim_interfaces(app="virtualization")
+        intf_ids: LInt = self._join_dcim_devices(app="virtualization", **kwargs)
+        params = {"id": intf_ids} if kwargs else {}
+        self._join_dcim_interfaces(app="virtualization", **params)
 
     # noinspection PyProtectedMember
-    def _join_dcim_devices(self, app: str) -> None:
-        """Create additional keys to represent devices/VM similar to the WEB UI.
+    def _join_dcim_devices(self, app: str, **kwargs) -> LInt:
+        """Create additional key/values to represent devices/VM similar to the WEB UI.
+
+        Create key/values: _interfaces, _front_ports, _console_ports, etc.
 
         :param app: Application name: "dcim", "virtualization"
+        :param kwargs: Filtering parameters.
 
-        :return: None. Update NbTree object.
+        :return: IDs of joined interfaces. Update NbTree.dcim.devices object.
         """
         model = "devices"
         key = "dcim/devices/"
@@ -116,11 +126,17 @@ class Joiner:
             key = "virtualization/virtual-machines/"
         reserved_keys: LStr = BaseC._reserved_keys[key]  # pylint: disable=W0212
         devices_d: DiDAny = getattr(getattr(self.tree, app), model)
+        if kwargs:
+            devices_d = {
+                d["id"]: d for d in find_objects(objects=list(devices_d.values()), **kwargs)
+            }
 
         # set values
         key = "device"
         if app == "virtualization":
             key = "virtual_machine"
+
+        intf_ids: LInt = []  # id of joined interfaces
 
         models = [s.lstrip("_") for s in reserved_keys]
         for model in models:
@@ -139,17 +155,25 @@ class Joiner:
                 _key = f"_{model}"
                 if _key in device_d:
                     device_d[_key][name] = port_d
+                    intf_ids.append(id_)
 
-    def _join_dcim_interfaces(self, app: str) -> None:
-        """Create additional keys to represent dcim/interfaces with assigned ipam/ip-addresses.
+        return intf_ids
+
+    def _join_dcim_interfaces(self, app: str, **kwargs) -> None:
+        """Create additional key/values for ipam/ip-addresses.
+
+        Create key/values: _interfaces, _front_ports, _console_ports, etc.
 
         :param app: Application name: "dcim", "virtualization"
+        :param kwargs: Filtering parameters.
 
         :return: None. Update NbTree object.
         """
         model = "interfaces"
         object_type = "virtualization.vminterface" if app == "virtualization" else "dcim.interface"
-        interfaces_d: DiDAny = getattr(getattr(self.tree, app), model)
+        intfs_d: DiDAny = getattr(getattr(self.tree, app), model)
+        if kwargs:
+            intfs_d = {d["id"]: d for d in find_objects(objects=list(intfs_d.values()), **kwargs)}
 
         app = "ipam"
         model = "ip_addresses"
@@ -165,9 +189,9 @@ class Joiner:
                 continue
             if address_d["assigned_object_type"] != object_type:
                 continue
-            interface_d: DAny = interfaces_d.get(assigned_object_id, {})  # pylint: disable=E1101
-            if _key in interface_d:
-                interface_d[_key][address] = address_d
+            intf_d: DAny = intfs_d.get(assigned_object_id, {})  # pylint: disable=E1101
+            if _key in intf_d:
+                intf_d[_key][address] = address_d
 
     def join_ipam_ipv4(self) -> None:
         """Create additional keys to represent ipam similar to the WEB UI.

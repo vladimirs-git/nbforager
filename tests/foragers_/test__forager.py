@@ -8,7 +8,7 @@ from requests_mock import Mocker
 from nbforager import nb_tree
 from nbforager.nb_forager import NbForager
 from nbforager.types_ import LT2StrDAny
-from tests.objects import full_tree
+from tests.functions import full_tree
 
 
 @pytest.fixture

@@ -6,13 +6,13 @@ from __future__ import annotations
 
 import copy
 import logging
+from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 
 import pynetbox
 from pynetbox.core.endpoint import Endpoint
 from vhelpers import vstr
-from copy import deepcopy
 
 from nbforager import nb_tree
 from nbforager.foragers.circuits import CircuitsAF

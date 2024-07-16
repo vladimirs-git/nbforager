@@ -39,13 +39,11 @@ pprint(nbf.tree.dcim.devices)
 # You can access any site attribute through a device.
 print(list(nbf.tree.dcim.devices.values())[0]["site"]["region"]["name"])  # North Carolina
 
-
 # Get devices with site data using nested=True.
 nbf.clear()
 nbf.dcim.devices.get(max_limit=1, nested=True)
 nbf.join_tree()
 print(list(nbf.tree.dcim.devices.values())[0]["site"]["region"]["name"])  # North Carolina
-
 
 # INTERFACES
 # Get only 1 device and related interfaces from Netbox.

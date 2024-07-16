@@ -1,8 +1,9 @@
-"""Tests nb_parser.py."""
+"""Tests nbforager.parser.nb_parser"""
 from typing import Any
 
 import pytest
 
+from nbforager.parser import nb_parser
 from nbforager.parser.nb_parser import NbParser
 from nbforager.types_ import LStr
 from tests.parser_ import params__nb_parser as p
@@ -122,3 +123,21 @@ def test__strict_str(keys: LStr, data: dict, strict: bool, expected: Any):
     else:
         with pytest.raises(expected):
             parser.strict_str(*keys)
+
+
+@pytest.mark.parametrize("objects, params, expected", [
+    ([{"id": 1}, {"id": 2}], {}, [1, 2]),
+    ([{"id": 1}, {"id": 2}], {"id": 1}, [1]),
+    ([{"id": 1}, {"id": 2}], {"id": 2}, [2]),
+    ([{"id": 1, "k1": "A"}, {"id": 2, "k1": "B"}], {"k1": "A"}, [1]),
+    ([{"id": 1, "k1": "A"}, {"id": 2, "k1": "B"}], {"k1": "B"}, [2]),
+    ([{"id": 1, "k1": {"k2": "A"}}, {"id": 2, "k1": {"k2": "B"}}], {"k1__k2": "A"}, [1]),
+    ([{"id": 1, "k1": {"k2": "A"}}, {"id": 2, "k1": {"k2": "B"}}], {"k1__k2": "B"}, [2]),
+    ([{"id": 1}, {"id": 2}], {"id": 3}, []),
+    ([], {}, []),
+])
+def test__find_objects(objects, params, expected):
+    """nb_parser.find_objects()."""
+    results = nb_parser.find_objects(objects=objects, **params)
+    actual = [d["id"] for d in results]
+    assert actual == expected

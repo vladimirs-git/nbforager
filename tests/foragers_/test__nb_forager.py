@@ -12,7 +12,7 @@ from nbforager import helpers as h, nb_forager, NbApi, nb_tree
 from nbforager.nb_cache import NbCache
 from nbforager.nb_forager import NbForager
 from nbforager.nb_tree import NbTree
-from tests import objects
+from tests import functions as func
 
 
 @pytest.fixture
@@ -25,7 +25,7 @@ def nbf() -> NbForager:
 def nbf_r() -> NbForager:
     """Init NbForager with NbForager.root data."""
     nbf_ = NbForager(host="netbox")
-    tree: NbTree = objects.full_tree()
+    tree: NbTree = func.full_tree()
     nb_tree.insert_tree(src=tree, dst=nbf_.root)
     return nbf_
 
@@ -34,7 +34,7 @@ def nbf_r() -> NbForager:
 def nbf_t() -> NbForager:
     """Init NbForager with NbForager.tree data."""
     nbf_ = NbForager(host="netbox")
-    tree: NbTree = objects.full_tree()
+    tree: NbTree = func.full_tree()
 
     nb_tree.insert_tree(src=tree, dst=nbf_.tree)
     return nbf_
@@ -198,7 +198,7 @@ def test__count(nbf: NbForager):
 
 def test__clear(nbf: NbForager):
     """NbForager.clear()."""
-    nbf.root.ipam.vrfs.update(objects.vrf_d([1]))
+    nbf.root.ipam.vrfs.update(func.vrf_d([1]))
     nbf.join_tree()
     assert [d["id"] for d in nbf.root.ipam.vrfs.values()] == [1]
     assert [d["id"] for d in nbf.tree.ipam.vrfs.values()] == [1]
@@ -218,14 +218,14 @@ def test__clear(nbf: NbForager):
 
 def test__copy(nbf: NbForager):
     """NbForager.copy()."""
-    nbf.root.ipam.vrfs.update(objects.vrf_d([1]))
+    nbf.root.ipam.vrfs.update(func.vrf_d([1]))
 
     copy_ = nbf.copy()
     assert nbf.count() == 1
     assert copy_.count() == 1
 
-    nbf.root.ipam.vrfs.update(objects.vrf_d([2]))
-    copy_.root.ipam.vrfs.update(objects.vrf_d([3, 4]))
+    nbf.root.ipam.vrfs.update(func.vrf_d([2]))
+    copy_.root.ipam.vrfs.update(func.vrf_d([3, 4]))
     assert nbf.count() == 2
     assert [d["id"] for d in nbf.root.ipam.vrfs.values()] == [1, 2]
     assert [d["id"] for d in nbf.ipam.vrfs.root_d.values()] == [1, 2]
@@ -237,7 +237,7 @@ def test__copy(nbf: NbForager):
 def test__read_cache(nbf: NbForager):
     """NbForager.read_cache()."""
     tree = NbTree()
-    tree.ipam.vrfs.update(objects.vrf_d([1]))  # pylint: disable=E1101
+    tree.ipam.vrfs.update(func.vrf_d([1]))  # pylint: disable=E1101
     meta = {"write_time": "2000-12-31 23:59:59"}
     return_value = {"tree": tree.model_dump(), "status": {"meta": meta}}
     patch("pathlib.Path.open", mock_open()).start()

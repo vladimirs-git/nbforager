@@ -12,6 +12,11 @@ from nbforager.types_ import DiDAny, LStr, DAny
 class BaseTree(BaseModel):
     """Base for BbTree models."""
 
+    def clear(self) -> None:  # TODO test
+        """Clear all data in all models."""
+        for model in self.models():
+            getattr(self, model).clear()
+
     def count(self) -> int:
         """Count the number of Netbox objects for all models."""
         return sum(len(getattr(self, s)) for s in self.models())
@@ -178,7 +183,7 @@ class WirelessM(BaseTree):
     wireless_links: DiDAny = Field(default={})
 
 
-class NbTree(BaseModel):
+class NbTree(BaseModel):  # TODO __repr__()
     """Structure that holds Netbox objects as dictionaries.
 
     Model: NbTree.{app}.{model}[id] = data.
@@ -208,6 +213,11 @@ class NbTree(BaseModel):
             NbTree().apps() -> ["circuit_terminations", "circuit_types", ...]
         """
         return list(self.__annotations__)
+
+    def clear(self) -> None:  # TODO test
+        """Clear all data in all models."""
+        for app in self.apps():
+            getattr(self, app).clear()
 
     def count(self) -> int:
         """Count the number of Netbox objects for all models."""

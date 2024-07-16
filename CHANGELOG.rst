@@ -4,6 +4,13 @@
 CHANGELOG
 =========
 
+0.2.5 (2024-07-16)
+------------------
+
+**Changed:** Joiner with **kwargs filters
+**Added:** NbTree.clear()
+
+
 0.2.4 (2024-07-14)
 ------------------
 

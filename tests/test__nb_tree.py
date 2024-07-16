@@ -5,13 +5,14 @@ import pytest
 
 from nbforager import nb_tree
 from nbforager.nb_tree import NbTree
-from tests import objects
+from tests import functions as func
+from tests import params as p
 
 
 def test__insert_tree():
     """models.tree.insert_tree()"""
     src = NbTree()
-    src.ipam.vrfs.update(objects.vrf_d([1]))
+    src.ipam.vrfs.update(func.vrf_d([1]))
     dst = NbTree()
 
     nb_tree.insert_tree(src=src, dst=dst)
@@ -21,24 +22,6 @@ def test__insert_tree():
     src.ipam.vrfs[1]["id"] = 2
     assert src.ipam.vrfs[1]["id"] == 2
     assert dst.ipam.vrfs[1]["id"] == 2
-
-
-def test__count():
-    """NbTree.count()"""
-    tree = NbTree()
-    tree.circuits.circuit_terminations.update({1: {}})
-    tree.circuits.circuit_types.update({1: {}})
-    tree.dcim.device_roles.update({1: {}})
-    tree.dcim.device_types.update({1: {}, 2: {}})
-    tree.ipam.aggregates.update({1: {}})
-    tree.ipam.asn_ranges.update({1: {}, 2: {}, 3: {}})
-    tree.tenancy.tenant_groups.update({1: {}})
-    tree.tenancy.tenants.update({1: {}, 2: {}, 3: {}, 4: {}})
-    assert tree.circuits.count() == 2
-    assert tree.dcim.count() == 3
-    assert tree.ipam.count() == 4
-    assert tree.tenancy.count() == 5
-    assert tree.count() == 14
 
 
 def test__apps():
@@ -57,6 +40,44 @@ def test__apps():
         "wireless",
     ]
     assert actual == expected
+
+
+def test__clear():
+    """NbTree.clear()"""
+    tree = NbTree()
+    tree.circuits.circuit_terminations.update({1: {}})
+    tree.dcim.device_roles.update({1: {}})
+    tree.ipam.aggregates.update({1: {}})
+    tree.tenancy.tenant_groups.update({1: {}})
+    assert tree.circuits.count() == 1
+    assert tree.dcim.count() == 1
+    assert tree.ipam.count() == 1
+    assert tree.tenancy.count() == 1
+
+    tree.clear()
+
+    assert tree.circuits.count() == 0
+    assert tree.dcim.count() == 0
+    assert tree.ipam.count() == 0
+    assert tree.tenancy.count() == 0
+
+
+def test__count():
+    """NbTree.count()"""
+    tree = NbTree()
+    tree.circuits.circuit_terminations.update({1: {}})
+    tree.circuits.circuit_types.update({1: {}})
+    tree.dcim.device_roles.update({1: {}})
+    tree.dcim.device_types.update({1: {}, 2: {}})
+    tree.ipam.aggregates.update({1: {}})
+    tree.ipam.asn_ranges.update({1: {}, 2: {}, 3: {}})
+    tree.tenancy.tenant_groups.update({1: {}})
+    tree.tenancy.tenants.update({1: {}, 2: {}, 3: {}, 4: {}})
+    assert tree.circuits.count() == 2
+    assert tree.dcim.count() == 3
+    assert tree.ipam.count() == 4
+    assert tree.tenancy.count() == 5
+    assert tree.count() == 14
 
 
 def test__models():
@@ -93,7 +114,7 @@ def test__models():
 ])
 def test__get_child(child: Any, expected: Any, exp_object):
     """nb_tree._get_child() for dict"""
-    tree = objects.full_tree()
+    tree = func.full_tree()
     if isinstance(exp_object, int):
         assert child["object"].get("id") is None
 
@@ -116,11 +137,11 @@ def test__join_tree__usual():
     """nb_tree.join_tree() usual dependency"""
     # set up simplified objects
     root = NbTree()
-    circuit = {k: v for k, v in objects.CIRCUIT1.items() if k in ["id", "url", "cid", "tenant"]}
+    circuit = {k: v for k, v in func.CIRCUIT1.items() if k in ["id", "url", "cid", "tenant"]}
     root.circuits.circuits = {d["id"]: d for d in [circuit]}
-    tenant = {k: v for k, v in objects.TENANT1.items() if k in ["id", "url", "name", "tags"]}
+    tenant = {k: v for k, v in func.TENANT1.items() if k in ["id", "url", "name", "tags"]}
     root.tenancy.tenants = {d["id"]: d for d in [tenant]}
-    tag = {k: v for k, v in objects.TAG1.items() if k in ["id", "url", "name", "color"]}
+    tag = {k: v for k, v in func.TAG1.items() if k in ["id", "url", "name", "color"]}
     root.extras.tags = {d["id"]: d for d in [tag]}
 
     tree = nb_tree.join_tree(tree=root)
@@ -136,15 +157,15 @@ def test__join_tree__cable():
     """nb_tree.join_tree() cable dependency"""
     # set up simplified objects
     root = NbTree()
-    cable = {k: v for k, v in objects.CABLE2.items() if k in
+    cable = {k: v for k, v in p.CABLE2.items() if k in
              ["id", "url", "display", "a_terminations"]}
     root.dcim.cables = {d["id"]: d for d in [cable]}
-    interface = {k: v for k, v in objects.INTERFACE2.items() if
+    interface = {k: v for k, v in func.D1_INTERFACE2.items() if
                  k in ["id", "url", "device", "cable", "link_peers", "link_peers_type"]}
     root.dcim.interfaces = {d["id"]: d for d in [interface]}
-    device = {k: v for k, v in objects.DEVICE1.items() if k in ["id", "url", "name", "tags"]}
+    device = {k: v for k, v in func.DEVICE1.items() if k in ["id", "url", "name", "tags"]}
     root.dcim.devices = {d["id"]: d for d in [device]}
-    tag = {k: v for k, v in objects.TAG1.items() if k in ["id", "url", "color"]}
+    tag = {k: v for k, v in func.TAG1.items() if k in ["id", "url", "color"]}
     root.extras.tags = {d["id"]: d for d in [tag]}
 
     tree = nb_tree.join_tree(tree=root)
@@ -175,21 +196,21 @@ def test__join_tree__circuit_terminations():
     """nb_tree.join_tree() circuit_terminations dependency"""
     # set up simplified objects
     root = NbTree()
-    circuit = {k: v for k, v in objects.CIRCUIT1.items() if k in
+    circuit = {k: v for k, v in func.CIRCUIT1.items() if k in
                ["id", "url", "cid", "termination_a"]}
     root.circuits.circuits = {d["id"]: d for d in [circuit]}
-    term = {k: v for k, v in objects.TERMINATION1.items() if k in
+    term = {k: v for k, v in func.TERMINATION1.items() if k in
             ["id", "url", "display", "circuit", "cable", "link_peers", "link_peers_type"]}
     root.circuits.circuit_terminations = {d["id"]: d for d in [term]}
-    cable = {k: v for k, v in objects.CABLE1.items() if k in
+    cable = {k: v for k, v in func.CABLE1.items() if k in
              ["id", "url", "display", "a_terminations"]}
     root.dcim.cables = {d["id"]: d for d in [cable]}
-    interface = {k: v for k, v in objects.INTERFACE1.items() if
+    interface = {k: v for k, v in func.D1_INTERFACE1.items() if
                  k in ["id", "url", "name", "device", "cable", "link_peers", "link_peers_type"]}
     root.dcim.interfaces = {d["id"]: d for d in [interface]}
-    device = {k: v for k, v in objects.DEVICE1.items() if k in ["id", "url", "name", "tags"]}
+    device = {k: v for k, v in func.DEVICE1.items() if k in ["id", "url", "name", "tags"]}
     root.dcim.devices = {d["id"]: d for d in [device]}
-    tag = {k: v for k, v in objects.TAG1.items() if k in ["id", "url", "color"]}
+    tag = {k: v for k, v in func.TAG1.items() if k in ["id", "url", "color"]}
     root.extras.tags = {d["id"]: d for d in [tag]}
 
     tree = nb_tree.join_tree(tree=root)
@@ -237,7 +258,7 @@ def test__missed_urls(
         urls, expected, errors,
 ):
     """nb_tree.missed_urls()"""
-    tree = objects.full_tree()
+    tree = func.full_tree()
     actual = nb_tree.missed_urls(urls=urls, tree=tree)
     assert actual == expected
     logs = [record.levelname == "ERROR" for record in caplog.records]

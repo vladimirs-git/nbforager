@@ -8,14 +8,14 @@ from _pytest.monkeypatch import MonkeyPatch
 
 from nbforager.nb_cache import NbCache
 from nbforager.nb_tree import NbTree
-from tests import objects
+from tests import functions as func
 
 
 @pytest.fixture
 def tree_meta():
     """Init NbTree and NbMeta objects."""
     tree = NbTree()
-    tree.ipam.vrfs.update(objects.vrf_d([1]))  # pylint: disable=E1101
+    tree.ipam.vrfs.update(func.vrf_d([1]))  # pylint: disable=E1101
 
     status = {
         "host": "netbox",

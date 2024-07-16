@@ -4,10 +4,10 @@
 from functools import wraps
 from typing import Any, Type, Dict, List
 
-from vhelpers import vstr
+from vhelpers import vstr, vlist
 
 from nbforager.exceptions import NbParserError
-from nbforager.types_ import DAny, SeqStr, Int, Str
+from nbforager.types_ import DAny, SeqStr, Int, Str, LDAny, TLists
 
 
 def check_strict(method):
@@ -297,3 +297,40 @@ def _init_data(data: DAny) -> DAny:
     if isinstance(data, dict):
         return data
     raise TypeError(f"{data=} {dict} expected.")
+
+
+# ============================ functions =============================
+
+
+def find_objects(objects: LDAny, **kwargs) -> LDAny:
+    """Find Netbox objects in tree by extended finding parameters.
+
+    :param objects: Netbox objects where searching is required using kwargs.
+    :param kwargs: Extended filtering parameters.
+    :return: Filtered Netbox objects.
+    """
+    if not kwargs:
+        return objects
+    (key, values), *key_values = list(kwargs.items())
+    if not isinstance(values, TLists):
+        values = [values]
+
+    objects_: LDAny = []
+    for data in objects:
+        keys = key.split("__")
+        if len(keys) <= 1:
+            keys = [key]
+        if keys[0] == "tags":
+            if len(keys) != 2:
+                raise ValueError(f"{keys=} {len(keys)=} expected 2.")
+            values_ = [d[keys[1]] for d in data["tags"]]
+            if vlist.is_in(values_, values):
+                objects_.append(data)
+        else:
+            value_ = NbParser(data).any(*keys)
+            if value_ in values:
+                objects_.append(data)
+
+    if key_values:
+        objects_ = find_objects(objects=objects_, **dict(key_values))
+    return objects_
