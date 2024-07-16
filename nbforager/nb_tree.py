@@ -4,6 +4,7 @@ from copy import deepcopy
 from typing import Optional
 
 from pydantic import BaseModel, Field
+from vhelpers import vstr
 
 from nbforager import helpers as h
 from nbforager.types_ import DiDAny, LStr, DAny
@@ -12,7 +13,13 @@ from nbforager.types_ import DiDAny, LStr, DAny
 class BaseTree(BaseModel):
     """Base for BbTree models."""
 
-    def clear(self) -> None:  # TODO test
+    def __repr__(self):
+        """__repr__."""
+        class_ = self.__class__.__name__
+        params = vstr.repr_info(**{s: len(getattr(self, s)) for s in self.models()})
+        return f"<{class_}: {params}>"
+
+    def clear(self) -> None:
         """Clear all data in all models."""
         for model in self.models():
             getattr(self, model).clear()
@@ -183,7 +190,7 @@ class WirelessM(BaseTree):
     wireless_links: DiDAny = Field(default={})
 
 
-class NbTree(BaseModel):  # TODO __repr__()
+class NbTree(BaseModel):
     """Structure that holds Netbox objects as dictionaries.
 
     Model: NbTree.{app}.{model}[id] = data.
@@ -204,6 +211,12 @@ class NbTree(BaseModel):  # TODO __repr__()
     virtualization: VirtualizationM = Field(default=VirtualizationM())
     wireless: WirelessM = Field(default=WirelessM())
 
+    def __repr__(self):
+        """__repr__."""
+        class_ = self.__class__.__name__
+        params = vstr.repr_info(**{s: getattr(self, s).count() for s in self.apps()})
+        return f"<{class_}: {params}>"
+
     def apps(self) -> LStr:
         """Get all application names.
 
@@ -214,7 +227,7 @@ class NbTree(BaseModel):  # TODO __repr__()
         """
         return list(self.__annotations__)
 
-    def clear(self) -> None:  # TODO test
+    def clear(self) -> None:
         """Clear all data in all models."""
         for app in self.apps():
             getattr(self, app).clear()

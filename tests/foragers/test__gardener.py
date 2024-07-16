@@ -41,16 +41,16 @@ def test__join_dcim_devices(joiner: Joiner):
 
     # device
     device_d = joiner.tree.dcim.devices[1]
-    reserved_keys = BaseC._reserved_keys["dcim/devices/"]
-    for key in reserved_keys:
+    extra_keys = BaseC._extra_keys["dcim/devices/"]
+    for key in extra_keys:
         isinstance(device_d[key], dict)
     assert device_d["_interfaces"]["GigabitEthernet1/0/1"]["name"] == "GigabitEthernet1/0/1"
     assert device_d["_console_ports"]["CONSOLE PORT1"]["name"] == "CONSOLE PORT1"
 
     # interface
     interface_d = joiner.tree.dcim.interfaces[1]
-    reserved_keys = BaseC._reserved_keys["dcim/interfaces/"]
-    for key in reserved_keys:
+    extra_keys = BaseC._extra_keys["dcim/interfaces/"]
+    for key in extra_keys:
         isinstance(interface_d[key], dict)
     assert interface_d["_ip_addresses"]["10.0.0.1/24"]["address"] == "10.0.0.1/24"
 
@@ -74,15 +74,15 @@ def test__join_virtualization_virtual_machines(joiner: Joiner):
 
     # vm
     machine_d = joiner.tree.virtualization.virtual_machines[1]
-    reserved_keys = BaseC._reserved_keys["virtualization/virtual-machines/"]
-    for key in reserved_keys:
+    extra_keys = BaseC._extra_keys["virtualization/virtual-machines/"]
+    for key in extra_keys:
         isinstance(machine_d[key], dict)
     assert machine_d["_interfaces"]["VIRTUAL_INTERFACE1"]["name"] == "VIRTUAL_INTERFACE1"
 
     # interface
     interface_d = joiner.tree.virtualization.interfaces[1]
-    reserved_keys = BaseC._reserved_keys["virtualization/interfaces/"]
-    for key in reserved_keys:
+    extra_keys = BaseC._extra_keys["virtualization/interfaces/"]
+    for key in extra_keys:
         isinstance(interface_d[key], dict)
     assert interface_d["_ip_addresses"]["10.0.0.4/24"]["address"] == "10.0.0.4/24"
 

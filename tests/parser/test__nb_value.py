@@ -5,7 +5,7 @@ import pytest
 
 from nbforager.parser.nb_value import NbValue
 from nbforager.types_ import LStr
-from tests.parser_ import params__nb_parser as p
+from tests.parser import params__nb_parser as p
 
 
 @pytest.mark.parametrize("data, strict, expected", p.ADDRESS)

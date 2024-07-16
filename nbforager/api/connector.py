@@ -118,7 +118,7 @@ class Connector(BaseC):
         """
         params_ld: LDList = self._validate_params(**kwargs)
         items: LDAny = self._query_params_ld(params_ld)
-        self._check_reserved_keys(items=items)
+        self._check_extra_keys(items=items)
         return items
 
     # noinspection PyIncorrectDocstring

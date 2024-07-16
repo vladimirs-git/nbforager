@@ -174,13 +174,13 @@ def test__init_loners(loners, expected):
     ([{"url": "ipam/prefixes/", "id": 1}], None),
     ([{"url": "ipam/prefixes/", "_aggregate": {}}], NbApiError),
 ])
-def test__check_reserved_keys__ipam_prefixes(api: NbApi, items, expected: Any):
-    """BaseC._check_reserved_keys() ipam/prefixes/."""
+def test__check_extra_keys__ipam_prefixes(api: NbApi, items, expected: Any):
+    """BaseC._check_extra_keys() ipam/prefixes/."""
     if expected is None:
-        api.ipam.prefixes._check_reserved_keys(items=items)
+        api.ipam.prefixes._check_extra_keys(items=items)
     else:
         with pytest.raises(expected):
-            api.ipam.prefixes._check_reserved_keys(items=items)
+            api.ipam.prefixes._check_extra_keys(items=items)
 
 
 @pytest.mark.parametrize("items, expected", [
@@ -189,13 +189,13 @@ def test__check_reserved_keys__ipam_prefixes(api: NbApi, items, expected: Any):
     ([{"url": "dcim/devices/", "interfaces": {}}], None),
     ([{"url": "dcim/devices/", "_interfaces": {}}], NbApiError),
 ])
-def test__check_reserved_keys__dcim_devices(api: NbApi, items, expected: Any):
-    """BaseC._check_reserved_keys(). dcim/devices/"""
+def test__check_extra_keys__dcim_devices(api: NbApi, items, expected: Any):
+    """BaseC._check_extra_keys(). dcim/devices/"""
     if expected is None:
-        api.dcim.devices._check_reserved_keys(items=items)
+        api.dcim.devices._check_extra_keys(items=items)
     else:
         with pytest.raises(expected):
-            api.dcim.devices._check_reserved_keys(items=items)
+            api.dcim.devices._check_extra_keys(items=items)
 
 
 @pytest.mark.parametrize("extended_get, params_d, expected", [

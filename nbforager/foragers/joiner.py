@@ -37,10 +37,10 @@ class Joiner:
             ("virtualization", "interfaces"),
         ]:
             key = f"{app}/{model}/".replace("_", "-")
-            reserved_keys: LStr = BaseC._reserved_keys[key]  # pylint: disable=W0212
+            extra_keys: LStr = BaseC._extra_keys[key]  # pylint: disable=W0212
             objects_d: DiDAny = getattr(getattr(self.tree, app), model)
             for object_d in objects_d.values():
-                for _key in reserved_keys:
+                for _key in extra_keys:
                     object_d[_key] = {}
 
         for model, key, strict in [
@@ -124,7 +124,7 @@ class Joiner:
         if app == "virtualization":
             model = "virtual_machines"
             key = "virtualization/virtual-machines/"
-        reserved_keys: LStr = BaseC._reserved_keys[key]  # pylint: disable=W0212
+        extra_keys: LStr = BaseC._extra_keys[key]  # pylint: disable=W0212
         devices_d: DiDAny = getattr(getattr(self.tree, app), model)
         if kwargs:
             devices_d = {
@@ -138,7 +138,7 @@ class Joiner:
 
         intf_ids: LInt = []  # id of joined interfaces
 
-        models = [s.lstrip("_") for s in reserved_keys]
+        models = [s.lstrip("_") for s in extra_keys]
         for model in models:
             ports_d: DiDAny = getattr(getattr(self.tree, app), model)
             ports: LDAny = list(ports_d.values())

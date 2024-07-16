@@ -5,7 +5,7 @@ import pytest
 
 from nbforager.exceptions import NbParserError
 from nbforager.parser.nb_custom import NbCustom
-from tests.parser_ import params__nb_parser as p
+from tests.parser import params__nb_parser as p
 
 
 @pytest.mark.parametrize("data, expected", [

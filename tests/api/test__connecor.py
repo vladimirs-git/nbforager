@@ -8,7 +8,7 @@ from requests import Response, Session
 
 from nbforager.nb_api import NbApi
 from nbforager.types_ import DAny
-from tests.api_.test__base_c import mock_session
+from tests.api.test__base_c import mock_session
 
 
 @pytest.fixture
