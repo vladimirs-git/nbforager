@@ -49,6 +49,19 @@ def attr_names(obj: Any) -> LStr:
     return methods
 
 
+def attr_to_model(attr: str) -> str:
+    """Convert attribute name to model name.
+
+    :param attr: The attribute name to be converted.
+
+    :return: The converted model name.
+
+    :example:
+        attr_to_model("ip_addresses") -> "ip-addresses"
+    """
+    return attr.replace("_", "-")
+
+
 def join_urls(urls: LStr) -> LStr:
     """Join URLs by models with list of IDs in query.
 
@@ -98,7 +111,7 @@ def model_to_attr(model: str) -> str:
     :example:
         model_to_attr("ip-addresses") -> "ip_addresses"
     """
-    return "_".join(model.split("-"))
+    return model.replace("-", "_")
 
 
 def nested_urls(nb_objects: LDAny) -> LStr:

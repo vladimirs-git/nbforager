@@ -193,6 +193,7 @@ PLATFORM1: DAny = {
     "tags": [{"id": 1, "url": "/api/extras/tags/1", "name": "TAG1"}],
     "slug": "platform1",
 }
+# DEVICE1 is similar to DEVICE2
 DEVICE1: DAny = {
     "id": 1,
     "url": "/api/dcim/devices/1",
@@ -209,6 +210,9 @@ DEVICE1: DAny = {
     "tenant": {"id": 1, "url": "/api/tenancy/tenants/1", "name": "TENANT1"},
     "interface_count": 2,
     "console_port_count": 1,
+    "virtual_chassis": None,
+    "vc_position": None,
+    "vc_priority": None,
 }
 DEVICE2: DAny = {
     "id": 2,
@@ -226,7 +230,11 @@ DEVICE2: DAny = {
     "tenant": {"id": 1, "url": "/api/tenancy/tenants/1", "name": "TENANT1"},
     "interface_count": 0,
     "console_port_count": 0,
+    "virtual_chassis": None,
+    "vc_position": None,
+    "vc_priority": None,
 }
+# DEVICE3 is master switch in virtual chassis with secondary DEVICE4
 DEVICE3: DAny = {
     "id": 3,
     "url": "/api/dcim/devices/3",
@@ -243,6 +251,49 @@ DEVICE3: DAny = {
     "tenant": {"id": 1, "url": "/api/tenancy/tenants/1", "name": "TENANT1"},
     "interface_count": 0,
     "console_port_count": 0,
+    # virtual-chassis
+    "virtual_chassis": {
+        "id": 1,
+        "url": "/api/dcim/virtual-chassis/1/",
+        "name": "DEVICE3",
+        "master": {
+            "id": 3,
+            "url": "/api/dcim/devices/3/",
+            "name": "DEVICE3"
+        }
+    },
+    "vc_position": 1,
+    "vc_priority": 1,
+}
+DEVICE4: DAny = {
+    "id": 4,
+    "url": "/api/dcim/devices/4",
+    "name": "DEVICE4",
+    "tags": [],
+    "primary_ip4": None,
+    "serial": "SERIAL4",
+    "device_role": {"id": 3, "url": "/api/dcim/device-roles/3", "name": "DEVICE ROLE3"},
+    "device_type": {"id": 1, "url": "/api/dcim/device-types/3", "name": "MODEL3"},
+    "location": {"id": 1, "url": "/api/dcim/locations/1", "name": "LOCATION1"},
+    "platform": {"id": 1, "url": "/api/dcim/platforms/1", "name": "PLATFORM1"},
+    "rack": {"id": 1, "url": "/api/dcim/racks/1", "name": "RACK1"},
+    "site": {"id": 1, "url": "/api/dcim/sites/1", "name": "SITE1"},
+    "tenant": {"id": 1, "url": "/api/tenancy/tenants/1", "name": "TENANT1"},
+    "interface_count": 0,
+    "console_port_count": 0,
+    # virtual-chassis
+    "virtual_chassis": {
+        "id": 1,
+        "url": "/api/dcim/virtual-chassis/1/",
+        "name": "DEVICE3",
+        "master": {
+            "id": 3,
+            "url": "/api/dcim/devices/3/",
+            "name": "DEVICE3"
+        }
+    },
+    "vc_position": 2,
+    "vc_priority": 2,
 }
 D1_INTERFACE1: DAny = {
     "id": 1,

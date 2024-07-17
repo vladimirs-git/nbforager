@@ -1,4 +1,4 @@
-"""Tests foragers."""
+"""Tests nbforager.foragers.joiner.py."""
 
 import pytest
 

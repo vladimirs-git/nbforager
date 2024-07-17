@@ -72,7 +72,7 @@ class BaseC:
     ]
     _extra_keys: DLStr = {
         "ipam/": [
-            # ipam aggregates, prefixes, ip_addresses
+            # ipam/aggregates, ipam/prefixes, ipam/ip_addresses
             "_ipv4",
             "_aggregate",
             "_super_prefix",
@@ -85,6 +85,7 @@ class BaseC:
             "nbnets__subnets",
         ],
         "dcim/devices/": [
+            # UI interfaces
             "_interfaces",
             "_front_ports",
             "_rear_ports",
@@ -95,6 +96,8 @@ class BaseC:
             "_module_bays",
             "_device_bays",
             "_inventory_items",
+            # UI virtual_chassis
+            "_virtual_chassis_members"
         ],
         "dcim/interfaces/": [
             "_ip_addresses",

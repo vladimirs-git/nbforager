@@ -31,6 +31,20 @@ def test__attr_names():
     assert actual == expected
 
 
+@pytest.mark.parametrize("model, expected", [
+    ("", ""),
+    ("model", "model"),
+    ("model-group", "model-group"),
+    ("model_group", "model-group"),
+    ("-model--group-", "-model--group-"),
+    ("_model__group_", "-model--group-"),
+])
+def test__attr_to_model(model, expected):
+    """helpers.attr_to_model()"""
+    actual = h.attr_to_model(model)
+    assert actual == expected
+
+
 @pytest.mark.parametrize("urls, expected", [
     ([], []),
     (["a/b/c/d/1"], ["a/b/c/d?id=1"]),
@@ -49,6 +63,8 @@ def test__join_urls(urls, expected):
     ("model", "model"),
     ("model-group", "model_group"),
     ("model_group", "model_group"),
+    ("-model--group-", "_model__group_"),
+    ("_model__group_", "_model__group_"),
 ])
 def test__model_to_attr(model, expected):
     """helpers.model_to_attr()"""

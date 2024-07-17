@@ -10,6 +10,7 @@ from nbforager.foragers.ipv4 import IPv4
 from nbforager.nb_tree import NbTree
 from nbforager.parser.nb_value import NbValue
 from nbforager.types_ import LDAny, DAny, LStr, DiDAny, LInt, DiLDAny
+from nbforager import helpers as h
 
 
 class Joiner:
@@ -36,7 +37,7 @@ class Joiner:
             ("virtualization", "virtual_machines"),
             ("virtualization", "interfaces"),
         ]:
-            key = f"{app}/{model}/".replace("_", "-")
+            key = h.attr_to_model(f"{app}/{model}/")
             extra_keys: LStr = BaseC._extra_keys[key]  # pylint: disable=W0212
             objects_d: DiDAny = getattr(getattr(self.tree, app), model)
             for object_d in objects_d.values():
@@ -76,6 +77,7 @@ class Joiner:
             - ``_power_outlets``
             - ``_power_ports``
             - ``_rear_ports``
+            - ``_virtual_chassis_members``
 
             In dcim.interfaces:
 
@@ -120,10 +122,10 @@ class Joiner:
         :return: IDs of joined interfaces. Update NbTree.dcim.devices object.
         """
         model = "devices"
-        key = "dcim/devices/"
+        key = f"dcim/{model}/"
         if app == "virtualization":
             model = "virtual_machines"
-            key = "virtualization/virtual-machines/"
+            key = h.attr_to_model(f"virtualization/{model}/")
         extra_keys: LStr = BaseC._extra_keys[key]  # pylint: disable=W0212
         devices_d: DiDAny = getattr(getattr(self.tree, app), model)
         if kwargs:
@@ -138,7 +140,8 @@ class Joiner:
 
         intf_ids: LInt = []  # id of joined interfaces
 
-        models = [s.lstrip("_") for s in extra_keys]
+        models: LStr = [s.lstrip("_") for s in extra_keys]
+        models = [s for s in models if s != "virtual_chassis_members"]
         for model in models:
             ports_d: DiDAny = getattr(getattr(self.tree, app), model)
             ports: LDAny = list(ports_d.values())

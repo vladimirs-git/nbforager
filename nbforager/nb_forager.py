@@ -301,6 +301,7 @@ class NbForager:
             - ``_power_outlets``
             - ``_power_ports``
             - ``_rear_ports``
+            - ``_virtual_chassis_members``
 
             In dcim.interfaces, virtualization.interfaces:
 
