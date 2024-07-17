@@ -71,6 +71,7 @@ from tests.params import (
     TENANT_GROUP1,
     TERMINATION1,
     TERMINATION2,
+    VIRTUAL_CHASSIS1,
     VIRTUAL_INTERFACE1,
     VIRTUAL_MACHINE1,
     VLAN1,
@@ -133,7 +134,7 @@ def full_tree() -> NbTree:
             regions={d["id"]: d for d in [REGION1]},
             site_groups={d["id"]: d for d in [SITE_GROUP1]},
             sites={d["id"]: d for d in [SITE1, SITE2]},
-            virtual_chassis={},
+            virtual_chassis={d["id"]: d for d in [VIRTUAL_CHASSIS1]},
             virtual_device_contexts={},
         ),
         extras=ExtrasM(

@@ -4,13 +4,13 @@ from operator import itemgetter
 from netports import Intf
 from vhelpers import vlist
 
+from nbforager import helpers as h
 from nbforager.api.base_c import BaseC
 from nbforager.foragers.forager import find_objects
 from nbforager.foragers.ipv4 import IPv4
 from nbforager.nb_tree import NbTree
 from nbforager.parser.nb_value import NbValue
 from nbforager.types_ import LDAny, DAny, LStr, DiDAny, LInt, DiLDAny
-from nbforager import helpers as h
 
 
 class Joiner:
@@ -77,7 +77,7 @@ class Joiner:
             - ``_power_outlets``
             - ``_power_ports``
             - ``_rear_ports``
-            - ``_virtual_chassis_members``
+            - ``_vc_members``
 
             In dcim.interfaces:
 
@@ -87,61 +87,51 @@ class Joiner:
 
         :return: None. Update NbTree object.
         """
-        intf_ids: LInt = self._join_dcim_devices(app="dcim", **kwargs)
-        params = {"id": intf_ids} if kwargs else {}
-        self._join_dcim_interfaces(app="dcim", **params)
+        self._join_virtual_chassis(**kwargs)
+        intf_ids: LInt = self._join_dcim_devices(**kwargs)
+        self._join_interfaces_ip(intf_ids, app="dcim")
 
-    def join_virtualization_virtual_machines(self, **kwargs) -> None:
-        """Create additional keys to represent virtualization.virtual_machines.
+    def _join_virtual_chassis(self, **kwargs):
+        """Add virtual-chassis members to master devices.
 
-            In virtualization.virtual_machines:
-
-            - ``_interfaces``
-
-            In virtualization.interfaces:
-
-            - ``_ip_addresses``
-
-        :param kwargs: Filtering parameters.
-
-        :return: None. Update NbTree object.
+        :param kwargs: Additional keyword arguments to filter devices.
+        :return: None. Update data in object.
         """
-        intf_ids: LInt = self._join_dcim_devices(app="virtualization", **kwargs)
-        params = {"id": intf_ids} if kwargs else {}
-        self._join_dcim_interfaces(app="virtualization", **params)
+        app = "dcim"
+        model = "devices"
+        devices_d: DiDAny = getattr(getattr(self.tree, app), model)
+        filtered_d = {d["id"]: d for d in find_objects(objects=list(devices_d.values()), **kwargs)}
 
-    # noinspection PyProtectedMember
-    def _join_dcim_devices(self, app: str, **kwargs) -> LInt:
-        """Create additional key/values to represent devices/VM similar to the WEB UI.
+        for member_id, device_d in filtered_d.items():
+            if device_d["virtual_chassis"]:
+                master_id = device_d["virtual_chassis"]["master"]["id"]
+                if member_id != master_id:
+                    master_d = devices_d[master_id]
+                    master_d["_vc_members"][member_id] = devices_d[member_id]
+
+    def _join_dcim_devices(self, **kwargs) -> LInt:
+        """Create additional key/values to represent devices similar to the WEB UI.
 
         Create key/values: _interfaces, _front_ports, _console_ports, etc.
 
-        :param app: Application name: "dcim", "virtualization"
         :param kwargs: Filtering parameters.
 
-        :return: IDs of joined interfaces. Update NbTree.dcim.devices object.
+        :return: IDs of joined ports. Update NbTree.dcim.devices object.
         """
+        # models
+        app = "dcim"
         model = "devices"
-        key = f"dcim/{model}/"
-        if app == "virtualization":
-            model = "virtual_machines"
-            key = h.attr_to_model(f"virtualization/{model}/")
-        extra_keys: LStr = BaseC._extra_keys[key]  # pylint: disable=W0212
-        devices_d: DiDAny = getattr(getattr(self.tree, app), model)
-        if kwargs:
-            devices_d = {
-                d["id"]: d for d in find_objects(objects=list(devices_d.values()), **kwargs)
-            }
-
-        # set values
-        key = "device"
-        if app == "virtualization":
-            key = "virtual_machine"
-
-        intf_ids: LInt = []  # id of joined interfaces
-
+        # noinspection PyProtectedMember
+        extra_keys: LStr = BaseC._extra_keys["dcim/devices/"]  # pylint: disable=W0212
+        extra_keys = [s for s in extra_keys if s != "_vc_members"]
         models: LStr = [s.lstrip("_") for s in extra_keys]
-        models = [s for s in models if s != "virtual_chassis_members"]
+
+        # filter devices
+        devices_d: DiDAny = getattr(getattr(self.tree, app), model)
+        devices_d = {d["id"]: d for d in find_objects(objects=list(devices_d.values()), **kwargs)}
+
+        intf_ids: LInt = []  # joined interfaces
+
         for model in models:
             ports_d: DiDAny = getattr(getattr(self.tree, app), model)
             ports: LDAny = list(ports_d.values())
@@ -151,32 +141,34 @@ class Joiner:
             ports_lt.sort(key=itemgetter(0))
             ports = [dict(t[1]) for t in ports_lt]
 
+            # set  _interfaces, _front_ports, etc.
             for port_d in ports:
                 name = port_d["name"]
-                id_ = port_d[key]["id"]
-                device_d: DAny = devices_d.get(id_, {})  # pylint: disable=E1101
-                _key = f"_{model}"
-                if _key in device_d:
-                    device_d[_key][name] = port_d
-                    intf_ids.append(id_)
+                id_ = port_d["device"]["id"]
+                device_d: DAny = devices_d.get(id_, {})
+                extra_key = f"_{model}"
+                if extra_key in device_d:
+                    device_d[extra_key][name] = port_d
+                    if model == "interfaces":
+                        intf_ids.append(id_)
 
         return intf_ids
 
-    def _join_dcim_interfaces(self, app: str, **kwargs) -> None:
+    def _join_interfaces_ip(self, intf_ids: LInt, app: str) -> None:
         """Create additional key/values for ipam/ip-addresses.
 
         Create key/values: _interfaces, _front_ports, _console_ports, etc.
 
+        :param intf_ids: Interface IDs that was joined in device/VM.
         :param app: Application name: "dcim", "virtualization"
-        :param kwargs: Filtering parameters.
 
         :return: None. Update NbTree object.
         """
         model = "interfaces"
         object_type = "virtualization.vminterface" if app == "virtualization" else "dcim.interface"
         intfs_d: DiDAny = getattr(getattr(self.tree, app), model)
-        if kwargs:
-            intfs_d = {d["id"]: d for d in find_objects(objects=list(intfs_d.values()), **kwargs)}
+        params = {"id": intf_ids}
+        intfs_d = {d["id"]: d for d in find_objects(objects=list(intfs_d.values()), **params)}
 
         app = "ipam"
         model = "ip_addresses"

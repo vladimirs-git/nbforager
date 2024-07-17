@@ -97,7 +97,7 @@ class BaseC:
             "_device_bays",
             "_inventory_items",
             # UI virtual_chassis
-            "_virtual_chassis_members"
+            "_vc_members",
         ],
         "dcim/interfaces/": [
             "_ip_addresses",

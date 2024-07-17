@@ -8,7 +8,11 @@ CHANGELOG
 ------------------
 
 **Added:** NbTree.clear()
+
+**Added:** extra_key dcim.devices _virtual_chassis_members
+
 **Changed:** Joiner with **kwargs filters
+
 **Changed:** NbTree.__repr__()
 
 

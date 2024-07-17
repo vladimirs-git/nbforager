@@ -1,5 +1,4 @@
 """Tests nbforager.foragers.joiner.py."""
-
 import pytest
 
 from nbforager import nb_tree
@@ -46,6 +45,7 @@ def test__join_dcim_devices(joiner: Joiner):
         isinstance(device_d[key], dict)
     assert device_d["_interfaces"]["GigabitEthernet1/0/1"]["name"] == "GigabitEthernet1/0/1"
     assert device_d["_console_ports"]["CONSOLE PORT1"]["name"] == "CONSOLE PORT1"
+    assert device_d["_vc_members"] == {}
 
     # interface
     interface_d = joiner.tree.dcim.interfaces[1]
@@ -67,24 +67,15 @@ def test__join_dcim_devices__filter(joiner: Joiner, params, expected):
     assert actual == expected
 
 
-def test__join_virtualization_virtual_machines(joiner: Joiner):
-    """Joiner.join_virtualization_virtual_machines()."""
-    joiner.init_extra_keys()
-    joiner.join_virtualization_virtual_machines()
+def test__join_virtual_chassis(joiner: Joiner):
+    """Joiner._join_virtual_chassis()."""
+    joiner._join_virtual_chassis()
 
-    # vm
-    machine_d = joiner.tree.virtualization.virtual_machines[1]
-    extra_keys = BaseC._extra_keys["virtualization/virtual-machines/"]
-    for key in extra_keys:
-        isinstance(machine_d[key], dict)
-    assert machine_d["_interfaces"]["VIRTUAL_INTERFACE1"]["name"] == "VIRTUAL_INTERFACE1"
-
-    # interface
-    interface_d = joiner.tree.virtualization.interfaces[1]
-    extra_keys = BaseC._extra_keys["virtualization/interfaces/"]
-    for key in extra_keys:
-        isinstance(interface_d[key], dict)
-    assert interface_d["_ip_addresses"]["10.0.0.4/24"]["address"] == "10.0.0.4/24"
+    actual = {}
+    for id_, device_d in joiner.tree.dcim.devices.items():
+        actual[id_] = list(device_d["_vc_members"])
+    expected = {1: [], 2: [], 3: [4], 4: []}
+    assert actual == expected
 
 
 def test__join_ipam_ipv4(joiner: Joiner):

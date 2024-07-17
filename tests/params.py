@@ -235,10 +235,11 @@ DEVICE2: DAny = {
     "vc_priority": None,
 }
 # DEVICE3 is master switch in virtual chassis with secondary DEVICE4
+DEVICE3_ = "DEVICE3"
 DEVICE3: DAny = {
     "id": 3,
     "url": "/api/dcim/devices/3",
-    "name": "DEVICE3",
+    "name": DEVICE3_,
     "tags": [{"id": 3, "url": "/api/extras/tags/3", "name": "TAG3"}],  # different
     "primary_ip4": {"address": "10.3.3.3/24"},
     "serial": "SERIAL1",  # the same as in DEVICE1
@@ -255,12 +256,8 @@ DEVICE3: DAny = {
     "virtual_chassis": {
         "id": 1,
         "url": "/api/dcim/virtual-chassis/1/",
-        "name": "DEVICE3",
-        "master": {
-            "id": 3,
-            "url": "/api/dcim/devices/3/",
-            "name": "DEVICE3"
-        }
+        "name": DEVICE3_,
+        "master": {"id": 3, "url": "/api/dcim/devices/3/", "name": DEVICE3_}
     },
     "vc_position": 1,
     "vc_priority": 1,
@@ -285,15 +282,21 @@ DEVICE4: DAny = {
     "virtual_chassis": {
         "id": 1,
         "url": "/api/dcim/virtual-chassis/1/",
-        "name": "DEVICE3",
-        "master": {
-            "id": 3,
-            "url": "/api/dcim/devices/3/",
-            "name": "DEVICE3"
-        }
+        "name": DEVICE3_,
+        "master": {"id": 3, "url": "/api/dcim/devices/3/", "name": DEVICE3_}
     },
     "vc_position": 2,
     "vc_priority": 2,
+}
+VIRTUAL_CHASSIS1: DAny = {
+    "id": 1,
+    "url": "/api/dcim/virtual-chassis/1/",
+    "name": DEVICE3_,
+    "domain": "DOMAIN1",
+    "master": {"id": 3, "url": "/api/dcim/devices/3/", "name": DEVICE3_},
+    "tags": [],
+    "custom_fields": {},
+    "member_count": 2,  # DEVICE3, DEVICE4
 }
 D1_INTERFACE1: DAny = {
     "id": 1,
@@ -444,7 +447,7 @@ D3_INTERFACE1: DAny = {
     "url": "/api/dcim/interfaces/4",
     "name": "GigabitEthernet1/0/1",
     "tags": [],
-    "device": {"id": 3, "url": "/api/dcim/devices/3", "name": "DEVICE3"},
+    "device": {"id": 3, "url": "/api/dcim/devices/3", "name": DEVICE3_},
     "vdcs": [],
     "module": None,
     "label": "LABEL2",
