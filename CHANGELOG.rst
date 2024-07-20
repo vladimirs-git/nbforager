@@ -4,7 +4,7 @@
 CHANGELOG
 =========
 
-0.2.6 (2024-07-17)
+0.3.0 (2024-07-20)
 ------------------
 
 **Added:** NbTree.clear()
@@ -14,6 +14,8 @@ CHANGELOG
 **Changed:** Joiner with **kwargs filters
 
 **Changed:** NbTree.__repr__()
+
+**Changed:** netports.vdict.pop()
 
 
 0.2.4 (2024-07-14)

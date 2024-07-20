@@ -76,6 +76,7 @@ objects = nb.dcim.devices.get(has_oob_ip=True)
 objects = nb.dcim.devices.get(virtual_chassis_member=True)
 # Virtual chassis member
 objects = nb.dcim.devices.get(local_context_data=True)
+objects = nb.dcim.devices.get(virtual_chassis_id=1)
 
 # Data Filter parameters
 objects = nb.dcim.devices.get(id=[1, 2])

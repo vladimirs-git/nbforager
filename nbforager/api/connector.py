@@ -136,7 +136,7 @@ class Connector(BaseC):
             - <Response [400]> Invalid data.
         :rtype: Response
         """
-        id_ = vdict.pop("id", kwargs)
+        id_ = vdict.pop(kwargs, key="id")
         if not id_:
             raise ValueError("id expected in the data.")
 

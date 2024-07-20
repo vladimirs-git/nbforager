@@ -106,8 +106,8 @@ class Joiner:
             if device_d["virtual_chassis"]:
                 master_id = device_d["virtual_chassis"]["master"]["id"]
                 if member_id != master_id:
-                    master_d = devices_d[master_id]
-                    master_d["_vc_members"][member_id] = devices_d[member_id]
+                    if master_d := devices_d.get(master_id, {}):
+                        master_d["_vc_members"][member_id] = devices_d[member_id]
 
     def _join_dcim_devices(self, **kwargs) -> LInt:
         """Create additional key/values to represent devices similar to the WEB UI.
