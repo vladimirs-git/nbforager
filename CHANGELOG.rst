@@ -4,7 +4,7 @@
 CHANGELOG
 =========
 
-0.3.0 (2024-07-20)
+0.3.0 (2024-07-21)
 ------------------
 
 **Added:** NbTree.clear()
@@ -16,6 +16,8 @@ CHANGELOG
 **Changed:** NbTree.__repr__()
 
 **Changed:** netports.vdict.pop()
+
+**Fixed:** NbCustom.platform_slug()
 
 
 0.2.4 (2024-07-14)
