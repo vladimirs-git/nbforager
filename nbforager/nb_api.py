@@ -187,7 +187,7 @@ class NbApi:
 
         :param url: URL to Netbox object.
         """
-        app, model, idx = h.split_url_to_attrs(url)
+        app, model, idx = h.url_to_attrs(url)
         method: Callable = getattr(getattr(getattr(self, app), model), "delete")
         return method(id=idx)
 

@@ -208,7 +208,7 @@ def split_url(url: str) -> T3Str:
     return app, model, port
 
 
-def split_url_to_attrs(url: str) -> T3StrInt:
+def url_to_attrs(url: str) -> T3StrInt:
     """Convert URL of app/model/id to attribute names.
 
     :param url: URL of app/model/id.
@@ -216,7 +216,7 @@ def split_url_to_attrs(url: str) -> T3StrInt:
     :return: Tuple of application attribute name, model attribute name and object ID.
 
     :example:
-        split_url_to_attrs("https://netbox/api/ipam/ip-addresses/1") -> "ipam", "ip_addresses", 1
+        url_to_attrs("https://netbox/api/ipam/ip-addresses/1") -> "ipam", "ip_addresses", 1
     """
     app, model, idx = split_url(url)
 
@@ -230,10 +230,9 @@ def split_url_to_attrs(url: str) -> T3StrInt:
 def url_to_path(url: str) -> str:
     """Convert URL to path app/model."""
     app, model, _ = split_url(url)
-    if app and model:
-        return f"{app}/{model}/"
-    raise ValueError(f"{app=} {model=} required.")
-
+    if not (app and model):
+        raise ValueError(f"{app=} {model=} required.")
+    return f"{app}/{model}/"
 
 # ============================== params ==============================
 

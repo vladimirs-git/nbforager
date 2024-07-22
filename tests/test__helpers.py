@@ -161,14 +161,14 @@ def test__split_url(url, expected):
     ("https://domain.com/api/ipam/1/1", NbApiError),
     ("https://domain.com/api/1/ip-addresses/1", NbApiError),
 ])
-def test__split_url_to_attrs(url, expected):
-    """helpers.split_url_to_attrs()"""
+def test__url_to_attrs(url, expected):
+    """helpers.url_to_attrs()"""
     if isinstance(expected, tuple):
-        actual = h.split_url_to_attrs(url=url)
+        actual = h.url_to_attrs(url=url)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            h.split_url_to_attrs(url=url)
+            h.url_to_attrs(url=url)
 
 
 @pytest.mark.parametrize("url, expected", [
