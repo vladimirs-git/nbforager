@@ -4,6 +4,7 @@ from typing import Any
 import pytest
 
 from nbforager import helpers as h, NbForager
+from nbforager.exceptions import NbApiError
 
 IP1 = "10.0.0.1/24"
 IP2 = "10.0.0.2/24"
@@ -120,6 +121,12 @@ def test__replace_upper(word, expected):
 
 
 @pytest.mark.parametrize("url, expected", [
+    ("https://domain.com/api/app/model/1", ("app", "model", "1")),
+    ("https://domain.com/api/app/model/1/", ("app", "model", "1")),
+    ("https://domain.com/api/app/model-group/1", ("app", "model-group", "1")),
+    ("https://domain.com/api/app/model/1?key=value", ("app", "model", "1")),
+    ("https://domain.com/api/app/model-group/1/", ("app", "model-group", "1")),
+    # invalid
     ("", ("", "", "")),
     ("typo", ("", "", "")),
     ("https://domain.com", ("", "", "")),
@@ -129,16 +136,39 @@ def test__replace_upper(word, expected):
     ("https://domain.com/api/app/model/1/1", ("", "", "")),
     ("https://domain.com/api/app/model", ("app", "model", "")),
     ("https://domain.com/api/app/model/", ("app", "model", "")),
-    ("https://domain.com/api/app/model/1", ("app", "model", "1")),
-    ("https://domain.com/api/app/model/1/", ("app", "model", "1")),
-    ("https://domain.com/api/app/model-group/1", ("app", "model-group", "1")),
-    ("https://domain.com/api/app/model/1?key=value", ("app", "model", "1")),
-    ("https://domain.com/api/app/model-group/1/", ("app", "model-group", "1")),
+
 ])
 def test__split_url(url, expected):
     """helpers.split_url()"""
     actual = h.split_url(url=url)
     assert actual == expected
+
+
+@pytest.mark.parametrize("url, expected", [
+    ("https://domain.com/api/ipam/ip-addresses/123", ("ipam", "ip_addresses", 123)),
+    ("https://domain.com/api/ipam/ip-addresses/1/", ("ipam", "ip_addresses", 1)),
+    ("https://domain.com/api/ipam/ip-addresses/1?key=value", ("ipam", "ip_addresses", 1)),
+    # invalid
+    ("", NbApiError),
+    ("typo", NbApiError),
+    ("https://domain.com", NbApiError),
+    ("https://domain.com/api", NbApiError),
+    ("https://domain.com/api/ipam", NbApiError),
+    ("https://domain.com/api/ipam/ip-addresses/ip-addresses/1", NbApiError),
+    ("https://domain.com/api/ipam/ip-addresses/1/1", NbApiError),
+    ("https://domain.com/api/ipam/ip-addresses", NbApiError),
+    ("https://domain.com/api/ipam/ip-addresses/", NbApiError),
+    ("https://domain.com/api/ipam/1/1", NbApiError),
+    ("https://domain.com/api/1/ip-addresses/1", NbApiError),
+])
+def test__split_url_to_attrs(url, expected):
+    """helpers.split_url_to_attrs()"""
+    if isinstance(expected, tuple):
+        actual = h.split_url_to_attrs(url=url)
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            h.split_url_to_attrs(url=url)
 
 
 @pytest.mark.parametrize("url, expected", [

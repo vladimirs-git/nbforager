@@ -24,6 +24,7 @@ Str = str
 StrInt = Union[str, int]
 T = TypeVar("T")
 T2Str = Tuple[str, str]
+T3StrInt = Tuple[str, str, int]
 T3Str = Tuple[str, str, str]
 TLists = (list, set, tuple)
 TStr = Tuple[str, ...]

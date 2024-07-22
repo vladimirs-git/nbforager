@@ -4,6 +4,11 @@
 
 from __future__ import annotations
 
+from typing import Callable
+
+from requests import Response
+
+from nbforager import helpers as h
 from nbforager.api.circuits import CircuitsAC
 from nbforager.api.core import CoreAC
 from nbforager.api.dcim import DcimAC
@@ -176,6 +181,15 @@ class NbApi:
     def url(self) -> str:
         """Netbox base URL."""
         return self.circuits.circuit_terminations.url_base
+
+    def delete(self, url: str) -> Response:
+        """Delete an object from Netbox using the ID in the provided URL.
+
+        :param url: URL to Netbox object.
+        """
+        app, model, idx = h.split_url_to_attrs(url)
+        method: Callable = getattr(getattr(getattr(self, app), model), "delete")
+        return method(id=idx)
 
     def version(self) -> str:
         """Get Netbox version.

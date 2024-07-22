@@ -6,8 +6,9 @@ from urllib.parse import urlencode, ParseResult
 
 from vhelpers import vlist, vparam
 
-from nbforager.types_ import LStr, LDAny, DDDLInt, LValue, LParam, LDList, DList, SeqStr, SStr
-from nbforager.types_ import LTInt2, DAny, TValues, TLists, T2Str, T3Str
+from nbforager.exceptions import NbApiError
+from nbforager.types_ import LStr, LDAny, DDDLInt, LValue, LParam, LDList, DList
+from nbforager.types_ import LTInt2, DAny, SeqStr, SStr, TValues, TLists, T2Str, T3Str, T3StrInt
 
 
 # =========================== app model id ===========================
@@ -189,6 +190,7 @@ def split_url(url: str) -> T3Str:
     url_o: ParseResult = urllib.parse.urlparse(url)
     if not url_o.path:
         return "", "", ""
+
     path = url_o.path.strip("/")
     items = path.split("/")
     if len(items) < 2:
@@ -204,6 +206,25 @@ def split_url(url: str) -> T3Str:
     if len(items) == 3:
         port = str(items[2])
     return app, model, port
+
+
+def split_url_to_attrs(url: str) -> T3StrInt:
+    """Convert URL of app/model/id to attribute names.
+
+    :param url: URL of app/model/id.
+
+    :return: Tuple of application attribute name, model attribute name and object ID.
+
+    :example:
+        split_url_to_attrs("https://netbox/api/ipam/ip-addresses/1") -> "ipam", "ip_addresses", 1
+    """
+    app, model, idx = split_url(url)
+
+    if not (app and model and idx and idx.isdigit()) or model.isdigit() or app.isdigit():
+        raise NbApiError(f"Invalid {url=}, expected app/modem/id format.")
+
+    model = model_to_attr(model)
+    return app, model, int(idx)
 
 
 def url_to_path(url: str) -> str:

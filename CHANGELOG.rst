@@ -4,14 +4,16 @@
 CHANGELOG
 =========
 
-0.3.0 (2024-07-21)
+0.3.0 (2024-07-22)
 ------------------
+
+**Added:** NbApi.delete(url)
 
 **Added:** NbTree.clear()
 
 **Added:** extra_key dcim.devices _virtual_chassis_members
 
-**Changed:** Joiner with **kwargs filters
+**Changed:** Joiner with kwargs filters
 
 **Changed:** NbTree.__repr__()
 

@@ -1,13 +1,18 @@
 """Tests nb_pai.py."""
 import inspect
+from typing import Any
 
 import pytest
 import requests_mock
+from _pytest.monkeypatch import MonkeyPatch
+from requests import Response, Session
 from requests_mock import Mocker
 
 from nbforager import helpers as h
+from nbforager.exceptions import NbApiError
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
+from tests.api.test__base_c import mock_session
 
 
 @pytest.fixture
@@ -92,3 +97,26 @@ def test__version(
     """NbApi.version()."""
     actual = api.version()
     assert actual == "3.6.5"
+
+
+@pytest.mark.parametrize("url, expected", [
+    ("https://domain.com/ipam/ip-addresses/1", 204),
+    ("https://domain.com/ipam/ip-addresses/9", 404),
+    ("https://domain.com/ipam/ip-addresses/", NbApiError),
+])
+def test__delete(
+        api: NbApi,
+        monkeypatch: MonkeyPatch,
+        url: str,
+        expected: Any,
+):
+    """Connector._join_params()."""
+    monkeypatch.setattr(Session, "delete", mock_session(expected))
+    if isinstance(expected, int):
+        response: Response = api.delete(url=url)
+
+        actual = response.status_code
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            api.delete(url=url)
