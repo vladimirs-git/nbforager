@@ -19,7 +19,7 @@ classifiers = [
 python = "^3.8"
 #
 ciscoconfparse = "^1.9"
-netports = ">=0.12.1,<1.0.0"
+netports = ">=0.13,<1.0.0"
 pydantic = "^2"
 pynetbox = "^7.3.3"
 requests = "^2"
