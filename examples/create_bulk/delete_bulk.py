@@ -60,7 +60,7 @@ ITEMS = [
 
 
 def delete_objects(models: list):
-    """Delete objects from the Netbox."""
+    """Delete an objects from the Netbox."""
     for model in models:
         tags = [f"{ca.TAG}{i}".lower() for i in range(1, ca.COUNT + 1)]
         objects = getattr(nb, model).get(or_tag=tags)

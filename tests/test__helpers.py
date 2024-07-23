@@ -138,9 +138,9 @@ def test__replace_upper(word, expected):
     ("https://domain.com/api/app/model/", ("app", "model", "")),
 
 ])
-def test__split_url(url, expected):
-    """helpers.split_url()"""
-    actual = h.split_url(url=url)
+def test__url_to_ami_items(url, expected):
+    """helpers.url_to_ami_items()"""
+    actual = h.url_to_ami_items(url=url)
     assert actual == expected
 
 
@@ -148,6 +148,8 @@ def test__split_url(url, expected):
     ("https://domain.com/api/ipam/ip-addresses/123", ("ipam", "ip_addresses", 123)),
     ("https://domain.com/api/ipam/ip-addresses/1/", ("ipam", "ip_addresses", 1)),
     ("https://domain.com/api/ipam/ip-addresses/1?key=value", ("ipam", "ip_addresses", 1)),
+    ("https://domain.com/api/ipam/ip-addresses", ("ipam", "ip_addresses", 0)),
+    ("https://domain.com/api/ipam/ip-addresses/", ("ipam", "ip_addresses", 0)),
     # invalid
     ("", NbApiError),
     ("typo", NbApiError),
@@ -156,35 +158,53 @@ def test__split_url(url, expected):
     ("https://domain.com/api/ipam", NbApiError),
     ("https://domain.com/api/ipam/ip-addresses/ip-addresses/1", NbApiError),
     ("https://domain.com/api/ipam/ip-addresses/1/1", NbApiError),
-    ("https://domain.com/api/ipam/ip-addresses", NbApiError),
-    ("https://domain.com/api/ipam/ip-addresses/", NbApiError),
     ("https://domain.com/api/ipam/1/1", NbApiError),
     ("https://domain.com/api/1/ip-addresses/1", NbApiError),
 ])
-def test__url_to_attrs(url, expected):
-    """helpers.url_to_attrs()"""
+def test__url_to_ami(url, expected):
+    """helpers.url_to_ami()"""
     if isinstance(expected, tuple):
-        actual = h.url_to_attrs(url=url)
+        actual = h.url_to_ami(url=url)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            h.url_to_attrs(url=url)
+            h.url_to_ami(url=url)
 
 
 @pytest.mark.parametrize("url, expected", [
+    ("https://domain.com/api/app/model/1?key=value", "app/model/"),
+    ("https://domain.com/api/app/model/1/", "app/model/"),
+    ("https://domain.com/api/app/model/1", "app/model/"),
+    ("https://domain.com/api/app/model", "app/model/"),
     ("", ValueError),
     ("typo", ValueError),
-    ("https://domain.com/api/app/model", "app/model/"),
-    ("https://domain.com/api/app/model/1?key=value", "app/model/"),
 ])
-def test__url_to_path(url, expected):
-    """helpers.url_to_path()"""
+def test__url_to_am_path(url, expected):
+    """helpers.url_to_am_path()"""
     if isinstance(expected, str):
-        actual = h.url_to_path(url=url)
+        actual = h.url_to_am_path(url=url)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            h.url_to_path(url=url)
+            h.url_to_am_path(url=url)
+
+
+@pytest.mark.parametrize("url, expected", [
+    ("https://domain.com/api/app/model/1?key=value", "app/model/1/"),
+    ("https://domain.com/api/app/model/1/", "app/model/1/"),
+    ("https://domain.com/api/app/model/1", "app/model/1/"),
+    ("https://domain.com/api/app/model", ValueError),
+    ("", ValueError),
+    ("typo", ValueError),
+])
+def test__url_to_ami_path(url, expected):
+    """helpers.url_to_ami_path()"""
+    if isinstance(expected, str):
+        actual = h.url_to_ami_path(url=url)
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            h.url_to_ami_path(url=url)
 
 
 # ============================== params ==============================

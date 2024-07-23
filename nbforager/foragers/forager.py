@@ -104,7 +104,7 @@ class Forager:
         # loop
         else:
             for url in urls:
-                app, model, _ = h.split_url(url)
+                app, model, _ = h.url_to_ami_items(url)
                 path = f"{app}/{model}/"
                 connector = self._get_connector(path)
                 params_d: DList = parse_qs(urlparse(url).query)
@@ -219,7 +219,7 @@ class Forager:
         urls: LStr = h.nested_urls(nb_objects)
         urls = missed_urls(urls=urls, tree=self.root)
         urls = h.join_urls(urls)
-        urls = [s for s in urls if h.split_url(s)[0]]
+        urls = [s for s in urls if h.url_to_ami_items(s)[0]]
         return urls
 
     # noinspection PyProtectedMember
@@ -232,7 +232,7 @@ class Forager:
         """
         path_params: LT2StrDAny = []
         for url in urls:
-            app, model, _ = h.split_url(url)
+            app, model, _ = h.url_to_ami_items(url)
             path = f"{app}/{model}/"
             connector = self._get_connector(path)
             params_d = parse_qs(urlparse(url).query)
@@ -313,7 +313,7 @@ class Forager:
     def _save_results(self, results):
         # save
         for data in results:
-            app, model, digit = h.split_url(data["url"])
+            app, model, digit = h.url_to_ami_items(data["url"])
             path = f"{app}/{model}"
             model_d: DiDAny = self._get_root_data(path)
             model_d[int(digit)] = data

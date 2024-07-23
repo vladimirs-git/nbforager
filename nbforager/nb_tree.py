@@ -323,7 +323,7 @@ def _get_child(child: DAny, tree: NbTree) -> DAny:
     """
     if child.get("url"):
         url = str(child["url"]).strip("/")
-        app, model, digit = h.split_url(url)
+        app, model, digit = h.url_to_ami_items(url)
         model = h.model_to_attr(model)
         if model_d := getattr(getattr(tree, app), model):
             if child_full := model_d.get(int(digit)):

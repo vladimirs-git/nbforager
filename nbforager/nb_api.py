@@ -182,14 +182,75 @@ class NbApi:
         """Netbox base URL."""
         return self.circuits.circuit_terminations.url_base
 
-    def delete(self, url: str) -> Response:
+    def create(self, **kwargs) -> Response:
+        """Create an object in Netbox using the app/model in the provided URL.
+
+        :param kwargs: Parameters for creating a new object.
+        The `url` and `id` parameters will be ignored.
+
+        :return: Session response.
+
+            - <Response [201]> Object successfully created,
+            - <Response [400]> Object already exist.
+        :rtype: Response
+        """
+        url = str(kwargs.get("url") or "")
+        app, model, _ = h.url_to_ami(url)
+        data: DAny = {k: v for k, v in kwargs.items() if k not in ["url", "id"]}
+        method: Callable = getattr(getattr(getattr(self, app), model), "create")
+        return method(**data)
+
+    def create_d(self, **kwargs) -> DAny:
+        """Create an object in Netbox using the app/model in the provided URL.
+
+        :param kwargs: Parameters for creating a new object.
+        The `url` and `id` parameters will be ignored.
+
+        :return: Data of newly created object.
+        :rtype: dict
+        """
+        url = str(kwargs.get("url") or "")
+        app, model, _ = h.url_to_ami(url)
+        data: DAny = {k: v for k, v in kwargs.items() if k not in ["url", "id"]}
+        method: Callable = getattr(getattr(getattr(self, app), model), "create")
+        return method(**data)
+
+    def delete(self, **kwargs) -> Response:
         """Delete an object from Netbox using the ID in the provided URL.
 
-        :param url: URL to Netbox object.
+        :param kwargs: Parameters of object to delete. Only url to object is required.
+        :return: Session response.
+
+            - <Response [204]> Object successfully deleted,
+            - <Response [404]> Object not found.
+        :rtype: Response
         """
-        app, model, idx = h.url_to_attrs(url)
+        url = str(kwargs.get("url") or "")
+        app, model, idx = h.url_to_ami(url)
         method: Callable = getattr(getattr(getattr(self, app), model), "delete")
         return method(id=idx)
+
+    # noinspection PyIncorrectDocstring
+    def update(self, **kwargs) -> Response:
+        """Update an object in Netbox using the app/model in the provided URL.
+
+        :param id: Netbox object id to update.
+        :type id: int
+
+        :param kwargs: Parameters to update an object in Netbox.
+
+        :return: Session response.
+
+            - <Response [200]> Object successfully updated,
+            - <Response [400]> Invalid data.
+        :rtype: Response
+        """
+        url = str(kwargs.get("url") or "")
+        app, model, idx = h.url_to_ami(url)
+        data: DAny = {k: v for k, v in kwargs.items() if k not in ["url"]}
+        data["id"] = idx
+        method: Callable = getattr(getattr(getattr(self, app), model), "update")
+        return method(**data)
 
     def version(self) -> str:
         """Get Netbox version.

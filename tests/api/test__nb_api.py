@@ -12,6 +12,7 @@ from nbforager import helpers as h
 from nbforager.exceptions import NbApiError
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
+from nbforager.types_ import DAny
 from tests.api.test__base_c import mock_session
 
 
@@ -99,10 +100,33 @@ def test__version(
     assert actual == "3.6.5"
 
 
+@pytest.mark.parametrize("params, expected", [
+    ({"id": 1, "url": "https://domain.com/ipam/ip-addresses/1", "key": "value"}, 201),
+    ({"id": 1, "url": "https://domain.com/ipam/typo/", "key": "value"}, AttributeError),
+    ({"id": 1, "url": "https://domain.com/ipam/", "key": "value"}, NbApiError),
+])
+def test__create(
+        api: NbApi,
+        monkeypatch: MonkeyPatch,
+        params: DAny,
+        expected: Any,
+):
+    """NbApi.create()."""
+    monkeypatch.setattr(Session, "post", mock_session(expected))
+    if isinstance(expected, int):
+        response: Response = api.create(**params)
+
+        actual = response.status_code
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            api.create(**params)
+
+
 @pytest.mark.parametrize("url, expected", [
     ("https://domain.com/ipam/ip-addresses/1", 204),
     ("https://domain.com/ipam/ip-addresses/9", 404),
-    ("https://domain.com/ipam/ip-addresses/", NbApiError),
+    ("https://domain.com/ipam/ip-addresses/", ValueError),
 ])
 def test__delete(
         api: NbApi,
@@ -110,7 +134,7 @@ def test__delete(
         url: str,
         expected: Any,
 ):
-    """Connector._join_params()."""
+    """NbApi.delete()."""
     monkeypatch.setattr(Session, "delete", mock_session(expected))
     if isinstance(expected, int):
         response: Response = api.delete(url=url)
@@ -120,3 +144,29 @@ def test__delete(
     else:
         with pytest.raises(expected):
             api.delete(url=url)
+
+
+@pytest.mark.parametrize("params, expected", [
+    ({"url": "https://domain.com/ipam/ip-addresses/1", "key": "value"}, 200),
+    ({"url": "https://domain.com/ipam/ip-addresses/1", "key": "value"}, 200),
+    ({"url": "https://domain.com/ipam/ip-addresses/9", "key": "value"}, 400),
+    ({"url": "https://domain.com/ipam/ip-addresses/0", "key": "value"}, ValueError),
+    ({"url": "https://domain.com/ipam/typo/", "key": "value"}, AttributeError),
+    ({"url": "https://domain.com/ipam/", "key": "value"}, NbApiError),
+])
+def test__update(
+        api: NbApi,
+        monkeypatch: MonkeyPatch,
+        params: DAny,
+        expected: Any,
+):
+    """NbApi.update()."""
+    monkeypatch.setattr(Session, "patch", mock_session(expected))
+    if isinstance(expected, int):
+        response: Response = api.update(**params)
+
+        actual = response.status_code
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            api.update(**params)

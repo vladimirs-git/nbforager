@@ -4,7 +4,7 @@ import urllib
 from typing import Any
 from urllib.parse import urlencode, ParseResult
 
-from vhelpers import vlist, vparam
+from vhelpers import vlist, vparam, vint
 
 from nbforager.exceptions import NbApiError
 from nbforager.types_ import LStr, LDAny, DDDLInt, LValue, LParam, LDList, DList
@@ -176,7 +176,7 @@ def replace_upper(word: str) -> str:
     return new_word
 
 
-def split_url(url: str) -> T3Str:
+def url_to_ami_items(url: str) -> T3Str:
     """Split the URL into the application, model, and ID items.
 
     :param url: The URL to be parsed.
@@ -208,7 +208,7 @@ def split_url(url: str) -> T3Str:
     return app, model, port
 
 
-def url_to_attrs(url: str) -> T3StrInt:
+def url_to_ami(url: str) -> T3StrInt:
     """Convert URL of app/model/id to attribute names.
 
     :param url: URL of app/model/id.
@@ -218,21 +218,34 @@ def url_to_attrs(url: str) -> T3StrInt:
     :example:
         url_to_attrs("https://netbox/api/ipam/ip-addresses/1") -> "ipam", "ip_addresses", 1
     """
-    app, model, idx = split_url(url)
+    app, model, idx = url_to_ami_items(url)
 
-    if not (app and model and idx and idx.isdigit()) or model.isdigit() or app.isdigit():
+    while True:
+        if app and not app.isdigit():
+            if model and not model.isdigit():
+                if not idx or idx.isdigit():
+                    break
         raise NbApiError(f"Invalid {url=}, expected app/modem/id format.")
 
     model = model_to_attr(model)
-    return app, model, int(idx)
+    return app, model, vint.to_int(idx)
 
 
-def url_to_path(url: str) -> str:
+def url_to_am_path(url: str) -> str:
     """Convert URL to path app/model."""
-    app, model, _ = split_url(url)
+    app, model, _ = url_to_ami_items(url)
     if not (app and model):
         raise ValueError(f"{app=} {model=} required.")
     return f"{app}/{model}/"
+
+
+def url_to_ami_path(url: str) -> str:
+    """Convert URL to path app/model/id."""
+    app, model, id_ = url_to_ami_items(url)
+    if not (app and model and id_):
+        raise ValueError(f"{app=} {model=} {id_=} required.")
+    return f"{app}/{model}/{id_}/"
+
 
 # ============================== params ==============================
 

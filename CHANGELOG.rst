@@ -4,10 +4,12 @@
 CHANGELOG
 =========
 
-0.3.0 (2024-07-22)
+0.3.0 (2024-07-23)
 ------------------
 
-**Added:** NbApi.delete(url)
+**Added:** helpers.url_to_ami_path(url)
+
+**Added:** NbApi.create(url) NbApi.create_d(url) NbApi.delete(url) NbApi.update(url)
 
 **Added:** NbTree.clear()
 

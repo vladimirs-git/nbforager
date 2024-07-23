@@ -23,9 +23,9 @@ class Connector(BaseC):
     # ============================= methods ==============================
 
     def create(self, **kwargs) -> Response:
-        """Create object in Netbox.
+        """Create an object in Netbox.
 
-        :param kwargs: Parameters of new object to create.
+        :param kwargs: Parameters for creating a new object.
 
         :return: Session response.
 
@@ -43,11 +43,11 @@ class Connector(BaseC):
         return response
 
     def create_d(self, **kwargs) -> DAny:
-        """Create object in Netbox.
+        """Create an object in Netbox.
 
-        :param kwargs: Data of new object to create.
+        :param kwargs: Parameters for creating a new object.
 
-        :return: Data of newly crated object.
+        :return: Data of newly created object.
         :rtype: dict
         """
         response: Response = self.create(**kwargs)
@@ -59,7 +59,7 @@ class Connector(BaseC):
 
     # noinspection PyShadowingBuiltins
     def delete(self, id: int) -> Response:  # pylint: disable=redefined-builtin
-        """Delete object in Netbox.
+        """Delete an object in Netbox.
 
         :param id: Object ID.
         :type id: int
@@ -70,6 +70,8 @@ class Connector(BaseC):
             - <Response [404]> Object not found.
         :rtype: Response
         """
+        if not id:
+            raise ValueError("id is required.")
         response: Response = self._session.delete(
             url=f"{self.url}{id}",
             headers=self._headers(),
@@ -123,12 +125,12 @@ class Connector(BaseC):
 
     # noinspection PyIncorrectDocstring
     def update(self, **kwargs) -> Response:
-        """Update object in Netbox.
+        """Update an object in Netbox.
 
         :param id: Netbox object id to update.
         :type id: int
 
-        :param kwargs: Parameters to update object in Netbox.
+        :param kwargs: Parameters to update an object in Netbox.
 
         :return: Session response.
 
@@ -138,7 +140,7 @@ class Connector(BaseC):
         """
         id_ = vdict.pop(kwargs, key="id")
         if not id_:
-            raise ValueError("id expected in the data.")
+            raise ValueError("id is required in the data.")
 
         response: Response = self._session.patch(
             url=f"{self.url}{id_}/",
@@ -151,12 +153,12 @@ class Connector(BaseC):
 
     # noinspection PyIncorrectDocstring
     def update_d(self, **kwargs) -> DAny:
-        """Update object in Netbox.
+        """Update an object in Netbox.
 
         :param id: Netbox object id to update.
         :type id: int
 
-        :param kwargs: Parameters to update object in Netbox.
+        :param kwargs: Parameters to update an object in Netbox.
 
         :return: Data of updated object.
         :rtype: dict
