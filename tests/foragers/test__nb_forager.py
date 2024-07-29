@@ -274,18 +274,19 @@ def test__join_tree(nbf_r: NbForager):
     assert nbf_r.tree.ipam.ip_addresses == {}
 
     nbf_r.join_tree()
+
     tree: NbTree = nbf_r.tree
     aggregate = tree.ipam.aggregates[1]
     assert aggregate["tenant"]["tags"][0]["name"] == "TAG1"
-    assert aggregate.get("_sub_prefixes") is None
+    assert aggregate.get("_sub_prefixes") == []
     prefix = tree.ipam.prefixes[1]
     assert prefix["tenant"]["tags"][0]["name"] == "TAG1"
-    assert prefix.get("_sub_prefixes") is None
+    assert prefix.get("_sub_prefixes") == []
     ip_address = tree.ipam.ip_addresses[1]
     assert ip_address["tenant"]["tags"][0]["name"] == "TAG1"
-    assert ip_address.get("_super_prefix") is None
+    assert ip_address.get("_super_prefix") == {}
     device = tree.dcim.devices[1]
-    assert device.get("_interfaces") is None
+    assert device.get("_interfaces") == {}
 
     nbf_r.join_tree(dcim=True)
     tree = nbf_r.tree
@@ -293,6 +294,7 @@ def test__join_tree(nbf_r: NbForager):
     assert device["_interfaces"]["GigabitEthernet1/0/1"]["name"] == "GigabitEthernet1/0/1"
 
     nbf_r.join_tree(ipam=True)
+
     tree = nbf_r.tree
     aggregate = tree.ipam.aggregates[1]
     assert aggregate["tenant"]["tags"][0]["name"] == "TAG1"

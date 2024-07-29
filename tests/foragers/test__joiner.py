@@ -6,6 +6,7 @@ from nbforager.api.base_c import BaseC
 from nbforager.foragers.ipv4 import IPv4
 from nbforager.foragers.joiner import Joiner
 from nbforager.nb_tree import NbTree
+from nbforager.types_ import LStr, DAny
 from tests import functions as func
 
 
@@ -39,32 +40,24 @@ def test__join_dcim_devices(joiner: Joiner):
     joiner.join_dcim_devices()
 
     # device
-    device_d = joiner.tree.dcim.devices[1]
-    extra_keys = BaseC._extra_keys["dcim/devices/"]
+    device_d: DAny = joiner.tree.dcim.devices[1]
+    extra_keys: LStr = BaseC._extra_keys["dcim/devices/"]
     for key in extra_keys:
         isinstance(device_d[key], dict)
     assert device_d["_interfaces"]["GigabitEthernet1/0/1"]["name"] == "GigabitEthernet1/0/1"
     assert device_d["_console_ports"]["CONSOLE PORT1"]["name"] == "CONSOLE PORT1"
     assert device_d["_vc_members"] == {}
 
-    # interface
+    # interface GigabitEthernet1/0/1
     interface_d = joiner.tree.dcim.interfaces[1]
     extra_keys = BaseC._extra_keys["dcim/interfaces/"]
     for key in extra_keys:
         isinstance(interface_d[key], dict)
     assert interface_d["_ip_addresses"]["10.0.0.1/24"]["address"] == "10.0.0.1/24"
 
-
-@pytest.mark.parametrize("params, expected", [
-    ({}, [1, 2, 3]),
-    ({"id": 1}, [1]),
-    ({"device_role__name": "DEVICE ROLE1"}, [1, 2]),
-])
-def test__join_dcim_devices__filter(joiner: Joiner, params, expected):
-    """Joiner.join_dcim_devices() with filtering params."""
-    joiner.join_dcim_devices(**params)
-    actual = [i for i, d in joiner.tree.dcim.devices.items() if d["_interfaces"]]
-    assert actual == expected
+    # interface GigabitEthernet1/0/2
+    interface_d = joiner.tree.dcim.interfaces[3]
+    assert interface_d["_ip_addresses"]["10.0.0.3/24"]["address"] == "10.0.0.3/24"
 
 
 def test__join_virtual_chassis(joiner: Joiner):

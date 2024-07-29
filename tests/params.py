@@ -298,7 +298,7 @@ VIRTUAL_CHASSIS1: DAny = {
     "custom_fields": {},
     "member_count": 2,  # DEVICE3, DEVICE4
 }
-D1_INTERFACE1: DAny = {
+D1_INTERFACE1: DAny = {  # global routing, 10.0.0.1/24
     "id": 1,
     "url": "/api/dcim/interfaces/1",
     "name": "GigabitEthernet1/0/1",
@@ -349,8 +349,9 @@ D1_INTERFACE1: DAny = {
     "connected_endpoints_type": None,
     "connected_endpoints_reachable": None,
     "custom_fields": {},
+    "count_ipaddresses": 1,
 }
-D1_INTERFACE2: DAny = {
+D1_INTERFACE2: DAny = {  # vrf VRF1, 10.0.0.3/24
     "id": 2,
     "url": "/api/dcim/interfaces/2",
     "name": "GigabitEthernet1/0/2",
@@ -396,6 +397,7 @@ D1_INTERFACE2: DAny = {
     "connected_endpoints_type": None,
     "connected_endpoints_reachable": None,
     "custom_fields": {},
+    "count_ipaddresses": 1,
 }
 D2_INTERFACE1: DAny = {
     "id": 3,
@@ -441,6 +443,7 @@ D2_INTERFACE1: DAny = {
     "connected_endpoints_type": None,
     "connected_endpoints_reachable": None,
     "custom_fields": {},
+    "count_ipaddresses": 0,
 }
 D3_INTERFACE1: DAny = {
     "id": 4,
@@ -486,6 +489,7 @@ D3_INTERFACE1: DAny = {
     "connected_endpoints_type": None,
     "connected_endpoints_reachable": None,
     "custom_fields": {},
+    "count_ipaddresses": 0,
 }
 LOCATION1: DAny = {
     "id": 1,
@@ -615,7 +619,7 @@ ASN2: DAny = {
     "rir": {"id": 2, "url": "/api/ipam/rirs/2", "name": "RFC 6996"},
     "tenant": {"id": 1, "url": "/api/tenancy/tenants/1", "name": "TENANT1"},
 }
-IP_ADDRESS1: DAny = {  # global private, device
+IP_ADDRESS1: DAny = {  # global private, device GigabitEthernet1/0/1
     "id": 1,
     "url": "/api/ipam/ip-addresses/1",
     "address": "10.0.0.1/24",
@@ -666,8 +670,14 @@ IP_ADDRESS3: DAny = {  # vrf private
     "vrf": {"id": 1, "url": "/api/ipam/vrfs/1", "name": "VRF1"},
     "role": None,
     "assigned_object_type": "dcim.interface",
-    "assigned_object_id": 1,
-    "assigned_object": None,
+    "assigned_object_id": 3,
+    "assigned_object": {
+        "id": 3,
+        "url": "/api/dcim/interfaces/3",
+        "name": "GigabitEthernet1/0/2",
+        "cable": 1,
+        "device": {"id": 1, "url": "/api/dcim/devices/1", "name": "DEVICE1"},
+    },
 }
 IP_ADDRESS4: DAny = {  # global private, vm
     "id": 4,

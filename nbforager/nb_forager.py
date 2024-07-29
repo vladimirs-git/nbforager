@@ -323,16 +323,15 @@ class NbForager:
         :rtype: NbTree
         """
         tree: NbTree = deepcopy(self.root)
-        if dcim or ipam:
-            Joiner(tree).init_extra_keys()
-
+        Joiner(tree).init_extra_keys()
         tree = nb_tree.join_tree(tree)
         nb_tree.insert_tree(src=tree, dst=self.tree)
 
+        joiner = Joiner(self.tree)
         if dcim:
-            Joiner(self.tree).join_dcim_devices()
+            joiner.join_dcim_devices()
         if ipam:
-            Joiner(self.tree).join_ipam_ipv4()
+            joiner.join_ipam_ipv4()
 
     def read_cache(self) -> None:
         """Read cached data from a pickle file.
