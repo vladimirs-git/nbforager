@@ -185,7 +185,7 @@ def url_to_ami_items(url: str) -> T3Str:
              If the URL is invalid or does not contain the necessary items, returns empty strings.
 
     :example:
-        split_url("https://demo.netbox.dev/api/ipam/vrfs?id=1") -> ("ipam", "vrfs", "1")
+        split_url("https://domain.com/api/ipam/vrfs?id=1") -> ("ipam", "vrfs", "1")
     """
     url_o: ParseResult = urllib.parse.urlparse(url)
     if not url_o.path:
@@ -208,15 +208,15 @@ def url_to_ami_items(url: str) -> T3Str:
     return app, model, port
 
 
-def url_to_ami(url: str) -> T3StrInt:
+def url_to_ami(url: str, path: bool = False) -> T3StrInt:
     """Convert URL of app/model/id to attribute names.
 
     :param url: URL of app/model/id.
-
+    :param path: If True, return model as item of path, else return madel as attribute.
     :return: Tuple of application attribute name, model attribute name and object ID.
 
     :example:
-        url_to_attrs("https://netbox/api/ipam/ip-addresses/1") -> "ipam", "ip_addresses", 1
+        url_to_attrs("https://domain.com/api/ipam/ip-addresses/1") -> "ipam", "ip_addresses", 1
     """
     app, model, idx = url_to_ami_items(url)
 
@@ -227,12 +227,21 @@ def url_to_ami(url: str) -> T3StrInt:
                     break
         raise NbApiError(f"Invalid {url=}, expected app/modem/id format.")
 
-    model = model_to_attr(model)
+    if not path:
+        model = model_to_attr(model)
+
     return app, model, vint.to_int(idx)
 
 
 def url_to_am_path(url: str) -> str:
-    """Convert URL to path app/model."""
+    """Convert URL to path app/model.
+
+    :param url: A string representing the Netbox API URL.
+    :return: A string representing the app/mode/ path.
+
+    :example:
+        url_to_am_path("https://domain.com/api/ipam/vrf/1") -> "ipam/vrf/"
+    """
     app, model, _ = url_to_ami_items(url)
     if not (app and model):
         raise ValueError(f"{app=} {model=} required.")
@@ -240,12 +249,51 @@ def url_to_am_path(url: str) -> str:
 
 
 def url_to_ami_path(url: str) -> str:
-    """Convert URL to path app/model/id."""
+    """Convert URL to path app/model/id.
+
+    :param url: A string representing the Netbox API URL.
+    :return: A string representing the app/mode/id path.
+
+    :example:
+        url_to_am_path("https://domain.com/api/ipam/vrf/1") -> "ipam/vrf/1/"
+    """
     app, model, id_ = url_to_ami_items(url)
     if not (app and model and id_):
         raise ValueError(f"{app=} {model=} {id_=} required.")
     return f"{app}/{model}/{id_}/"
 
+
+def url_to_ami_url(url: str) -> str:
+    """Convert URL to short URL with /api/app/model/id.
+
+    :param url: A string representing the Netbox API URL.
+    :return: A string representing the short URL.
+
+    :example:
+        url_to_ami_url("https://domain.com/api/ipam/vrf/1") -> "/api/ipam/vrf/1/"
+    """
+    app, model, id_ = url_to_ami(url=url, path=True)
+    ami_url = f"/api/{app}/{model}/"
+    if id_:
+        ami_url += f"{id_}/"
+    return ami_url
+
+
+def url_to_ui_url(url: str) -> str:
+    """Convert Netbox API URl to UI URL.
+
+    :param url: A string representing the Netbox API URL.
+    :return: A string representing the Netbox UI URL.
+
+    :example:
+        url_to_ui_url("https://domain.com/api/ipam/vrf/1") -> "/api/ipam/vrf/1/"
+    """
+    url_o: ParseResult = urllib.parse.urlparse(url)
+    app, model, id_ = url_to_ami(url=url, path=True)
+    ui_url = f"{url_o.scheme}://{url_o.netloc}/{app}/{model}/"
+    if id_:
+        ui_url += f"{id_}/"
+    return ui_url
 
 # ============================== params ==============================
 

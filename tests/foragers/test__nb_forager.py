@@ -13,6 +13,7 @@ from nbforager.nb_cache import NbCache
 from nbforager.nb_forager import NbForager
 from nbforager.nb_tree import NbTree
 from tests import functions as func
+from tests import params as p
 
 
 @pytest.fixture
@@ -276,35 +277,35 @@ def test__join_tree(nbf_r: NbForager):
     nbf_r.join_tree()
 
     tree: NbTree = nbf_r.tree
-    aggregate = tree.ipam.aggregates[1]
-    assert aggregate["tenant"]["tags"][0]["name"] == "TAG1"
+    aggregate = tree.ipam.aggregates[p.AG1]
+    assert aggregate["tenant"]["tags"][0]["name"] == p.TAG1
     assert aggregate.get("_sub_prefixes") == []
-    prefix = tree.ipam.prefixes[1]
-    assert prefix["tenant"]["tags"][0]["name"] == "TAG1"
+    prefix = tree.ipam.prefixes[p.P1]
+    assert prefix["tenant"]["tags"][0]["name"] == p.TAG1
     assert prefix.get("_sub_prefixes") == []
-    ip_address = tree.ipam.ip_addresses[1]
-    assert ip_address["tenant"]["tags"][0]["name"] == "TAG1"
+    ip_address = tree.ipam.ip_addresses[p.A1]
+    assert ip_address["tenant"]["tags"][0]["name"] == p.TAG1
     assert ip_address.get("_super_prefix") == {}
-    device = tree.dcim.devices[1]
+    device = tree.dcim.devices[p.D1]
     assert device.get("_interfaces") == {}
 
     nbf_r.join_tree(dcim=True)
     tree = nbf_r.tree
-    device = tree.dcim.devices[1]
-    assert device["_interfaces"]["GigabitEthernet1/0/1"]["name"] == "GigabitEthernet1/0/1"
+    device = tree.dcim.devices[p.D1]
+    assert device["_interfaces"][p.ETHERNET11]["name"] == p.ETHERNET11
 
     nbf_r.join_tree(ipam=True)
 
     tree = nbf_r.tree
-    aggregate = tree.ipam.aggregates[1]
-    assert aggregate["tenant"]["tags"][0]["name"] == "TAG1"
-    assert aggregate["_sub_prefixes"][0]["prefix"] == "10.0.0.0/24"
-    prefix = tree.ipam.prefixes[1]
-    assert prefix["tenant"]["tags"][0]["name"] == "TAG1"
-    assert prefix["_sub_prefixes"][0]["prefix"] == "10.0.0.0/31"
-    ip_address = tree.ipam.ip_addresses[1]
-    assert ip_address["tenant"]["tags"][0]["name"] == "TAG1"
-    assert ip_address["_super_prefix"]["prefix"] == "10.0.0.0/24"
+    aggregate = tree.ipam.aggregates[p.AG1]
+    assert aggregate["tenant"]["tags"][0]["name"] == p.TAG1
+    assert aggregate["_sub_prefixes"][0]["prefix"] == p.PREFIX1
+    prefix = tree.ipam.prefixes[p.P1]
+    assert prefix["tenant"]["tags"][0]["name"] == p.TAG1
+    assert prefix["_sub_prefixes"][0]["prefix"] == p.PREFIX4
+    ip_address = tree.ipam.ip_addresses[p.A1]
+    assert ip_address["tenant"]["tags"][0]["name"] == p.TAG1
+    assert ip_address["_super_prefix"]["prefix"] == p.PREFIX1
 
 
 @pytest.mark.parametrize("version, expected", [
@@ -325,7 +326,7 @@ def test__devices_primary_ip4(nbf_r: NbForager):
     actual = nbf_r._devices_primary_ip4()
     assert actual == ["10.1.1.1/24", "10.2.2.2/24", "10.3.3.3/24"]
 
-    nbf_r.root.dcim.devices[1]["primary_ip4"] = None
+    nbf_r.root.dcim.devices[p.D1]["primary_ip4"] = None
     actual = nbf_r._devices_primary_ip4()
     assert actual == ["10.2.2.2/24", "10.3.3.3/24"]
 
@@ -333,11 +334,11 @@ def test__devices_primary_ip4(nbf_r: NbForager):
 def test__set_addresses_mask_32(nbf_r: NbForager):
     """NbForager.set_addresses_mask_32()."""
     actual = [d["address"] for d in nbf_r.root.ipam.ip_addresses.values()]
-    assert actual == ["10.0.0.1/24", "1.0.0.1/24", "10.0.0.3/24", "10.0.0.4/24"]
+    assert actual == [p.ADDRESS1, p.ADDRESS2, p.ADDRESS3, p.ADDRESS4]
 
     nbf_r._set_ipam_ip_addresses_mask_32()
     actual = [d["address"] for d in nbf_r.root.ipam.ip_addresses.values()]
-    assert actual == ["10.0.0.1/32", "1.0.0.1/32", "10.0.0.3/32", "10.0.0.4/32"]
+    assert actual == ["10.0.0.1/32", "1.0.0.2/32", "10.0.0.3/32", "10.0.0.4/32"]
 
 
 def test__print_warnings(nbf_r: NbForager, caplog):
@@ -346,7 +347,7 @@ def test__print_warnings(nbf_r: NbForager, caplog):
     actual = [record.levelname == "WARNING" for record in caplog.records]
     assert actual == []
 
-    nbf_r.root.ipam.ip_addresses[1]["warnings"] = ["warning"]  # pylint: disable=E1101
+    nbf_r.root.ipam.ip_addresses[p.A1]["warnings"] = ["warning"]  # pylint: disable=E1101
     nbf_r._print_warnings()
     actual = [record.levelname == "WARNING" for record in caplog.records]
     assert actual == [True]

@@ -8,7 +8,8 @@ from requests_mock import Mocker
 from nbforager import nb_tree
 from nbforager.nb_forager import NbForager
 from nbforager.types_ import LT2StrDAny
-from tests.foragers import params__forager as p
+from tests import params as p
+from tests.foragers import params__forager as pf
 from tests.functions import full_tree
 
 
@@ -168,7 +169,7 @@ def test__get(mock_requests_vrfs: Mocker):  # pylint: disable=unused-argument
     nbf.ipam.vrfs.get()
 
 
-@pytest.mark.parametrize("params, expected", p.FIND)
+@pytest.mark.parametrize("params, expected", pf.FIND)
 def test__find_root(nbf_r: NbForager, params, expected: Any):
     """Forager.find_root().
 
@@ -186,7 +187,7 @@ def test__find_root(nbf_r: NbForager, params, expected: Any):
             nbf_r.dcim.devices.find_root(**params)
 
 
-@pytest.mark.parametrize("params, expected", p.FIND)
+@pytest.mark.parametrize("params, expected", pf.FIND)
 def test__find_tree(nbf_t: NbForager, params, expected):
     """Forager.find_tree()."""
     if isinstance(expected, list):
@@ -200,57 +201,57 @@ def test__find_tree(nbf_t: NbForager, params, expected):
 
 @pytest.mark.parametrize("params, expected", [
     # 1 param
-    ({}, [1, 2, 3, 4, 5]),
-    ({"role": "role1"}, [1, 4]),
-    ({"role": "role2"}, [5]),
-    ({"role": "role3"}, [3]),
+    ({}, [p.P1, p.P2, p.P3, p.P4, p.P5]),
+    ({"role": "role1"}, [p.P1, p.P4]),
+    ({"role": "role2"}, [p.P5]),
+    ({"role": "role3"}, [p.P3]),
     ({"role": "role4"}, []),
-    ({"site": "site1"}, [1]),
-    ({"site": "site2"}, [4, 5]),
-    ({"site": "site3"}, [3]),
-    ({"site": "site4"}, []),
-    ({"env": "ENV1"}, [1, 4]),
-    ({"env": "ENV2"}, [5]),
-    ({"env": "ENV3"}, [3]),
+    ({"site": p.RIX1_}, [p.P1]),
+    ({"site": p.RIX2_}, [p.P4, p.P5]),
+    ({"site": p.RIX3_}, [p.P3]),
+    ({"site": "rix4"}, []),
+    ({"env": "ENV1"}, [p.P1, p.P4]),
+    ({"env": "ENV2"}, [p.P5]),
+    ({"env": "ENV3"}, [p.P3]),
     ({"env": "ENV4"}, []),
     # 2 params
-    ({"role": "role1", "site": "site1"}, [1]),
-    ({"role": "role1", "site": "site2"}, [4]),
-    ({"role": "role1", "site": "site3"}, []),
-    ({"role": "role2", "site": "site1"}, []),
-    ({"role": "role2", "site": "site2"}, [5]),
-    ({"role": "role2", "site": "site3"}, []),
-    ({"role": "role3", "site": "site1"}, []),
-    ({"role": "role3", "site": "site2"}, []),
-    ({"role": "role3", "site": "site3"}, [3]),
-    ({"role": "role1", "env": "ENV1"}, [1, 4]),
+    ({"role": "role1", "site": p.RIX1_}, [p.P1]),
+    ({"role": "role1", "site": p.RIX2_}, [p.P4]),
+    ({"role": "role1", "site": p.RIX3_}, []),
+    ({"role": "role2", "site": p.RIX1_}, []),
+    ({"role": "role2", "site": p.RIX2_}, [p.P5]),
+    ({"role": "role2", "site": p.RIX3_}, []),
+    ({"role": "role3", "site": p.RIX1_}, []),
+    ({"role": "role3", "site": p.RIX2_}, []),
+    ({"role": "role3", "site": p.RIX3_}, [p.P3]),
+    ({"role": "role1", "env": "ENV1"}, [p.P1, p.P4]),
     ({"role": "role1", "env": "ENV2"}, []),
     ({"role": "role1", "env": "ENV3"}, []),
     ({"role": "role2", "env": "ENV1"}, []),
-    ({"role": "role2", "env": "ENV2"}, [5]),
+    ({"role": "role2", "env": "ENV2"}, [p.P5]),
     ({"role": "role2", "env": "ENV3"}, []),
     ({"role": "role3", "env": "ENV1"}, []),
     ({"role": "role3", "env": "ENV2"}, []),
-    ({"role": "role3", "env": "ENV3"}, [3]),
-    ({"site": "site1", "env": "ENV1"}, [1]),
-    ({"site": "site1", "env": "ENV2"}, []),
-    ({"site": "site1", "env": "ENV3"}, []),
-    ({"site": "site2", "env": "ENV1"}, [4]),
-    ({"site": "site2", "env": "ENV2"}, [5]),
-    ({"site": "site2", "env": "ENV3"}, []),
+    ({"role": "role3", "env": "ENV3"}, [p.P3]),
+    ({"site": p.RIX1_, "env": "ENV1"}, [p.P1]),
+    ({"site": p.RIX1_, "env": "ENV2"}, []),
+    ({"site": p.RIX1_, "env": "ENV3"}, []),
+    ({"site": p.RIX2_, "env": "ENV1"}, [p.P4]),
+    ({"site": p.RIX2_, "env": "ENV2"}, [p.P5]),
+    ({"site": p.RIX2_, "env": "ENV3"}, []),
     # 3 params
-    ({"role": "role1", "site": "site1", "env": "ENV1"}, [1]),
-    ({"role": "role1", "site": "site1", "env": "ENV2"}, []),
-    ({"role": "role1", "site": "site1", "env": "ENV3"}, []),
-    ({"role": "role1", "site": "site2", "env": "ENV1"}, [4]),
-    ({"role": "role1", "site": "site2", "env": "ENV2"}, []),
-    ({"role": "role1", "site": "site2", "env": "ENV3"}, []),
-    ({"role": "role2", "site": "site1", "env": "ENV1"}, []),
-    ({"role": "role2", "site": "site1", "env": "ENV2"}, []),
-    ({"role": "role2", "site": "site1", "env": "ENV3"}, []),
-    ({"role": "role2", "site": "site2", "env": "ENV1"}, []),
-    ({"role": "role2", "site": "site2", "env": "ENV2"}, [5]),
-    ({"role": "role2", "site": "site2", "env": "ENV3"}, []),
+    ({"role": "role1", "site": p.RIX1_, "env": "ENV1"}, [p.P1]),
+    ({"role": "role1", "site": p.RIX1_, "env": "ENV2"}, []),
+    ({"role": "role1", "site": p.RIX1_, "env": "ENV3"}, []),
+    ({"role": "role1", "site": p.RIX2_, "env": "ENV1"}, [p.P4]),
+    ({"role": "role1", "site": p.RIX2_, "env": "ENV2"}, []),
+    ({"role": "role1", "site": p.RIX2_, "env": "ENV3"}, []),
+    ({"role": "role2", "site": p.RIX1_, "env": "ENV1"}, []),
+    ({"role": "role2", "site": p.RIX1_, "env": "ENV2"}, []),
+    ({"role": "role2", "site": p.RIX1_, "env": "ENV3"}, []),
+    ({"role": "role2", "site": p.RIX2_, "env": "ENV1"}, []),
+    ({"role": "role2", "site": p.RIX2_, "env": "ENV2"}, [p.P5]),
+    ({"role": "role2", "site": p.RIX2_, "env": "ENV3"}, []),
 ])
 def test__find_rse(nbf_t: NbForager, params, expected: Any):
     """Forager.find_rse()."""

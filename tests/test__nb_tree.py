@@ -5,6 +5,7 @@ import pytest
 
 from nbforager import nb_tree
 from nbforager.nb_tree import NbTree
+from nbforager.types_ import DAny
 from tests import functions as func
 from tests import params as p
 
@@ -95,155 +96,140 @@ def test__models():
     assert actual == expected
 
 
-@pytest.mark.parametrize("child, expected, exp_object", [
+@pytest.mark.parametrize("child, exp_id, exp_object", [
     # url
-    ({"url": "/dcim/cables/1"}, 1, None),
-    ({"url": "/circuits/circuit-terminations/1"}, 1, None),
-    ({"url": "/circuits/circuit-terminations/1/"}, 1, None),
+    ({"url": f"/dcim/cables/{p.CB1}"}, p.CB1, None),
+    ({"url": f"/dcim/cables/{p.CB1}/"}, p.CB1, None),  # slash
+    ({"url": f"/circuits/circuit-terminations/{p.TR1}"}, p.TR1, None),
     ({"url": "/"}, AttributeError, None),
-    ({"url": "/typo/ip_addresses/1"}, AttributeError, None),
-    ({"url": "/ipam/typo/1"}, AttributeError, None),
-    ({"url": "/ipam/1"}, AttributeError, None),
+    ({"url": f"/typo/ip_addresses/{p.A1}"}, AttributeError, None),
+    ({"url": f"/ipam/typo/{p.A1}"}, AttributeError, None),
+    ({"url": f"/ipam/{p.A1}"}, AttributeError, None),
     ({"url": "/ipam/ip_addresses/typo"}, ValueError, None),
-    ({"id": 9, "url": "/ipam/ip_addresses/9"}, None, None),
+    ({"id": 9, "url": "/ipam/ip_addresses/9/"}, None, None),
     ({"id": 9, "url": ""}, None, None),
     ({"id": 9}, None, None),
     # object
-    ({"object_id": 1, "object": {"url": "/dcim/cables/1"}}, None, 1),
-    ({"object_id": 1, "object": "typo"}, None, None),
+    ({"object_id": p.CB1, "object": {"url": f"/dcim/cables/{p.CB1}"}}, None, p.CB1),
+    ({"object_id": p.CB1, "object": "typo"}, None, None),
 ])
-def test__get_child(child: Any, expected: Any, exp_object):
+def test__get_child(child: Any, exp_id, exp_object):
     """nb_tree._get_child() for dict"""
     tree = func.full_tree()
     if isinstance(exp_object, int):
         assert child["object"].get("id") is None
 
-    if isinstance(expected, (int, type(None))):
+    if isinstance(exp_id, (int, type(None))):
         child_full = nb_tree._get_child(child=child, tree=tree)
         actual = child_full.get("id")
-        assert actual == expected
+        assert actual == exp_id
 
         if isinstance(exp_object, int):
             actual = child["object"].get("id")
             assert actual == exp_object
 
     else:
-        with pytest.raises(expected):
+        with pytest.raises(exp_id):
             nb_tree._get_child(child=child, tree=tree)
 
 
-# noinspection DuplicatedCode
-def test__join_tree__usual():
-    """nb_tree.join_tree() usual dependency"""
-    # set up simplified objects
-    root = NbTree()
-    circuit = {k: v for k, v in func.CIRCUIT1.items() if k in ["id", "url", "cid", "tenant"]}
-    root.circuits.circuits = {d["id"]: d for d in [circuit]}
-    tenant = {k: v for k, v in func.TENANT1.items() if k in ["id", "url", "name", "tags"]}
-    root.tenancy.tenants = {d["id"]: d for d in [tenant]}
-    tag = {k: v for k, v in func.TAG1.items() if k in ["id", "url", "name", "color"]}
-    root.extras.tags = {d["id"]: d for d in [tag]}
+def test__join_dcim_devices__circuit():
+    """nb_tree.join_tree() circuit termination."""
+    tree: NbTree = func.full_tree()
 
-    tree = nb_tree.join_tree(tree=root)
+    tree = nb_tree.join_tree(tree)
 
-    assert tree.circuits.circuits[1]["tenant"]["tags"][0]["color"] == "aa1409"
-    assert tree.tenancy.tenants[1]["tags"][0]["color"] == "aa1409"
-    assert root.circuits.circuits[1]["tenant"].get("tags") is None
-    assert root.tenancy.tenants[1]["tags"][0].get("color") is None
+    # D1_INTERFACE1--CABLE1--TERM_A-CIRCUIT1-TERM_Z--CABLE2--D2_INTERFACE1
+    # D1_INTERFACE1
+    nb_intf: DAny = tree.dcim.interfaces[p.D1P1]
+    assert nb_intf["cable_end"] == "A"
+    assert nb_intf["cable"]["id"] == p.CB1
+    assert nb_intf["cable"]["a_terminations"][0]["object_type"] == "circuits.circuittermination"
+    assert nb_intf["cable"]["a_terminations"][0]["object_id"] == p.TR1
+    assert nb_intf["cable"]["a_terminations"][0]["object"]["circuit"]["cid"] == p.CID1
+    assert nb_intf["cable"]["b_terminations"][0]["object_type"] == "dcim.interface"
+    assert nb_intf["cable"]["b_terminations"][0]["object_id"] == p.D1P1
+    assert nb_intf["cable"]["b_terminations"][0]["object"]["name"] == p.ETHERNET11
+    assert nb_intf["link_peers_type"] == "circuits.circuittermination"
+    assert nb_intf["link_peers"][0]["circuit"]["id"] == p.C1
+    assert nb_intf["link_peers"][0]["link_peers_type"] == "dcim.interface"
+    assert nb_intf["link_peers"][0]["link_peers"][0]["name"] == p.ETHERNET11
+    # CABLE1
+    nb_cable: DAny = tree.dcim.cables[p.CB1]
+    assert nb_cable["a_terminations"][0]["object_type"] == "circuits.circuittermination"
+    assert nb_cable["a_terminations"][0]["object_id"] == p.TR1
+    assert nb_cable["a_terminations"][0]["object"]["circuit"]["cid"] == p.CID1
+    assert nb_cable["b_terminations"][0]["object_type"] == "dcim.interface"
+    assert nb_cable["b_terminations"][0]["object_id"] == p.D1P1
+    assert nb_cable["b_terminations"][0]["object"]["name"] == p.ETHERNET11
+    # CIRCUIT
+    nb_circuit: DAny = tree.circuits.circuits[p.C1]
+    assert nb_circuit["termination_a"]["id"] == p.TR1
+    assert nb_circuit["termination_a"]["circuit"]["cid"] == p.CID1
+    assert nb_circuit["termination_a"]["link_peers_type"] == "dcim.interface"
+    assert nb_circuit["termination_a"]["link_peers"][0]["name"] == p.ETHERNET11
+    assert nb_circuit["termination_z"]["id"] == p.TR2
+    assert nb_circuit["termination_z"]["circuit"]["cid"] == p.CID1
+    assert nb_circuit["termination_z"]["link_peers_type"] == "dcim.interface"
+    assert nb_circuit["termination_z"]["link_peers"][0]["name"] == p.ETHERNET11
+    # CABLE2
+    nb_cable = tree.dcim.cables[p.CB2]
+    assert nb_cable["a_terminations"][0]["object_type"] == "circuits.circuittermination"
+    assert nb_cable["a_terminations"][0]["object_id"] == p.TR2
+    assert nb_cable["a_terminations"][0]["object"]["circuit"]["cid"] == p.CID1
+    assert nb_cable["b_terminations"][0]["object_type"] == "dcim.interface"
+    assert nb_cable["b_terminations"][0]["object_id"] == p.D2P1
+    assert nb_cable["b_terminations"][0]["object"]["name"] == p.ETHERNET11
+    # D2_INTERFACE1
+    nb_intf = tree.dcim.interfaces[p.D2P1]
+    assert nb_intf["cable_end"] == "B"
+    assert nb_intf["cable"]["id"] == p.CB2
+    assert nb_intf["cable"]["a_terminations"][0]["object_type"] == "circuits.circuittermination"
+    assert nb_intf["cable"]["a_terminations"][0]["object_id"] == p.TR2
+    assert nb_intf["cable"]["a_terminations"][0]["object"]["circuit"]["cid"] == p.CID1
+    assert nb_intf["cable"]["b_terminations"][0]["object_type"] == "dcim.interface"
+    assert nb_intf["cable"]["b_terminations"][0]["object_id"] == p.D2P1
+    assert nb_intf["cable"]["b_terminations"][0]["object"]["name"] == p.ETHERNET11
+    assert nb_intf["link_peers_type"] == "circuits.circuittermination"
+    assert nb_intf["link_peers"][0]["circuit"]["id"] == p.C1
+    assert nb_intf["link_peers"][0]["link_peers_type"] == "dcim.interface"
+    assert nb_intf["link_peers"][0]["link_peers"][0]["name"] == p.ETHERNET11
 
-
-# noinspection DuplicatedCode
-def test__join_tree__cable():
-    """nb_tree.join_tree() cable dependency"""
-    # set up simplified objects
-    root = NbTree()
-    cable = {k: v for k, v in p.CABLE2.items() if k in
-             ["id", "url", "display", "a_terminations"]}
-    root.dcim.cables = {d["id"]: d for d in [cable]}
-    interface = {k: v for k, v in func.D1_INTERFACE2.items() if
-                 k in ["id", "url", "device", "cable", "link_peers", "link_peers_type"]}
-    root.dcim.interfaces = {d["id"]: d for d in [interface]}
-    device = {k: v for k, v in func.DEVICE1.items() if k in ["id", "url", "name", "tags"]}
-    root.dcim.devices = {d["id"]: d for d in [device]}
-    tag = {k: v for k, v in func.TAG1.items() if k in ["id", "url", "color"]}
-    root.extras.tags = {d["id"]: d for d in [tag]}
-
-    tree = nb_tree.join_tree(tree=root)
-
-    # cable
-    cable = tree.dcim.cables[2]
-    assert cable["a_terminations"][0]["object_id"] == 2
-    assert cable["a_terminations"][0]["object_type"] == "dcim.interface"
-    assert cable["a_terminations"][0]["object"]["cable"]["display"] == "#2"
-    # interface
-    interface = tree.dcim.interfaces[2]
-    assert interface["device"]["name"] == "DEVICE1"
-    assert interface["device"]["tags"][0]["color"] == "aa1409"
-    assert interface["cable"]["display"] == "#2"
-    assert interface["cable"]["a_terminations"][0]["object"]["id"] == 2
-    assert interface["link_peers_type"] == "dcim.interface"
-    assert interface["link_peers"][0]["a_terminations"][0]["object"]["cable"]["id"] == 2
-    # device
-    device = tree.dcim.devices[1]
-    assert device["tags"][0]["color"] == "aa1409"
-    # root
-    assert root.dcim.cables[2]["a_terminations"][0]["object"]["cable"] == 2
-    assert root.dcim.interfaces[2]["cable"].get("a_terminations") is None
-
-
-# noinspection DuplicatedCode
-def test__join_tree__circuit_terminations():
-    """nb_tree.join_tree() circuit_terminations dependency"""
-    # set up simplified objects
-    root = NbTree()
-    circuit = {k: v for k, v in func.CIRCUIT1.items() if k in
-               ["id", "url", "cid", "termination_a"]}
-    root.circuits.circuits = {d["id"]: d for d in [circuit]}
-    term = {k: v for k, v in func.TERMINATION1.items() if k in
-            ["id", "url", "display", "circuit", "cable", "link_peers", "link_peers_type"]}
-    root.circuits.circuit_terminations = {d["id"]: d for d in [term]}
-    cable = {k: v for k, v in func.CABLE1.items() if k in
-             ["id", "url", "display", "a_terminations"]}
-    root.dcim.cables = {d["id"]: d for d in [cable]}
-    interface = {k: v for k, v in func.D1_INTERFACE1.items() if
-                 k in ["id", "url", "name", "device", "cable", "link_peers", "link_peers_type"]}
-    root.dcim.interfaces = {d["id"]: d for d in [interface]}
-    device = {k: v for k, v in func.DEVICE1.items() if k in ["id", "url", "name", "tags"]}
-    root.dcim.devices = {d["id"]: d for d in [device]}
-    tag = {k: v for k, v in func.TAG1.items() if k in ["id", "url", "color"]}
-    root.extras.tags = {d["id"]: d for d in [tag]}
-
-    tree = nb_tree.join_tree(tree=root)
-
-    # circuit
-    circuit = tree.circuits.circuits[1]
-    assert circuit["cid"] == "CID1"
-    assert circuit["termination_a"]["circuit"]["termination_a"]["circuit"]["id"] == 1
-    # circuit_terminations
-    term = tree.circuits.circuit_terminations[1]
-    assert term["display"] == "CID1: Termination A"
-    assert term["circuit"]["cid"] == "CID1"
-    assert term["circuit"]["termination_a"]["circuit"]["cid"] == "CID1"
-    assert term["link_peers_type"] == "dcim.interface"
-    assert term["link_peers"][0]["name"] == "GigabitEthernet1/0/1"
-    assert term["link_peers"][0]["device"]["tags"][0]["color"] == "aa1409"
-    # interface
-    interface = tree.dcim.interfaces[1]
-    assert interface["name"] == "GigabitEthernet1/0/1"
-    assert interface["device"]["tags"][0]["color"] == "aa1409"
-    assert interface["cable"]["a_terminations"][0]["object_type"] == "circuits.circuittermination"
-    assert interface["cable"]["a_terminations"][0]["object"]["display"] == "CID1: Termination A"
-    assert interface["link_peers_type"] == "circuits.circuittermination"
-    assert interface["link_peers"][0]["display"] == "CID1: Termination A"
-    assert interface["link_peers"][0]["link_peers_type"] == "dcim.interface"
-    assert interface["link_peers"][0]["link_peers"][0]["name"] == "GigabitEthernet1/0/1"
-    assert interface["link_peers"][0]["link_peers"][0]["device"]["tags"][0]["color"] == "aa1409"
-    # device
-    device = tree.dcim.devices[1]
-    assert device["tags"][0]["color"] == "aa1409"
-    # root
-    assert root.dcim.cables[1]["a_terminations"][0]["object"]["cable"] == 1
-    assert root.dcim.interfaces[1]["cable"].get("a_terminations") is None
+    # D1_INTERFACE2--CABLE3--D3_INTERFACE1
+    # D1_INTERFACE2
+    nb_intf = tree.dcim.interfaces[p.D1P2]
+    assert nb_intf["cable_end"] == "A"
+    assert nb_intf["cable"]["id"] == p.CB3
+    assert nb_intf["cable"]["a_terminations"][0]["object_type"] == "dcim.interface"
+    assert nb_intf["cable"]["a_terminations"][0]["object_id"] == p.D1P2
+    assert nb_intf["cable"]["a_terminations"][0]["object"]["name"] == p.ETHERNET12
+    assert nb_intf["cable"]["b_terminations"][0]["object_type"] == "dcim.interface"
+    assert nb_intf["cable"]["b_terminations"][0]["object_id"] == p.D3P1
+    assert nb_intf["cable"]["b_terminations"][0]["object"]["name"] == p.ETHERNET11
+    assert nb_intf["link_peers_type"] == "dcim.interface"
+    assert nb_intf["link_peers"][0]["cable"]["id"] == p.CB3
+    assert nb_intf["link_peers"][0]["link_peers_type"] == "dcim.interface"
+    assert nb_intf["link_peers"][0]["link_peers"][0]["name"] == p.ETHERNET12
+    # CABLE1
+    nb_cable = tree.dcim.cables[p.CB3]
+    assert nb_cable["a_terminations"][0]["object_type"] == "dcim.interface"
+    assert nb_cable["a_terminations"][0]["object_id"] == p.D1P2
+    assert nb_cable["a_terminations"][0]["object"]["name"] == p.ETHERNET12
+    assert nb_cable["b_terminations"][0]["object_type"] == "dcim.interface"
+    assert nb_cable["b_terminations"][0]["object_id"] == p.D3P1
+    assert nb_cable["b_terminations"][0]["object"]["name"] == p.ETHERNET11
+    # D3_INTERFACE1
+    nb_intf = tree.dcim.interfaces[p.D3P1]
+    assert nb_intf["cable_end"] == "B"
+    assert nb_intf["cable"]["id"] == p.CB3
+    assert nb_intf["cable"]["a_terminations"][0]["object_id"] == p.D1P2
+    assert nb_intf["cable"]["a_terminations"][0]["object"]["name"] == p.ETHERNET12
+    assert nb_intf["cable"]["b_terminations"][0]["object_id"] == p.D3P1
+    assert nb_intf["cable"]["b_terminations"][0]["object"]["name"] == p.ETHERNET11
+    assert nb_intf["link_peers_type"] == "dcim.interface"
+    assert nb_intf["link_peers"][0]["name"] == p.ETHERNET12
+    assert nb_intf["link_peers"][0]["link_peers_type"] == "dcim.interface"
+    assert nb_intf["link_peers"][0]["link_peers"][0]["name"] == p.ETHERNET11
 
 
 @pytest.mark.parametrize("urls, expected, errors", [

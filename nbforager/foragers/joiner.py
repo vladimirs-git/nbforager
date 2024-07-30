@@ -1,7 +1,6 @@
 """Joiner."""
 from operator import itemgetter
 
-from netports import Intf
 from vhelpers import vlist
 
 from nbforager import helpers as h
@@ -87,7 +86,7 @@ class Joiner:
         """
         self._join_virtual_chassis()
         intf_ids: LInt = self._join_dcim_devices()
-        self._join_interfaces_ip(intf_ids, app="dcim")
+        self._join_ip_addresses(intf_ids, app="dcim")
 
     def _join_virtual_chassis(self):
         """Add virtual-chassis members to master devices.
@@ -100,7 +99,7 @@ class Joiner:
 
         for member_id, device_d in nbf_devices.items():
             if device_d["virtual_chassis"]:
-                master_id = device_d["virtual_chassis"]["master"]["id"]
+                master_id: int = device_d["virtual_chassis"]["master"]["id"]
                 if member_id != master_id:
                     if master_d := nbf_devices.get(master_id, {}):
                         master_d["_vc_members"][member_id] = nbf_devices[member_id]
@@ -127,24 +126,33 @@ class Joiner:
         # set  _interfaces, _front_ports, etc.
         for extra_model in extra_models:
             ports_d: DiDAny = getattr(getattr(self.tree, app), extra_model)
-            for port_d in ports_d.values():
-                port_name = port_d["name"]
-                device_id: int = port_d["device"]["id"]
-                device_d: DAny = nbf_devices.get(device_id, {})
+            for nb_port in ports_d.values():
+                port_name = nb_port["name"]
+                device_id: int = nb_port["device"]["id"]
+                nb_device: DAny = nbf_devices.get(device_id, {})
                 extra_key = f"_{extra_model}"
 
                 # if device has been downloaded from netbox
-                if extra_key in device_d:
-                    device_d[extra_key][port_name] = port_d
+                if extra_key in nb_device:
+                    nb_device[extra_key][port_name] = nb_port
 
                     # interface ids to assign ip_addresses
                     if extra_model == "interfaces":
-                        intf_id = port_d["id"]
+                        intf_id = nb_port["id"]
                         intf_ids.add(intf_id)
+
+        # join virtual chassis interfaces to master
+        for device_id, nb_device in nbf_devices.items():
+            for member_id, vc_member in nb_device["_vc_members"].items():
+                master_id = vc_member["virtual_chassis"]["master"]["id"]
+                if device_id == master_id:
+                    for intf_name, nb_intf in vc_member["_interfaces"].items():
+                        if intf_name not in nb_device["_interfaces"]:
+                            nb_device["_interfaces"][intf_name] = nb_intf
 
         return sorted(intf_ids)
 
-    def _join_interfaces_ip(self, intf_ids: LInt, app: str) -> None:
+    def _join_ip_addresses(self, intf_ids: LInt, app: str) -> None:
         """Add NbTree.ipam.ip_address data to NbTree.dcim.interfaces._ip_addresses or VM.
 
         :param intf_ids: Interface IDs that was joined in device/VM.
@@ -161,17 +169,17 @@ class Joiner:
         app = "ipam"
         extra_model = "ip_addresses"
         extra_key = f"_{extra_model}"
-        addresses_d: DiDAny = getattr(getattr(self.tree, app), extra_model)
+        nbf_addresses: DiDAny = getattr(getattr(self.tree, app), extra_model)
 
-        for address_d in addresses_d.values():
-            address = address_d["address"]
-            if address_d["assigned_object_type"] == object_type:
-                if assigned_object_id := address_d["assigned_object_id"]:
-                    intf_d: DAny = intfs_d.get(assigned_object_id, {})  # pylint: disable=E1101
+        for nb_addr in nbf_addresses.values():
+            address = nb_addr["address"]
+            if nb_addr["assigned_object_type"] == object_type:
+                if assigned_object_id := nb_addr["assigned_object_id"]:
+                    nb_intf: DAny = intfs_d.get(assigned_object_id, {})  # pylint: disable=E1101
 
                     # if device has been downloaded from netbox
-                    if extra_key in intf_d:
-                        intf_d[extra_key][address] = address_d
+                    if extra_key in nb_intf:
+                        nb_intf[extra_key][address] = nb_addr
 
     def join_ipam_ipv4(self) -> None:
         """Create additional keys to represent ipam similar to the WEB UI.

@@ -59,9 +59,12 @@ test = ["pytest"]
 "Download URL" = "https://github.com/vladimirs-git/nbforager/archive/refs/tags/0.3.1.tar.gz"
 
 [tool.pylint]
+disable = "fixme"
+max-args = 10
+max-attributes = 10
 max-line-length = 100
 max-locals = 20
-disable = "fixme"
+max-nested-blocks = 6
 
 #[tool.pylint.message_control]
 #enable = ["too-many-public-methods"]
