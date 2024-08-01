@@ -143,7 +143,7 @@ class Joiner:
 
         # join virtual chassis interfaces to master
         for device_id, nb_device in nbf_devices.items():
-            for member_id, vc_member in nb_device["_vc_members"].items():
+            for vc_member in nb_device["_vc_members"].values():
                 master_id = vc_member["virtual_chassis"]["master"]["id"]
                 if device_id == master_id:
                     for intf_name, nb_intf in vc_member["_interfaces"].items():

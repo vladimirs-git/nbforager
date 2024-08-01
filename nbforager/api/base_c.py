@@ -180,9 +180,9 @@ class BaseC:
         self.threads: int = _init_threads(**kwargs)
         self.interval: float = float(kwargs.get("interval") or 0.0)
         # Errors processing
-        self.timeout: float = float(kwargs.get("timeout") or 60)
+        self.timeout: int = int(kwargs.get("timeout") or 60)
         self.max_retries: int = int(kwargs.get("max_retries") or 0)
-        self.sleep: float = float(kwargs.get("sleep") or 10)
+        self.sleep: int = int(kwargs.get("sleep") or 10)
         self.strict: bool = bool(kwargs.get("strict"))
         # Settings
         self.extended_get: bool = bool(kwargs.get("extended_get"))
@@ -485,7 +485,7 @@ class BaseC:
                     url=url,
                     headers=self._headers(),
                     verify=self.verify,
-                    timeout=self.timeout,
+                    timeout=float(self.timeout),
                 )
             except ReadTimeout:
                 attempts = f"{counter} of {self.max_retries}"

@@ -172,6 +172,31 @@ class NbApi:
         name = self.__class__.__name__
         return f"<{name}: {self.host}>"
 
+    def __copy__(self) -> NbApi:
+        """Create a duplicate of the object.
+
+        :return: A copy of the current object.
+        """
+        connector = self.circuits.circuit_terminations
+        return type(self)(
+            host=connector.host,
+            token=connector.token,
+            scheme=connector.scheme,
+            port=connector.port,
+            verify=connector.verify,
+            limit=connector.limit,
+            url_length=connector.url_length,
+            threads=connector.threads,
+            interval=connector.interval,
+            timeout=connector.timeout,
+            max_retries=connector.max_retries,
+            sleep=connector.sleep,
+            strict=connector.strict,
+            extended_get=connector.extended_get,
+            default_get=connector.default_get,
+            loners=connector.loners,
+        )
+
     @property
     def host(self) -> str:
         """Netbox host name."""
@@ -181,6 +206,34 @@ class NbApi:
     def url(self) -> str:
         """Netbox base URL."""
         return self.circuits.circuit_terminations.url_base
+
+    def copy(self, **kwargs) -> NbApi:
+        """Create a duplicate of the object.
+
+        :param kwargs: Keyword arguments to replace in original object.
+        :return: A copy of the current object.
+        """
+        connector = self.circuits.circuit_terminations
+        params: DAny = {
+            "host": connector.host,
+            "token": connector.token,
+            "scheme": connector.scheme,
+            "port": connector.port,
+            "verify": connector.verify,
+            "limit": connector.limit,
+            "url_length": connector.url_length,
+            "threads": connector.threads,
+            "interval": connector.interval,
+            "timeout": connector.timeout,
+            "max_retries": connector.max_retries,
+            "sleep": connector.sleep,
+            "strict": connector.strict,
+            "extended_get": connector.extended_get,
+            "default_get": connector.default_get,
+            "loners": connector.loners,
+        }
+        params.update(kwargs)
+        return type(self)(**params)
 
     def create(self, **kwargs) -> Response:
         """Create an object in Netbox using the app/model in the provided URL.

@@ -4,8 +4,10 @@
 CHANGELOG
 =========
 
-0.3.1 (2024-07-30)
+0.3.1 (2024-08-01)
 ------------------
+
+**Added:** copy(NbApi)
 
 **Changed:** Joiner.join_tree()
 

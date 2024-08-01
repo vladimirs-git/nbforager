@@ -1,5 +1,6 @@
 """Tests nb_pai.py."""
 import inspect
+from copy import copy
 from typing import Any
 
 import pytest
@@ -14,6 +15,27 @@ from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
 from nbforager.types_ import DAny
 from tests.api.test__base_c import mock_session
+
+ATTRS = [
+    "self",
+    "host",
+    "token",
+    "scheme",
+    "port",
+    "verify",
+    "limit",
+    "url_length",
+    "threads",
+    "interval",
+    "timeout",
+    "max_retries",
+    "sleep",
+    "strict",
+    "extended_get",
+    "default_get",
+    "loners",
+    "kwargs",
+]
 
 
 @pytest.fixture
@@ -55,27 +77,18 @@ def test__app_model(api: NbApi):
 def test__init__(api: NbApi):
     """NbApi.__init__()."""
     actual = list(inspect.signature(type(api).__init__).parameters)
-    expected = [
-        "self",
-        "host",
-        "token",
-        "scheme",
-        "port",
-        "verify",
-        "limit",
-        "url_length",
-        "threads",
-        "interval",
-        "timeout",
-        "max_retries",
-        "sleep",
-        "strict",
-        "extended_get",
-        "default_get",
-        "loners",
-        "kwargs",
-    ]
+
+    expected = ATTRS
     assert set(actual).symmetric_difference(set(expected)) == set()
+    assert actual == expected
+
+
+def test__copy__(api: NbApi):
+    """NbApi.__copy__()."""
+    api_: NbApi = copy(api)
+
+    actual = api_.host
+    expected = "netbox"
     assert actual == expected
 
 
@@ -98,6 +111,17 @@ def test__version(
     """NbApi.version()."""
     actual = api.version()
     assert actual == "3.6.5"
+
+
+@pytest.mark.parametrize("host, expected", [
+    ("netbox2", "netbox2"),
+])
+def test__copy(api: NbApi, host, expected):
+    """NbApi.copy()."""
+    api_: NbApi = api.copy(host=host)
+
+    actual = api_.host
+    assert actual == expected
 
 
 @pytest.mark.parametrize("params, expected", [
