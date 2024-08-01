@@ -21,7 +21,7 @@ SInt = Set[int]
 SStr = Set[str]
 SeqStr = Sequence[str]
 Str = str
-StrInt = Union[str, int]
+IntStr = Union[int, str]
 T = TypeVar("T")
 T2Str = Tuple[str, str]
 T3StrInt = Tuple[str, str, int]
@@ -32,6 +32,7 @@ TValues = (str, int, float)
 Value = Union[str, int, float]
 
 # 2 level
+SeqUIntStr = Sequence[IntStr]
 DDAny = Dict[str, DAny]
 DDStr = Dict[str, DStr]
 DLInt = Dict[str, LInt]

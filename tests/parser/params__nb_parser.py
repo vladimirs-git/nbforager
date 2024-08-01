@@ -41,6 +41,13 @@ ANY = [
     (["a", "b", "c"], {"a": {"b": {"c": {}}}}, False, {}),
     (["a", "b", "c"], {"a": {"b": {"c": {"k": "C"}}}}, True, {"k": "C"}),
     (["a", "b", "c"], {"a": {"b": {"c": {"k": "C"}}}}, False, {"k": "C"}),
+    # list
+    (["a", 0, "b"], {"a": [{"b": None}]}, False, None),
+    (["a", 0, "b"], {"a": [{"b": None}]}, True, None),
+    (["a", 0, "b"], {"a": [{"b": "B"}]}, False, "B"),
+    (["a", 0, "b"], {"a": [{"b": "B"}]}, True, "B"),
+    (["a", 0, "b"], {"a": {"b": "B"}}, False, None),
+    (["a", 0, "b"], {"a": {"b": "B"}}, True, None),
 ]
 
 # test__bool
@@ -61,6 +68,13 @@ BOOL = [
     (["a", "b", "c"], {"a": {"b": {"c": True}}}, False, True),
     (["a", "b", "c"], {"a": {"b": {"c": None}}}, True, NbParserError),
     (["a", "b", "c"], {"a": {"b": {"c": None}}}, False, False),
+    # list
+    (["a", 0, "b"], {"a": [{"b": None}]}, False, False),
+    (["a", 0, "b"], {"a": [{"b": None}]}, True, NbParserError),
+    (["a", 0, "b"], {"a": [{"b": True}]}, False, True),
+    (["a", 0, "b"], {"a": [{"b": True}]}, True, True),
+    (["a", 0, "b"], {"a": {"b": True}}, False, False),
+    (["a", 0, "b"], {"a": {"b": True}}, True, NbParserError),
 ]
 
 # test__dict
@@ -77,6 +91,13 @@ DICT = [
     (["a", "b"], {"a": {"b": {"k": "B"}}}, False, {"k": "B"}),
     (["a", "b", "c"], {"a": {"b": {"c": {"k": "C"}}}}, True, {"k": "C"}),
     (["a", "b", "c"], {"a": {"b": {"c": {"k": "C"}}}}, False, {"k": "C"}),
+    # list
+    (["a", 0, "b"], {"a": [{"b": None}]}, False, {}),
+    (["a", 0, "b"], {"a": [{"b": None}]}, True, NbParserError),
+    (["a", 0, "b"], {"a": [{"b": {"k": "B"}}]}, False, {"k": "B"}),
+    (["a", 0, "b"], {"a": [{"b": {"k": "B"}}]}, True, {"k": "B"}),
+    (["a", 0, "b"], {"a": {"b": {"k": "B"}}}, False, {}),
+    (["a", 0, "b"], {"a": {"b": {"k": "B"}}}, True, NbParserError),
 ]
 
 # test__int
@@ -99,6 +120,13 @@ INT = [
     (["a", "b", "c"], {"a": {"b": {"c": None}}}, False, 0),
     (["id"], None, True, NbParserError),
     (["id"], None, False, 0),
+    # list
+    (["a", 0, "b"], {"a": [{"b": None}]}, False, 0),
+    (["a", 0, "b"], {"a": [{"b": None}]}, True, NbParserError),
+    (["a", 0, "b"], {"a": [{"b": 1}]}, False, 1),
+    (["a", 0, "b"], {"a": [{"b": 1}]}, True, 1),
+    (["a", 0, "b"], {"a": {"b": 1}}, False, 0),
+    (["a", 0, "b"], {"a": {"b": 1}}, True, NbParserError),
 ]
 
 # test__list
@@ -119,6 +147,13 @@ LIST = [
     (["a", "b", "c"], {"a": {"b": {"c": ["C"]}}}, False, ["C"]),
     (["a", "b", "c"], {"a": {"b": {"c": None}}}, True, NbParserError),
     (["a", "b", "c"], {"a": {"b": {"c": None}}}, False, []),
+    # list
+    (["a", 0, "b"], {"a": [{"b": ["B"]}]}, False, ["B"]),
+    (["a", 0, "b"], {"a": [{"b": ["B"]}]}, True, NbParserError),
+    (["a", 0, "b"], {"a": [{"b": ["B"]}]}, False, ["B"]),
+    (["a", 0, "b"], {"a": [{"b": ["B"]}]}, True, ["B"]),
+    (["a", 0, "b"], {"a": {"b": ["B"]}}, False, []),
+    (["a", 0, "b"], {"a": {"b": ["B"]}}, True, NbParserError),
 ]
 
 # test__str
@@ -139,6 +174,13 @@ STR = [
     (["a", "b", "c"], {"a": {"b": {"c": "C"}}}, False, "C"),
     (["a", "b", "c"], {"a": {"b": {"c": None}}}, True, NbParserError),
     (["a", "b", "c"], {"a": {"b": {"c": None}}}, False, ""),
+    # list
+    (["a", 0, "b"], {"a": [{"b": None}]}, False, ""),
+    (["a", 0, "b"], {"a": [{"b": None}]}, True, NbParserError),
+    (["a", 0, "b"], {"a": [{"b": "B"}]}, False, "B"),
+    (["a", 0, "b"], {"a": [{"b": "B"}]}, True, "B"),
+    (["a", 0, "b"], {"a": {"b": "B"}}, False, ""),
+    (["a", 0, "b"], {"a": {"b": "B"}}, True, NbParserError),
 ]
 
 # test__strict_dict

@@ -4,10 +4,12 @@
 CHANGELOG
 =========
 
-0.3.1 (2024-08-01)
+0.3.1 (2024-08-06)
 ------------------
 
 **Added:** copy(NbApi)
+
+**Changed:** NbParser.str() by list index
 
 **Changed:** Joiner.join_tree()
 

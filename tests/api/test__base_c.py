@@ -245,39 +245,37 @@ def test__change_params_exceptions(
     assert actual == expected
 
 
-@pytest.mark.parametrize("kwargs, status_code, text, error", [
+@pytest.mark.parametrize("kwargs, exp_status_code, exp_text, error", [
+    # strict=True
     ({"host": "netbox", "strict": True}, 200, "", None),
-    ({"host": "netbox", "strict": False}, 200, "", None),
     ({"host": "netbox", "strict": True}, 400, "", None),
-    ({"host": "netbox", "strict": False}, 400, "", ConnectionError),
     ({"host": "netbox", "strict": True}, 500, "any", ConnectionError),
-    ({"host": "netbox", "strict": False}, 500, "any", ConnectionError),
     ({"host": "netbox", "strict": True}, 403, "Invalid token", ConnectionError),
-    ({"host": "netbox", "strict": False}, 403, "Invalid token", ConnectionError),
     ({"host": "netbox", "timeout": 1, "max_retries": 1, "sleep": 1, "strict": True}, 200, "", None),
-    ({"host": "netbox", "timeout": 1, "max_retries": 1, "sleep": 1}, 200, "", None),
-    # was implemented in old version
-    ({"host": "netbox", "timeout": 1, "max_retries": 2, "sleep": 1, "strict": True}, 504, "",
-     ConnectionError),
-    ({"host": "netbox", "timeout": 1, "max_retries": 2, "sleep": 1}, 504, "", ConnectionError),
+    ({"host": "netbox", "timeout": 1, "max_retries": 2, "sleep": 1, "strict": True},
+     504, "", ConnectionError),  # was implemented in old version
+    # strict=False
+    ({"host": "netbox", "strict": False}, 200, "", None),
+    ({"host": "netbox", "strict": False}, 400, "", ConnectionError),
+    ({"host": "netbox", "strict": False}, 500, "any", ConnectionError),
+    ({"host": "netbox", "strict": False}, 403, "Invalid token", ConnectionError),
+    ({"host": "netbox", "timeout": 1, "max_retries": 1, "sleep": 1, "strict": False},
+     200, "", None),
+    ({"host": "netbox", "timeout": 1, "max_retries": 2, "sleep": 1, "strict": False},
+     504, "", ConnectionError),  # was implemented in old version
 ])
-def test__retry_requests(
-        monkeypatch: MonkeyPatch,
-        kwargs: DAny,
-        status_code: int,
-        text: str,
-        error: Any,
-):
+def test__retry_requests(monkeypatch: MonkeyPatch,
+                         kwargs: DAny, exp_status_code, exp_text, error: Any):
     """BaseC._retry_requests()."""
     api = NbApi(**kwargs)
-    monkeypatch.setattr(Session, "get", mock_session(status_code, text))
+    monkeypatch.setattr(Session, "get", mock_session(exp_status_code, exp_text))
     if error:
         with pytest.raises(error):
             api.ipam.ip_addresses._retry_requests(url="")
     else:
         response = api.ipam.ip_addresses._retry_requests(url="")
         actual = response.status_code
-        assert actual == status_code
+        assert actual == exp_status_code
 
 
 # ============================= helpers ==============================

@@ -157,9 +157,10 @@ class BaseC:
             session timeout reached. Default is `10`.
 
         :param bool strict: When querying objects by tag, if there are no tags present,
-            the Netbox API response returns a status_code=400. True - ConnectionError is
-            raised when status_code=400. False - a warning message is logged and an
-            empty list is returned with status_code=200. Default is `False`.
+            the Netbox API response returns a status_code=400.
+            True - ConnectionError is raised when status_code=400.
+            False - WARNING message is logged and an empty list is returned with status_code=200.
+            Default is `False`.
 
         :param bool extended_get: True - Extend filtering parameters in GET request,
             ``{parameter}`` can be used instead of ``{parameter}_id``. Default is `True`.
@@ -501,6 +502,7 @@ class BaseC:
 
             if response.ok:
                 return response
+
             msg = self._msg_status_code(response)
             if self._is_status_code_5xx(response):
                 raise ConnectionError(f"Netbox server error: {msg}.")

@@ -7,7 +7,7 @@ from typing import Any, Type, Dict, List
 from vhelpers import vstr, vlist
 
 from nbforager.exceptions import NbParserError
-from nbforager.types_ import DAny, SeqStr, Int, Str, LDAny, TLists
+from nbforager.types_ import DAny, SeqStr, Int, Str, LDAny, TLists, SeqUIntStr
 
 
 def check_strict(method):
@@ -252,7 +252,7 @@ class NbParser:
 
     # ============================= helpers ==============================
 
-    def _get_keys(self, type_: Type, keys: SeqStr, data: Dict) -> Any:
+    def _get_keys(self, type_: Type, keys: SeqUIntStr, data: Dict) -> Any:
         """Retrieve values from data using keys and check their data types.
 
         :param type_: Data type.
@@ -266,7 +266,7 @@ class NbParser:
         try:
             for key in keys:
                 data = data[key]  # type: ignore
-        except (KeyError, TypeError) as ex:
+        except (KeyError, IndexError, TypeError) as ex:
             if self.strict:
                 ex_type = type(ex).__name__
                 raise NbParserError(f"{ex_type}: {ex}, {keys=} in {self._source()}.") from ex
