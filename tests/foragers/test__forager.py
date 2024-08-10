@@ -1,6 +1,7 @@
 """Tests nbforager.nb_forager.py."""
 from typing import Any, Tuple
 
+import dictdiffer
 import pytest
 import requests_mock
 from requests_mock import Mocker
@@ -262,3 +263,27 @@ def test__find_rse(nbf_t: NbForager, params, expected: Any):
     else:
         with pytest.raises(expected):
             nbf_t.ipam.prefixes.find_rse(**params)
+
+
+@pytest.mark.parametrize("kwargs, expected", [
+    ({"id": 1}, {"id": 1}),
+    ({"id": [1]}, {"id": []}),
+    ({"id": {1}}, {"id": {1}}),
+    ({"id": [9]}, {"id": [9]}),
+    ({"id": [1, 2, 8, 9]}, {"id": [8, 9]}),
+    ({"name": "DEVICE1"}, {"name": "DEVICE1"}),
+    ({"name": ["DEVICE1"]}, {"name": ["DEVICE1"]}),
+    ({}, {}),
+])
+def test__delete_existing_ids_from_kwargs(nbf_r: NbForager, kwargs, expected: Any):
+    """Forager._delete_existing_ids_from_kwargs().
+
+    NbForager.tree and NbForager.root has 3 devices: DEVICE1, DEVICE2, DEVICE3.
+    DEVICE1 has: tags=TAG1, device_role=DEVICE ROLE1, serial=SERIAL1
+    DEVICE2 has: tags=TAG1, device_role=DEVICE ROLE1, serial=SERIAL2
+    DEVICE3 has: tags=TAG3, device_role=DEVICE ROLE3, serial=SERIAL1
+    """
+    nbf_r.dcim.devices._delete_existing_ids_from_kwargs(kwargs)
+
+    diff = list(dictdiffer.diff(kwargs, expected))
+    assert not diff

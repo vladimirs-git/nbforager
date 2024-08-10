@@ -148,8 +148,8 @@ LIST = [
     (["a", "b", "c"], {"a": {"b": {"c": None}}}, True, NbParserError),
     (["a", "b", "c"], {"a": {"b": {"c": None}}}, False, []),
     # list
-    (["a", 0, "b"], {"a": [{"b": ["B"]}]}, False, ["B"]),
-    (["a", 0, "b"], {"a": [{"b": ["B"]}]}, True, NbParserError),
+    (["a", 0, "b"], {"a": [{"b": "B"}]}, False, []),
+    (["a", 0, "b"], {"a": [{"b": "B"}]}, True, NbParserError),
     (["a", 0, "b"], {"a": [{"b": ["B"]}]}, False, ["B"]),
     (["a", 0, "b"], {"a": [{"b": ["B"]}]}, True, ["B"]),
     (["a", 0, "b"], {"a": {"b": ["B"]}}, False, []),
