@@ -21,6 +21,7 @@ from nbforager.api.users import UsersAC
 from nbforager.api.virtualization import VirtualizationAC
 from nbforager.api.wireless import WirelessAC
 from nbforager.parser.nb_parser import NbParser
+from nbforager.nb_tree import NbTree
 from nbforager.types_ import ODLStr, ODDAny, DAny
 
 
@@ -207,6 +208,25 @@ class NbApi:
     def url(self) -> str:
         """Netbox base URL."""
         return self.circuits.circuit_terminations.url_base
+
+    @property
+    def threads(self) -> int:
+        """Threads count."""
+        return self.circuits.circuit_terminations.threads
+
+    @threads.setter
+    def threads(self, threads: int) -> None:
+        """Set the number of threads.
+
+        :param threads: Threads count to set.
+
+        :return: None. Update threads in all connectors.
+        """
+        tree = NbTree()
+        for app in tree.apps():
+            for model in getattr(tree, app).models():
+                connector = getattr(getattr(self, app), model)
+                setattr(connector, "threads", threads)
 
     def copy(self, **kwargs) -> NbApi:
         """Create a duplicate of the object.

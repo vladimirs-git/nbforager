@@ -17,7 +17,7 @@ from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree, missed_urls
 from nbforager.parser.nb_parser import find_objects
 from nbforager.py_tree import PyTree
-from nbforager.types_ import LDAny, DiDAny, LStr, LT2StrDAny, DList, LDList, DiAny, SInt
+from nbforager.types_ import LDAny, DiDAny, LStr, LT2StrDAny, DList, LDList, DiAny
 
 
 class Forager:
@@ -86,7 +86,6 @@ class Forager:
         :return: None. Update self object.
         """
         # Query main data
-        self._delete_existing_ids_from_kwargs(kwargs)
         nb_objects: LDAny = self._get_root_data_from_netbox(**kwargs)
         if not nested:
             return
@@ -171,24 +170,6 @@ class Forager:
         return find_objects(objects=list(self.tree_d.values()), **kwargs)
 
     # ============================= helpers ==============================
-
-    def _delete_existing_ids_from_kwargs(self, kwargs) -> None:
-        """Delete the IDs of objects that are already present in the tree.
-
-        Delete only if kwargs["id"] is a list, ignore other data types.
-
-        :param kwargs: Filtering parameters.
-
-        :return: None. Update IDs in kwargs.
-        """
-        if list(kwargs) != ["id"]:
-            return
-        if not isinstance(kwargs["id"], list):
-            return
-        ids: SInt = set(kwargs["id"])
-        present: SInt = {d["id"] for d in self.find_root(**kwargs)}
-        ids = set(ids).difference(present)
-        kwargs["id"] = sorted(ids)
 
     def _get_root_data_from_netbox(self, **kwargs) -> LDAny:
         """Retrieve data from the Netbox.

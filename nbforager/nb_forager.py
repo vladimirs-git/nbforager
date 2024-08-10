@@ -216,6 +216,21 @@ class NbForager:
         """Netbox URL."""
         return self.api.url
 
+    @property
+    def threads(self) -> int:
+        """Threads count."""
+        return self.api.threads
+
+    @threads.setter
+    def threads(self, threads: int) -> None:
+        """Set the number of threads.
+
+        :param threads: Threads count to set.
+
+        :return: None. Update threads in all connectors.
+        """
+        self.api.threads = threads
+
     # =========================== method =============================
 
     def clear(self, root: bool = True, tree: bool = True) -> None:

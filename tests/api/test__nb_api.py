@@ -104,6 +104,18 @@ def test__url(params, expected):
     assert actual == expected
 
 
+def test__threads():
+    """NbApi.threads."""
+    api = NbApi(host="netbox")
+    assert api.threads == 1
+
+    api.threads = 2
+
+    expected = 2
+    assert api.threads == expected
+    assert api.dcim.devices.threads == expected
+
+
 def test__version(
         api: NbApi,
         mock_requests_status: Mocker,  # pylint: disable=unused-argument

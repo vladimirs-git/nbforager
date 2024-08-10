@@ -7,6 +7,8 @@ CHANGELOG
 0.3.1 (2024-08-10)
 ------------------
 
+**Added:** NbApi.threads
+
 **Added:** copy(NbApi)
 
 **Changed:** NbParser.str() by list index

@@ -7,7 +7,7 @@ from typing import Any, Type, Dict, List
 from vhelpers import vstr, vlist
 
 from nbforager.exceptions import NbParserError
-from nbforager.types_ import DAny, SeqStr, Int, Str, LDAny, TLists, SeqUIntStr
+from nbforager.types_ import DAny, Int, Str, LDAny, TLists, SeqUIntStr
 
 
 def check_strict(method):
