@@ -17,7 +17,7 @@ from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree, missed_urls
 from nbforager.parser.nb_parser import find_objects
 from nbforager.py_tree import PyTree
-from nbforager.types_ import LDAny, DiDAny, LStr, LT2StrDAny, DList, LDList, DiAny
+from nbforager.types_ import LDAny, DiDAny, LStr, LT2StrDAny, DList, LDList, DiAny, SInt
 
 
 class Forager:
@@ -86,7 +86,7 @@ class Forager:
         :return: None. Update self object.
         """
         # Query main data
-        nb_objects: LDAny = self._get_root_data_from_netbox(**kwargs)
+        nb_objects: LDAny = self._get_root_data_from_netbox(nested=nested, **kwargs)
         if not nested:
             return
         urls: LStr = self._collect_nested_urls(nb_objects)
@@ -171,43 +171,48 @@ class Forager:
 
     # ============================= helpers ==============================
 
-    def _get_root_data_from_netbox(self, **kwargs) -> LDAny:
+    def _delete_existing_nested_ids(self, kwargs) -> None:
+        """Delete the IDs of objects that are already present in the tree and nested=True.
+
+        Delete only if kwargs["id"] is a list, ignore other data types.
+
+        :param kwargs: Filtering parameters.
+
+        :return: None. Update IDs in kwargs.
+        """
+        if list(kwargs) != ["id"]:
+            return
+        if not isinstance(kwargs["id"], list):
+            return
+        ids: SInt = set(kwargs["id"])
+        present: SInt = {d["id"] for d in self.find_root(_nested=True, **kwargs)}
+        ids = set(ids).difference(present)
+        kwargs["id"] = sorted(ids)
+
+    def _get_root_data_from_netbox(self, nested: bool = False, **kwargs) -> LDAny:
         """Retrieve data from the Netbox.
 
         Request data based on the kwargs filter parameters and
         save the received objects to the NbForager.root.
+        Set extra `_nested` value in Netbox object.
+
+        :param bool nested: `True` - Request base and nested objects,
+            `False` - Request only base objects. Default id `False`
 
         :param kwargs: Filtering parameters.
 
         :return: List of Netbox objects. Update NbForager.root object.
         """
         nb_objects: LDAny = self.connector.get(**kwargs)
-        nb_objects = self._validate_ids(nb_objects)
         for nb_object in nb_objects:
-            self.root_d[nb_object["id"]] = nb_object
+            key = "_nested"
+            if key in nb_object:
+                raise ValueError(f"Reserved {key=} detected.")
+            nb_object["_nested"] = nested
+
+            idx = int(nb_object["id"])
+            self.root_d[idx] = nb_object
         return nb_objects
-
-    @staticmethod
-    def _validate_ids(nb_objects: LDAny) -> LDAny:
-        """Check the IDs in the items. The ID should be a unique integer.
-
-        :param nb_objects: List of dictionaries containing Netbox objects.
-
-        :return: None. Logging an error if the ID does not match the conditions.
-        """
-        nb_objects_: LDAny = []
-        for nb_object in nb_objects:
-            id_ = nb_object.get("id")
-            if not isinstance(id_, int):
-                msg = f"TypeError: {id_=} {int} expected in {nb_object=}."
-                logging.error(msg)
-                continue
-            if id_ in nb_objects:
-                msg = f"ValueError: Duplicate {id_=} in nb_objects_ and {nb_object=}."
-                logging.error(msg)
-                continue
-            nb_objects_.append(nb_object)
-        return nb_objects_
 
     def _collect_nested_urls(self, nb_objects: LDAny) -> LStr:
         """Collect nested urls.

@@ -7,6 +7,8 @@ CHANGELOG
 0.3.1 (2024-08-10)
 ------------------
 
+**Added:** Forager._delete_existing_nested_ids()
+
 **Added:** NbApi.threads
 
 **Added:** copy(NbApi)
