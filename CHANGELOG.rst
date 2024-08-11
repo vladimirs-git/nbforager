@@ -4,7 +4,7 @@
 CHANGELOG
 =========
 
-0.3.1 (2024-08-10)
+0.3.1 (2024-08-11)
 ------------------
 
 **Added:** Forager._delete_existing_nested_ids()

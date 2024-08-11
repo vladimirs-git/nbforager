@@ -276,7 +276,7 @@ def test__find_rse(nbf_t: NbForager, params, expected: Any):
 
 
 @pytest.mark.parametrize("kwargs, expected", [
-    ({"id": [1]}, {"id": []}),  # nested=True
+    ({"id": [1]}, {}),  # nested=True
     ({"id": [2]}, {"id": [2]}),  # nested=False
     ({"id": [9]}, {"id": [9]}),  # absent
     ({"id": [1, 2, 9]}, {"id": [2, 9]}),  # combo
@@ -298,7 +298,7 @@ def test__delete_existing_nested_ids(nbf_r: NbForager, kwargs, expected):
     nbf_r.root.dcim.devices[1]["_nested"] = True
     nbf_r.root.dcim.devices[2]["_nested"] = False
 
-    nbf_r.dcim.devices._delete_existing_nested_ids(kwargs)
+    actual = nbf_r.dcim.devices._delete_existing_nested_ids(**kwargs)
 
-    diff = list(dictdiffer.diff(kwargs, expected))
+    diff = list(dictdiffer.diff(actual, expected))
     assert not diff

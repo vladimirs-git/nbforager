@@ -514,7 +514,7 @@ D1_INTERFACE1_D: DAny = {
             "url": f"api/dcim/interfaces/{D2P1}/",
             "name": ETHERNET11,
             "device": {"id": D2, "url": f"/api/dcim/devices/{D2}/", "name": HOSTNAME2},
-            "cable": C2,
+            "cable": CB2,
             "_occupied": True,
         }
     ],
@@ -644,7 +644,7 @@ D2_INTERFACE1_D: DAny = {
             "url": f"api/dcim/interfaces/{D1P1}/",
             "name": ETHERNET11,
             "device": {"id": D1, "url": f"/api/dcim/devices/{D1}/", "name": HOSTNAME1},
-            "cable": C1,
+            "cable": CB1,
             "_occupied": True,
         }
     ],

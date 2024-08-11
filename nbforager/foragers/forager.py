@@ -17,7 +17,7 @@ from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree, missed_urls
 from nbforager.parser.nb_parser import find_objects
 from nbforager.py_tree import PyTree
-from nbforager.types_ import LDAny, DiDAny, LStr, LT2StrDAny, DList, LDList, DiAny, SInt
+from nbforager.types_ import LDAny, DiDAny, LStr, LT2StrDAny, DList, LDList, DiAny, SInt, DAny
 
 
 class Forager:
@@ -86,7 +86,10 @@ class Forager:
         :return: None. Update self object.
         """
         # Query main data
-        nb_objects: LDAny = self._get_root_data_from_netbox(nested=nested, **kwargs)
+        kwargs_: DAny = self._delete_existing_nested_ids(**kwargs)
+        if kwargs and not kwargs_:
+            return
+        nb_objects: LDAny = self._get_root_data_from_netbox(nested=nested, **kwargs_)
         if not nested:
             return
         urls: LStr = self._collect_nested_urls(nb_objects)
@@ -171,7 +174,7 @@ class Forager:
 
     # ============================= helpers ==============================
 
-    def _delete_existing_nested_ids(self, kwargs) -> None:
+    def _delete_existing_nested_ids(self, **kwargs) -> DAny:
         """Delete the IDs of objects that are already present in the tree and nested=True.
 
         Delete only if kwargs["id"] is a list, ignore other data types.
@@ -181,13 +184,14 @@ class Forager:
         :return: None. Update IDs in kwargs.
         """
         if list(kwargs) != ["id"]:
-            return
+            return kwargs
         if not isinstance(kwargs["id"], list):
-            return
+            return kwargs
         ids: SInt = set(kwargs["id"])
-        present: SInt = {d["id"] for d in self.find_root(_nested=True, **kwargs)}
-        ids = set(ids).difference(present)
-        kwargs["id"] = sorted(ids)
+        existing_ids: SInt = {d["id"] for d in self.find_root(_nested=True, **kwargs)}
+        if new_ids := sorted(set(ids).difference(existing_ids)):
+            return {"id": new_ids}
+        return {}
 
     def _get_root_data_from_netbox(self, nested: bool = False, **kwargs) -> LDAny:
         """Retrieve data from the Netbox.
@@ -205,11 +209,7 @@ class Forager:
         """
         nb_objects: LDAny = self.connector.get(**kwargs)
         for nb_object in nb_objects:
-            key = "_nested"
-            if key in nb_object:
-                raise ValueError(f"Reserved {key=} detected.")
             nb_object["_nested"] = nested
-
             idx = int(nb_object["id"])
             self.root_d[idx] = nb_object
         return nb_objects
@@ -315,13 +315,20 @@ class Forager:
         connector = getattr(getattr(self.api, app), model)
         return connector
 
-    def _save_results(self, results):
-        # save
+    def _save_results(self, results: LDAny) -> None:
+        """Save Netbox objects to root NbTree object.
+
+        :param results: Data to be saved.
+        :return: None. root NbTree object.
+        """
         for data in results:
-            app, model, digit = h.url_to_ami_items(data["url"])
+            app, model, idx_ = h.url_to_ami_items(data["url"])
+            idx = int(idx_)
             path = f"{app}/{model}"
             model_d: DiDAny = self._get_root_data(path)
-            model_d[int(digit)] = data
+            if idx not in model_d:
+                data["_nested"] = False
+                model_d[idx] = data
 
     def _get_pynb_data(self, path: str) -> DiAny:
         """Get data in self pynb by app/model path.
