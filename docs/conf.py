@@ -10,7 +10,7 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 project = "nbforager"
 copyright = "2023, Vladimirs Prusakovs"
 author = "Vladimirs Prusakovs"
-release = "0.3.1"
+release = "0.3.2"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
