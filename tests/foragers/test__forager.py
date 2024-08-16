@@ -1,7 +1,7 @@
 """Tests nbforager.nb_forager.py."""
 from typing import Any, Tuple
 
-import dictdiffer
+import dictdiffer  # type: ignore
 import pytest
 import requests_mock
 from requests_mock import Mocker

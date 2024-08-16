@@ -5,9 +5,9 @@ from vhelpers import vlist
 
 from nbforager import helpers as h
 from nbforager.api.base_c import BaseC
-from nbforager.foragers.forager import find_objects
 from nbforager.foragers.ipv4 import IPv4
 from nbforager.nb_tree import NbTree
+from nbforager.parser import nb_parser
 from nbforager.parser.nb_value import NbValue
 from nbforager.types_ import LDAny, DAny, LStr, DiDAny, LInt, DiLDAny, SInt
 
@@ -164,7 +164,9 @@ class Joiner:
         object_type = "virtualization.vminterface" if app == "virtualization" else "dcim.interface"
         intfs_d: DiDAny = getattr(getattr(self.tree, app), model)
         params = {"id": intf_ids}
-        intfs_d = {d["id"]: d for d in find_objects(objects=list(intfs_d.values()), **params)}
+        intfs_d = {
+            d["id"]: d for d in nb_parser.find_objects(objects=list(intfs_d.values()), **params)
+        }
 
         app = "ipam"
         extra_model = "ip_addresses"

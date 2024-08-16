@@ -4,7 +4,7 @@
 CHANGELOG
 =========
 
-0.3.1 (2024-08-12)
+0.3.1 (2024-08-16)
 ------------------
 
 **Added:** Forager._delete_existing_nested_ids()
@@ -16,6 +16,8 @@ CHANGELOG
 **Changed:** NbParser.str() by list index
 
 **Changed:** Joiner.join_tree()
+
+**Fixed** Slice nested URLs in threading mode
 
 
 0.3.0 (2024-07-23)

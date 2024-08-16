@@ -10,6 +10,9 @@ IP1 = "10.0.0.1/24"
 IP2 = "10.0.0.2/24"
 IP3 = "10.0.0.3/24"
 IP4 = "10.0.0.4/24"
+SLASH = "%2F"
+IP1_ = f"10.0.0.1{SLASH}24"
+IP2_ = f"10.0.0.2{SLASH}24"
 
 
 # =========================== app model id ===========================
@@ -369,6 +372,18 @@ def test__slice_params_d(url, max_len, key, params_d, expected):
 def test__slice_params_ld(url, max_len, keys, params, expected):
     """helpers.slice_params_ld()."""
     actual = h.slice_params_ld(url=url, max_len=max_len, keys=keys, params_ld=params)
+    assert actual == expected
+
+
+@pytest.mark.parametrize("url, max_len, expected", [
+    (f"https://domain.com?address={IP1}&address={IP2}", 2047,
+     [f"https://domain.com?address={IP1_}&address={IP2_}"]),
+    (f"https://domain.com?address={IP1}&address={IP2}", 50,
+     [f"https://domain.com?address={IP1_}", f"https://domain.com?address={IP2_}"]),
+])
+def test__slice_url(url, max_len, expected):
+    """helpers.slice_url()."""
+    actual = h.slice_url(url=url, max_len=max_len)
     assert actual == expected
 
 

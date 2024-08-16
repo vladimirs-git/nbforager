@@ -3,11 +3,12 @@ import itertools
 import urllib
 from typing import Any
 from urllib.parse import urlencode, ParseResult
+from urllib.parse import urlparse, parse_qs
 
 from vhelpers import vlist, vparam, vint
 
 from nbforager.exceptions import NbApiError
-from nbforager.types_ import LStr, LDAny, DDDLInt, LValue, LParam, LDList, DList
+from nbforager.types_ import LStr, LDAny, DDDLInt, LValue, LParam, LDList, DList, DLStr
 from nbforager.types_ import LTInt2, DAny, SeqStr, SStr, TValues, TLists, T2Str, T3Str, T3StrInt
 
 
@@ -497,6 +498,41 @@ def slice_params_ld(url: str, max_len: int, keys: LStr, params_ld: LDList) -> LD
         params_ld_ = [{}]
 
     return params_ld_
+
+
+def slice_url(url: str, max_len: int) -> LStr:
+    """Split (slice) URL to multiple URLs if length is greater than max_len.
+
+    :param url: URL that need to split.
+    :param max_len: Maximum length of URL.
+
+    :return: Sliced URLs.
+    """
+    url_o: ParseResult = urlparse(url)
+    base = f"{url_o.scheme}://{url_o.netloc}{url_o.path}"
+    query_s: str = urlparse(url).query
+    params_d: DLStr = parse_qs(query_s)
+    key = get_key_of_longest_value(params_d)
+    values: LValue = _validate_values(values=params_d[key])
+    params_wo_key: LParam = [(k, v) for k, v in params_d.items() if k != key]
+
+    slices: LTInt2 = generate_slices(
+        url=url,
+        max_len=max_len,
+        key=key,
+        values=values,
+        params=[*params_wo_key, ("offset", 1000), ("limit", 1000)],
+    )
+
+    urls: LStr = []
+
+    for start, end in slices:
+        params_l: LParam = params_wo_key + [(key, s) for s in values[start:end]]
+        query_s = urlencode(params_l, doseq=True)
+        url_ = f"{base}?{query_s}"
+        urls.append(url_)
+
+    return urls
 
 
 def _validate_values(values: Any) -> LValue:

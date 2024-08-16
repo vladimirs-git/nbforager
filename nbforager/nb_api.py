@@ -20,8 +20,8 @@ from nbforager.api.tenancy import TenancyAC
 from nbforager.api.users import UsersAC
 from nbforager.api.virtualization import VirtualizationAC
 from nbforager.api.wireless import WirelessAC
-from nbforager.parser.nb_parser import NbParser
 from nbforager.nb_tree import NbTree
+from nbforager.parser.nb_parser import NbParser
 from nbforager.types_ import ODLStr, ODDAny, DAny
 
 

@@ -88,20 +88,10 @@ class NbParser:
         """__repr__."""
         data = None
         if isinstance(self.data, dict):
-            params_d = {}
-            if name := self.data.get("name"):
-                params_d["name"] = str(name)
-            elif prefix := self.data.get("prefix"):
-                params_d["prefix"] = str(prefix)
-            elif address := self.data.get("address"):
-                params_d["address"] = str(address)
-            elif prefix := self.data.get("name"):
-                params_d["prefix"] = str(prefix)
-            elif object_type := self.data.get("object_type"):
-                params_d["object_type"] = str(object_type)
-            elif id_ := self.data.get("id"):
-                params_d["id"] = str(id_)
-            data = vstr.repr_params(**params_d)
+            for key in ["name", "prefix", "address", "cid", "object_type", "id"]:
+                if value := self.data.get(key):
+                    data = vstr.repr_params(**{key: str(value)})
+                    break
 
         name = self.__class__.__name__
         return f"<{name}: {data}>"

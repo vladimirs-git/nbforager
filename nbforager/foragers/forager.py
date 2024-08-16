@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-import logging
 import time
 from queue import Queue
 from threading import Thread
@@ -13,9 +12,10 @@ from urllib.parse import urlparse, parse_qs
 from vhelpers import vstr
 
 from nbforager import helpers as h
+from nbforager import nb_tree
 from nbforager.nb_api import NbApi
-from nbforager.nb_tree import NbTree, missed_urls
-from nbforager.parser.nb_parser import find_objects
+from nbforager.nb_tree import NbTree
+from nbforager.parser import nb_parser
 from nbforager.py_tree import PyTree
 from nbforager.types_ import LDAny, DiDAny, LStr, LT2StrDAny, DList, LDList, DiAny, SInt, DAny
 
@@ -137,7 +137,7 @@ class Forager:
 
         :return: Filtered Netbox objects.
         """
-        return find_objects(objects=list(self.root_d.values()), **kwargs)
+        return nb_parser.find_objects(objects=list(self.root_d.values()), **kwargs)
 
     def find_rse(self, role: str = "", site: str = "", env: str = "", **kwargs) -> LDAny:
         """Find Netbox objects in NbForager.tree by Role-Sile-Env finding parameters.
@@ -158,7 +158,7 @@ class Forager:
         }
         params = {k: v for k, v in params.items() if v}
         kwargs.update(params)
-        return find_objects(objects=list(self.tree_d.values()), **kwargs)
+        return nb_parser.find_objects(objects=list(self.tree_d.values()), **kwargs)
 
     def find_tree(self, **kwargs) -> LDAny:
         """Find Netbox objects in NbForager.tree by extended finding parameters.
@@ -170,7 +170,7 @@ class Forager:
 
         :return: Filtered Netbox objects.
         """
-        return find_objects(objects=list(self.tree_d.values()), **kwargs)
+        return nb_parser.find_objects(objects=list(self.tree_d.values()), **kwargs)
 
     # ============================= helpers ==============================
 
@@ -222,10 +222,20 @@ class Forager:
         :return: Nested URLs.
         """
         urls: LStr = h.nested_urls(nb_objects)
-        urls = missed_urls(urls=urls, tree=self.root)
+        urls = nb_tree.missed_urls(urls=urls, tree=self.root)
         urls = h.join_urls(urls)
         urls = [s for s in urls if h.url_to_ami_items(s)[0]]
-        return urls
+
+        urls_: LStr = []
+
+        for url in urls:
+            app, model, _ = h.url_to_ami_items(url)
+            path = f"{app}/{model}/"
+            connector = self._get_connector(path)
+            urls_sliced = h.slice_url(url, max_len=connector.url_length)
+            urls_.extend(urls_sliced)
+
+        return urls_
 
     # noinspection PyProtectedMember
     def _get_path_params(self, urls: LStr) -> LT2StrDAny:
