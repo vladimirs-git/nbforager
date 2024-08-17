@@ -5,8 +5,8 @@ from nbforager.api import extended_get
 from nbforager.api.extended_get import ParamPath
 
 
-def test__param_map():
-    """ParamMap()."""
+def test__param_path():
+    """ParamPath()."""
     obj = ParamPath(param="name", path="app/name")
     assert obj.param == "name"
     assert obj.param_id == "name_id"

@@ -27,7 +27,7 @@ def joiner() -> Joiner:
     ("ip_addresses", p.A1, p.ADDRESS1),
 ])
 def test__init_extra_keys(joiner: Joiner, model, idx, network):
-    """Joiner.init_extra_keys()."""
+    """Joiner.init_extra_keys() executed in fixture."""
     data = getattr(joiner.tree.ipam, model)[idx]
     assert data["_ipv4"] == IPv4(network)
     assert data.get("_aggregate") == {}

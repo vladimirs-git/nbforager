@@ -221,7 +221,7 @@ def test__is_vrf(data: dict, strict: bool, expected: Any):
 
 @pytest.mark.parametrize("subnet, expected", p.IS_PREFIX)
 def test__is_prefix(subnet: str, expected: Any):
-    """NbValue.is_prefix()."""
+    """NbValue._is_prefix()."""
     parser = NbValue(data={})
     if isinstance(expected, bool):
         actual = parser._is_prefix(subnet)

@@ -46,14 +46,14 @@ def prepare_connector_results(nbf: NbForager) -> Tuple[NbForager, LT2StrDAny]:
 
 
 def test__interval():
-    """Forager._interval()."""
+    """Forager.interval()."""
     nbf = NbForager(host="netbox", interval=0.5)
     assert nbf.ipam.vrfs.interval == 0.5
     assert nbf.api.ipam.vrfs.interval == 0.5
 
 
 def test__threads():
-    """Forager._interval()."""
+    """Forager.threads()."""
     nbf = NbForager(host="netbox", threads=2)
 
     expected = 2

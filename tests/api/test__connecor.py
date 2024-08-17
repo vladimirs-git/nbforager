@@ -27,9 +27,11 @@ def test__create(
         data: DAny,
         expected: int,
 ):
-    """Connector._join_params()."""
+    """Connector.create()."""
     monkeypatch.setattr(Session, "post", mock_session(expected))
+
     response: Response = api.ipam.ip_addresses.create(**data)
+
     actual = response.status_code
     assert actual == expected
 
@@ -41,9 +43,11 @@ def test__create(
 def test__create_d(
         api: NbApi, monkeypatch: MonkeyPatch, data: DAny, status_code: int, content: str
 ):
-    """Connector._join_params()."""
+    """Connector.create_d()."""
     monkeypatch.setattr(Session, "post", mock_session(status_code, content))
+
     actual: DAny = api.ipam.ip_addresses.create_d(**data)
+
     if content:
         assert actual == data
     else:
@@ -60,10 +64,12 @@ def test__update(
         data: DAny,
         expected: Any,
 ):
-    """Connector._join_params()."""
+    """Connector.update()."""
     monkeypatch.setattr(Session, "patch", mock_session(expected))
     if isinstance(expected, int):
+
         response: Response = api.ipam.ip_addresses.update(**data)
+
         actual = response.status_code
         assert actual == expected
     else:
@@ -84,7 +90,9 @@ def test__update_d(
 ):
     """Connector.update_d()."""
     monkeypatch.setattr(Session, "patch", mock_session(status_code, content))
+
     actual: DAny = api.ipam.ip_addresses.update_d(**data)
+
     if content:
         assert actual == data
     else:

@@ -322,7 +322,7 @@ def test__version(nbf: NbForager, version, expected):
 # =========================== data methods ===========================
 
 def test__devices_primary_ip4(nbf_r: NbForager):
-    """NbForager.devices_primary_ip4()."""
+    """NbForager._devices_primary_ip4()."""
     actual = nbf_r._devices_primary_ip4()
     assert actual == ["10.1.1.1/24", "10.2.2.2/24", "10.3.3.3/24"]
 
@@ -331,8 +331,8 @@ def test__devices_primary_ip4(nbf_r: NbForager):
     assert actual == ["10.2.2.2/24", "10.3.3.3/24"]
 
 
-def test__set_addresses_mask_32(nbf_r: NbForager):
-    """NbForager.set_addresses_mask_32()."""
+def test__set_ipam_ip_addresses_mask_32(nbf_r: NbForager):
+    """NbForager._set_ipam_ip_addresses_mask_32()."""
     actual = [d["address"] for d in nbf_r.root.ipam.ip_addresses.values()]
     assert actual == [p.ADDRESS1, p.ADDRESS2, p.ADDRESS3, p.ADDRESS4]
 
@@ -342,7 +342,7 @@ def test__set_addresses_mask_32(nbf_r: NbForager):
 
 
 def test__print_warnings(nbf_r: NbForager, caplog):
-    """NbForager.print_warnings()."""
+    """NbForager._print_warnings()."""
     nbf_r._print_warnings()
     actual = [record.levelname == "WARNING" for record in caplog.records]
     assert actual == []
@@ -366,4 +366,6 @@ def test__print_warnings(nbf_r: NbForager, caplog):
 def test__make_cache_path(kwargs, expected):
     """nb_foragers.make_cache_path()."""
     actual = nb_forager.make_cache_path(**kwargs)
+
+    expected = str(Path(expected))
     assert actual == expected
