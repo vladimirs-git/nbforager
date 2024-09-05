@@ -2,7 +2,7 @@
 from typing import Any
 
 import pytest
-
+from urllib.parse import urlencode
 from nbforager import helpers as h, NbForager
 from nbforager.exceptions import NbApiError
 
@@ -334,12 +334,12 @@ def test__change_params_or(params_ld, expected):
 ])
 def test__generate_slices(max_len, values, expected):
     """helpers.generate_slices()."""
+    query: str = urlencode([("family", 4), ("status", "active"), ("offset", 1000), ("limit", 1000)])
     actual = h.generate_slices(
-        url="https://domain.com",
+        url=f"https://domain.com?{query}",
         max_len=max_len,
         key="address",
         values=values,
-        params=[("family", 4), ("status", "active"), ("offset", 1000), ("limit", 1000)],
     )
     assert actual == expected
 

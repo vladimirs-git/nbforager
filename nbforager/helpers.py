@@ -2,8 +2,7 @@
 import itertools
 import urllib
 from typing import Any
-from urllib.parse import urlencode, ParseResult
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import ParseResult, urlencode, urlparse, parse_qs
 
 from vhelpers import vlist, vparam, vint
 
@@ -398,14 +397,13 @@ def _get_keys_need_split(need_split: SeqStr, params_d: DList) -> SStr:
     return keys_need_split
 
 
-def generate_slices(url: str, max_len: int, key: str, values: LValue, params: LParam) -> LTInt2:
+def generate_slices(url: str, max_len: int, key: str, values: LValue) -> LTInt2:
     """Generate start and end indexes of parameters, ready for URL slicing.
 
     :param url: URL that need to split.
     :param max_len: Maximum length of URL.
     :param key: The key of the parameter that needs to be sliced.
     :param values: The values of the parameter that need to be sliced.
-    :param params: Other parameters that need to be mentioned in the URL.
 
     :return: The start and end indexes of the parameters, ready for URL slicing.
     """
@@ -414,15 +412,15 @@ def generate_slices(url: str, max_len: int, key: str, values: LValue, params: LP
 
     slices: LTInt2 = []
     start = 0
-    for end in range(1, len(values) + 1):
-        end_ = end + 1
+    for idx in range(1, len(values) + 1):
+        end_ = idx + 1
         params_ = [(key, s) for s in values[start:end_]]
-        params_ = [*params, *params_]
-        url_ = f"{url}?{urlencode(params_)}"
-        if end_ < len(values) + 1 and len(url_) < max_len:
-            continue
-        slices.append((start, end))
-        start = end
+        url_full = f"{url}&{urlencode(params_)}"
+        if end_ < len(values) + 1:  # if value is not last
+            if len(url_full) < max_len:  # if url is short
+                continue  # increase length
+        slices.append((start, idx))
+        start = idx
     return slices
 
 
@@ -443,20 +441,20 @@ def slice_params_d(url: str, max_len: int, key: str, params_d: DList) -> LDList:
         [{"address": ["10.0.0.1"], "family": 4}, {"address": ["10.0.0.2"], "family": 4}]
     """
     values: LValue = _validate_values(values=params_d[key])
-    params_wo_key: LParam = [(k, v) for k, v in params_d.items() if k != key]
+    params_common: LParam = [(k, v) for k, v in params_d.items() if k != key]
+    params_w_offset: LParam = [*params_common, ("offset", 1000), ("limit", 1000)]
 
     slices: LTInt2 = generate_slices(
-        url=url,
+        url=f"{url}?{urlencode(params_w_offset)}",
         max_len=max_len,
         key=key,
         values=values,
-        params=[*params_wo_key, ("offset", 1000), ("limit", 1000)],
     )
 
     params_sliced: LDList = []
     for start, end in slices:
-        params_l: LParam = params_wo_key + [(key, s) for s in values[start:end]]
-        params_sliced_: DList = vparam.to_dict(params_l)
+        params_i = [(key, s) for s in values[start:end]]
+        params_sliced_: DList = vparam.to_dict([*params_common, *params_i])
         params_sliced.append(params_sliced_)
     return params_sliced
 
@@ -509,27 +507,27 @@ def slice_url(url: str, max_len: int) -> LStr:
     :return: Sliced URLs.
     """
     url_o: ParseResult = urlparse(url)
-    base = f"{url_o.scheme}://{url_o.netloc}{url_o.path}"
+    url_base = f"{url_o.scheme}://{url_o.netloc}{url_o.path}"
     query_s: str = urlparse(url).query
     params_d: DLStr = parse_qs(query_s)
     key = get_key_of_longest_value(params_d)
     values: LValue = _validate_values(values=params_d[key])
-    params_wo_key: LParam = [(k, v) for k, v in params_d.items() if k != key]
+    params_common: LParam = [(k, v) for k, v in params_d.items() if k != key]
+    params_w_offset =[*params_common, ("offset", 1000), ("limit", 1000)]
 
     slices: LTInt2 = generate_slices(
-        url=url,
+        url=f"{url_base}?{urlencode(params_w_offset)}",
         max_len=max_len,
         key=key,
         values=values,
-        params=[*params_wo_key, ("offset", 1000), ("limit", 1000)],
     )
 
     urls: LStr = []
 
     for start, end in slices:
-        params_l: LParam = params_wo_key + [(key, s) for s in values[start:end]]
+        params_l: LParam = params_common + [(key, s) for s in values[start:end]]
         query_s = urlencode(params_l, doseq=True)
-        url_ = f"{base}?{query_s}"
+        url_ = f"{url_base}?{query_s}"
         urls.append(url_)
 
     return urls

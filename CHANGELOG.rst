@@ -4,7 +4,7 @@
 CHANGELOG
 =========
 
-0.3.3 (2024-08-17)
+0.3.4 (2024-09-04)
 ------------------
 
 **Added:** Forager._delete_existing_nested_ids()
@@ -18,6 +18,8 @@ CHANGELOG
 **Changed:** Joiner.join_tree()
 
 **Fixed** Slice nested URLs in threading mode
+
+**Fixed:** generate_slices()
 
 
 0.3.0 (2024-07-23)
