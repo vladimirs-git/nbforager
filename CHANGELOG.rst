@@ -4,7 +4,13 @@
 CHANGELOG
 =========
 
-0.3.4 (2024-09-04)
+0.3.5 (2024-09-14)
+------------------
+
+**Added:** helper.url_to_api_url()
+
+
+0.3.5 (2024-09-04)
 ------------------
 
 **Added:** Forager._delete_existing_nested_ids()

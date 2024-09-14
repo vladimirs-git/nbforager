@@ -278,6 +278,21 @@ def url_to_ami_url(url: str) -> str:
         ami_url += f"{id_}/"
     return ami_url
 
+def url_to_api_url(url: str) -> str:
+    """Convert Netbox UI URl to API URL.
+
+    :param url: A string representing the Netbox UI URL.
+    :return: A string representing the Netbox API URL.
+
+    :example:
+        url_to_ui_url("https://domain.com/ipam/vrf/1") -> "https://domain.com/api/ipam/vrf/1"
+    """
+    url_o: ParseResult = urllib.parse.urlparse(url)
+    app, model, id_ = url_to_ami(url=url, path=True)
+    ui_url = f"{url_o.scheme}://{url_o.netloc}/api/{app}/{model}/"
+    if id_:
+        ui_url += f"{id_}/"
+    return ui_url
 
 def url_to_ui_url(url: str) -> str:
     """Convert Netbox API URl to UI URL.
