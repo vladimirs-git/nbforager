@@ -270,7 +270,7 @@ def url_to_ami_url(url: str) -> str:
     :return: A string representing the short URL.
 
     :example:
-        url_to_ami_url("https://domain.com/api/ipam/vrf/1") -> "/api/ipam/vrf/1/"
+        url_to_ami_url("https://domain.com/api/ipam/vrf/1/") -> "/api/ipam/vrf/1/"
     """
     app, model, id_ = url_to_ami(url=url, path=True)
     ami_url = f"/api/{app}/{model}/"
@@ -285,7 +285,7 @@ def url_to_api_url(url: str) -> str:
     :return: A string representing the Netbox API URL.
 
     :example:
-        url_to_ui_url("https://domain.com/ipam/vrf/1") -> "https://domain.com/api/ipam/vrf/1"
+        url_to_ui_url("https://domain.com/ipam/vrf/1/") -> "https://domain.com/api/ipam/vrf/1/"
     """
     url_o: ParseResult = urllib.parse.urlparse(url)
     app, model, id_ = url_to_ami(url=url, path=True)
@@ -301,7 +301,7 @@ def url_to_ui_url(url: str) -> str:
     :return: A string representing the Netbox UI URL.
 
     :example:
-        url_to_ui_url("https://domain.com/api/ipam/vrf/1") -> "/api/ipam/vrf/1/"
+        url_to_ui_url("https://domain.com/api/ipam/vrf/1/") -> "https://domain.com/ipam/vrf/1/"
     """
     url_o: ParseResult = urllib.parse.urlparse(url)
     app, model, id_ = url_to_ami(url=url, path=True)
