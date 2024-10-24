@@ -4,6 +4,14 @@
 CHANGELOG
 =========
 
+0.3.6 (2024-10-23)
+------------------
+
+**Added:** helpers.object_type_to_am()
+
+**Fixed:** BaseC._query_count() offset
+
+
 0.3.5 (2024-09-14)
 ------------------
 
@@ -19,7 +27,7 @@ CHANGELOG
 
 **Changed:** Joiner.join_tree()
 
-**Fixed** Slice nested URLs in threading mode
+**Fixed:** Slice nested URLs in threading mode
 
 **Fixed:** generate_slices()
 

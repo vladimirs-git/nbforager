@@ -93,6 +93,20 @@ def test__nested_urls(nb_objects, expected):
     assert actual == expected
 
 
+
+@pytest.mark.parametrize("object_type, expected", [
+    # s
+    ("dcim.interface", ("dcim", "interfaces")),
+    ("virtualization.interface", ("virtualization", "interfaces")),
+    # es
+    ("ipam.prefix", ("ipam", "prefixes")),
+])
+def test__object_type_to_am(object_type, expected):
+    """helpers.object_type_to_am()"""
+    actual = h.object_type_to_am(object_type=object_type)
+    assert actual == expected
+
+
 @pytest.mark.parametrize("path, expected", [
     ("", ValueError),
     ("typo", ValueError),

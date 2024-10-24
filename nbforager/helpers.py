@@ -140,6 +140,30 @@ def nested_urls(nb_objects: LDAny) -> LStr:
     return sorted(urls)
 
 
+def object_type_to_am(object_type: str) -> T2Str:
+    """Convert object_type value (used in extras/changelog) to attribute names.
+
+    :param object_type: object_type value.
+    :return: Tuple of application attribute name, model attribute name.
+    :example:
+        object_type_to_ami("ipam/prefix") -> "ipam", "prefixes"
+    """
+    model_s = [
+        "interface",
+    ]
+    model_es = [
+        "prefix",
+    ]
+    app, model = object_type.split(".")
+
+    if model in model_s:
+        model += "s"
+    elif model in model_es:
+        model += "es"
+
+    return app, model
+
+
 def path_to_attrs(path: str) -> T2Str:
     """Convert path of app/model to attribute names.
 

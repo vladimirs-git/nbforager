@@ -317,6 +317,9 @@ class BaseC:
         :return: Netbox objects. Update self _results.
         """
         offset = 0
+        if offsets := params_d.get("offset"):
+            offset = int(offsets[0])
+
         max_limit: int = self._set_limit(params_d)
         params_l: LParam = vparam.from_dict(params_d)
 
