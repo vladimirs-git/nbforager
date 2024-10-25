@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from vhelpers import vstr
 
 from nbforager import helpers as h
-from nbforager.types_ import DiDAny, LStr, DAny
+from nbforager.types_ import DiDAny, LStr, DAny, T2Str
 
 
 class BaseTree(BaseModel):
@@ -309,6 +309,40 @@ def missed_urls(urls: LStr, tree: NbTree) -> LStr:
             urls_.append(url)
     return urls_
 
+
+def object_type_to_am(object_type: str) -> T2Str:
+    """Convert object_type value (used in extras/changelog) to app/model values.
+
+    :param object_type: object_type value.
+    :return: Tuple of app, model.
+    :example:
+        object_type_to_ami("ipam.ipaddress") -> "ipam", "ip_addresses"
+    """
+    app_type, model_type = object_type.split(".")
+    tree = NbTree()
+    for app in tree.apps():
+        if app != app_type:
+            continue
+        models: LStr = getattr(tree, app).models()
+        for model in models:
+            if model[:2] != model_type[:2]:
+                continue
+
+            # plural to singular
+            modified = model.replace("_", "")
+            if modified.endswith("ies"):
+                modified = modified[:-3] + "y"  # entries -> entry
+            elif modified.endswith("ses"):
+                modified = modified[:-2]  # ipaddresses -> ipaddress
+            elif modified.endswith("xes"):
+                modified = modified[:-2]  # prefixes -> prefix
+            elif modified.endswith("s"):
+                modified = modified[:-1]  # types -> type
+
+            if modified == model_type:
+                return app, model
+
+    raise ValueError(f"{object_type=} is not defined.")
 
 # ============================= helpers ==============================
 

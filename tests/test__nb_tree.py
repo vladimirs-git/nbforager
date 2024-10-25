@@ -249,3 +249,16 @@ def test__missed_urls(
     assert actual == expected
     logs = [record.levelname == "ERROR" for record in caplog.records]
     assert logs == errors
+
+
+@pytest.mark.parametrize("object_type, expected", [
+    ("dcim.consoleporttemplate", ("dcim", "console_port_templates")),
+    ("dcim.interface", ("dcim", "interfaces")),
+    ("ipam.ipaddress", ("ipam", "ip_addresses")),
+    ("ipam.prefix", ("ipam", "prefixes")),
+])
+def test__object_type_to_am(object_type, expected):
+    """BaseC.object_type_to_am()."""
+    actual = nb_tree.object_type_to_am(object_type)
+
+    assert actual == expected

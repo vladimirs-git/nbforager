@@ -1,5 +1,6 @@
 """Helper functions."""
 import itertools
+import re
 import urllib
 from typing import Any
 from urllib.parse import ParseResult, urlencode, urlparse, parse_qs
@@ -140,30 +141,6 @@ def nested_urls(nb_objects: LDAny) -> LStr:
     return sorted(urls)
 
 
-def object_type_to_am(object_type: str) -> T2Str:
-    """Convert object_type value (used in extras/changelog) to attribute names.
-
-    :param object_type: object_type value.
-    :return: Tuple of application attribute name, model attribute name.
-    :example:
-        object_type_to_ami("ipam/prefix") -> "ipam", "prefixes"
-    """
-    model_s = [
-        "interface",
-    ]
-    model_es = [
-        "prefix",
-    ]
-    app, model = object_type.split(".")
-
-    if model in model_s:
-        model += "s"
-    elif model in model_es:
-        model += "es"
-
-    return app, model
-
-
 def path_to_attrs(path: str) -> T2Str:
     """Convert path of app/model to attribute names.
 
@@ -302,6 +279,7 @@ def url_to_ami_url(url: str) -> str:
         ami_url += f"{id_}/"
     return ami_url
 
+
 def url_to_api_url(url: str) -> str:
     """Convert Netbox UI URl to API URL.
 
@@ -317,6 +295,7 @@ def url_to_api_url(url: str) -> str:
     if id_:
         ui_url += f"{id_}/"
     return ui_url
+
 
 def url_to_ui_url(url: str) -> str:
     """Convert Netbox API URl to UI URL.
@@ -552,7 +531,7 @@ def slice_url(url: str, max_len: int) -> LStr:
     key = get_key_of_longest_value(params_d)
     values: LValue = _validate_values(values=params_d[key])
     params_common: LParam = [(k, v) for k, v in params_d.items() if k != key]
-    params_w_offset =[*params_common, ("offset", 1000), ("limit", 1000)]
+    params_w_offset = [*params_common, ("offset", 1000), ("limit", 1000)]
 
     slices: LTInt2 = generate_slices(
         url=f"{url_base}?{urlencode(params_w_offset)}",
