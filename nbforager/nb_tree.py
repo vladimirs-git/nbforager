@@ -310,10 +310,12 @@ def missed_urls(urls: LStr, tree: NbTree) -> LStr:
     return urls_
 
 
-def object_type_to_am(object_type: str) -> T2Str:
+def object_type_to_am(object_type: str, path: bool = False) -> T2Str:
     """Convert object_type value (used in extras/changelog) to app/model values.
 
     :param object_type: object_type value.
+    :param path: True - model as path with `-` character,
+        False - model as attribute with `_` character,
     :return: Tuple of app, model.
     :example:
         object_type_to_ami("ipam.ipaddress") -> "ipam", "ip_addresses"
@@ -340,6 +342,8 @@ def object_type_to_am(object_type: str) -> T2Str:
                 modified = modified[:-1]  # types -> type
 
             if modified == model_type:
+                if path:
+                    model = model.replace("_", "-")
                 return app, model
 
     raise ValueError(f"{object_type=} is not defined.")

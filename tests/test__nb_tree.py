@@ -251,14 +251,20 @@ def test__missed_urls(
     assert logs == errors
 
 
-@pytest.mark.parametrize("object_type, expected", [
-    ("dcim.consoleporttemplate", ("dcim", "console_port_templates")),
-    ("dcim.interface", ("dcim", "interfaces")),
-    ("ipam.ipaddress", ("ipam", "ip_addresses")),
-    ("ipam.prefix", ("ipam", "prefixes")),
+@pytest.mark.parametrize("params, expected", [
+    # attr
+    ({"object_type": "dcim.consoleporttemplate"}, ("dcim", "console_port_templates")),
+    ({"object_type": "dcim.interface"}, ("dcim", "interfaces")),
+    ({"object_type": "ipam.ipaddress"}, ("ipam", "ip_addresses")),
+    ({"object_type": "ipam.prefix"}, ("ipam", "prefixes")),
+    # path
+    ({"object_type": "dcim.consoleporttemplate", "path": True}, ("dcim", "console-port-templates")),
+    ({"object_type": "dcim.interface", "path": True}, ("dcim", "interfaces")),
+    ({"object_type": "ipam.ipaddress", "path": True}, ("ipam", "ip-addresses")),
+    ({"object_type": "ipam.prefix", "path": True}, ("ipam", "prefixes")),
 ])
-def test__object_type_to_am(object_type, expected):
+def test__object_type_to_am(params, expected):
     """BaseC.object_type_to_am()."""
-    actual = nb_tree.object_type_to_am(object_type)
+    actual = nb_tree.object_type_to_am(**params)
 
     assert actual == expected
