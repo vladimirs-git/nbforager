@@ -257,11 +257,13 @@ def test__missed_urls(
     ({"object_type": "dcim.interface"}, ("dcim", "interfaces")),
     ({"object_type": "ipam.ipaddress"}, ("ipam", "ip_addresses")),
     ({"object_type": "ipam.prefix"}, ("ipam", "prefixes")),
+    ({"object_type": "virtualization.vminterface"}, ("virtualization", "interfaces")),
     # path
     ({"object_type": "dcim.consoleporttemplate", "path": True}, ("dcim", "console-port-templates")),
     ({"object_type": "dcim.interface", "path": True}, ("dcim", "interfaces")),
     ({"object_type": "ipam.ipaddress", "path": True}, ("ipam", "ip-addresses")),
     ({"object_type": "ipam.prefix", "path": True}, ("ipam", "prefixes")),
+    ({"object_type": "virtualization.vminterface" , "path": True}, ("virtualization", "interfaces")),
 ])
 def test__object_type_to_am(params, expected):
     """BaseC.object_type_to_am()."""

@@ -321,6 +321,10 @@ def object_type_to_am(object_type: str, path: bool = False) -> T2Str:
         object_type_to_ami("ipam.ipaddress") -> "ipam", "ip_addresses"
     """
     app_type, model_type = object_type.split(".")
+
+    if model_type == "vminterface":
+        model_type = "interface"
+
     tree = NbTree()
     for app in tree.apps():
         if app != app_type:
