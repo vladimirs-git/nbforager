@@ -13,7 +13,7 @@ from nbforager import helpers as h
 from nbforager.exceptions import NbApiError
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
-from nbforager.types_ import DAny
+from nbforager.types_ import DAny, LDAny
 from tests.api.test__base_c import mock_session
 
 ATTRS = [
@@ -42,6 +42,28 @@ ATTRS = [
 def api():
     """Init API"""
     return NbApi(host="netbox")
+
+
+@pytest.fixture
+def mock_get():
+    """Mock Session GET."""
+    vrf1 = {"id": 1, "url": "https://netbox/api/ipam/vrfs/1/", "name": "VRF 1"}
+    vrf2 = {"id": 2, "url": "https://netbox/api/ipam/vrfs/2/", "name": "VRF 1"}
+    with requests_mock.Mocker() as mock:
+        mock.get(url="https://netbox/api/ipam/vrfs/", json={"results": [vrf1, vrf2]})
+        yield mock
+
+
+@pytest.fixture
+def mock_get_d():
+    """Mock Session GET."""
+    vrf1 = {"id": 1, "url": "https://netbox/api/ipam/vrfs/1/", "name": "VRF 1"}
+    with requests_mock.Mocker() as mock:
+        mock.get(
+            url="https://netbox/api/ipam/vrfs/?id=1&limit=1000&offset=0",
+            json={"results": [vrf1]},
+        )
+        yield mock
 
 
 @pytest.fixture
@@ -157,6 +179,42 @@ def test__create(
     else:
         with pytest.raises(expected):
             api.create(**params)
+
+
+@pytest.mark.parametrize("params, expected", [
+    ({"url": "https://domain.com/ipam/vrfs/", "key": "value"}, [1, 2]),
+])
+def test__get(
+        api: NbApi,
+        mock_get: Mocker,  # pylint: disable=unused-argument
+        params,
+        expected,
+):
+    """NbApi.get()."""
+    api = NbApi(host="netbox")
+
+    objects: LDAny = api.get(**params)
+
+    actual = [d["id"] for d in objects]
+    assert actual == expected
+
+
+@pytest.mark.parametrize("params, expected", [
+    ({"url": "https://domain.com/ipam/vrfs/1/", "key": "value"}, 1),
+])
+def test__get_d(
+        api: NbApi,
+        mock_get_d: Mocker,  # pylint: disable=unused-argument
+        params,
+        expected,
+):
+    """NbApi.get_d()."""
+    api = NbApi(host="netbox")
+
+    result: DAny = api.get_d(**params)
+
+    actual = result["id"]
+    assert actual == expected
 
 
 @pytest.mark.parametrize("url, expected", [

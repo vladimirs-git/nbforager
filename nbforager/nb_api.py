@@ -22,7 +22,7 @@ from nbforager.api.virtualization import VirtualizationAC
 from nbforager.api.wireless import WirelessAC
 from nbforager.nb_tree import NbTree
 from nbforager.parser.nb_parser import NbParser
-from nbforager.types_ import ODLStr, ODDAny, DAny
+from nbforager.types_ import ODLStr, ODDAny, DAny, LDAny
 
 
 class NbApi:
@@ -48,27 +48,27 @@ class NbApi:
     """
 
     def __init__(
-        self,
-        host: str,
-        token: str = "",
-        scheme: str = "https",
-        port: int = 0,
-        verify: bool = True,
-        limit: int = 1000,
-        url_length: int = 2047,
-        # Multithreading
-        threads: int = 1,
-        interval: float = 0.0,
-        # Errors processing
-        timeout: int = 60,
-        max_retries: int = 0,
-        sleep: int = 10,
-        strict: bool = False,
-        # Settings
-        extended_get: bool = True,
-        default_get: ODDAny = None,
-        loners: ODLStr = None,
-        **kwargs,
+            self,
+            host: str,
+            token: str = "",
+            scheme: str = "https",
+            port: int = 0,
+            verify: bool = True,
+            limit: int = 1000,
+            url_length: int = 2047,
+            # Multithreading
+            threads: int = 1,
+            interval: float = 0.0,
+            # Errors processing
+            timeout: int = 60,
+            max_retries: int = 0,
+            sleep: int = 10,
+            strict: bool = False,
+            # Settings
+            extended_get: bool = True,
+            default_get: ODDAny = None,
+            loners: ODLStr = None,
+            **kwargs,
     ):
         """Init NbApi.
 
@@ -255,6 +255,37 @@ class NbApi:
         }
         params.update(kwargs)
         return type(self)(**params)
+
+    def get(self, **kwargs) -> LDAny:
+        """Get an objects in Netbox using the app/model in the provided URL.
+
+        :param kwargs: Parameters of object, only URL is required.
+
+        :return: List of dictionaries containing Netbox objects.
+        :rtype: List[dict]
+        """
+        url = str(kwargs.get("url") or "")
+        app, model, id_ = h.url_to_ami(url)
+        params = {"id": id_} if id_ else {}
+        method: Callable = getattr(getattr(getattr(self, app), model), "get")
+        return method(**params)
+
+    def get_d(self, **kwargs) -> DAny:
+        """Get an objects in Netbox using the app/model in the provided URL.
+
+        :param kwargs: Parameters of object, only URL with ID is required.
+
+        :return: Dictionary containing Netbox object.
+        :rtype: dict
+        """
+        url = str(kwargs.get("url") or "")
+        app, model, id_ = h.url_to_ami(url)
+        if not id_:
+            raise ValueError("ID is required in the URL.")
+        method: Callable = getattr(getattr(getattr(self, app), model), "get")
+        if objects := method(id=id_):
+            return objects[0]
+        return {}
 
     def create(self, **kwargs) -> Response:
         """Create an object in Netbox using the app/model in the provided URL.

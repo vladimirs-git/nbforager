@@ -342,6 +342,8 @@ def object_type_to_am(object_type: str, path: bool = False) -> T2Str:
                 modified = modified[:-2]  # ipaddresses -> ipaddress
             elif modified.endswith("xes"):
                 modified = modified[:-2]  # prefixes -> prefix
+            elif modified.endswith("sis"):
+                pass # chassis -> chassis
             elif modified.endswith("s"):
                 modified = modified[:-1]  # types -> type
 
