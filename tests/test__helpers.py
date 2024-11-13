@@ -17,6 +17,20 @@ IP2_ = f"10.0.0.2{SLASH}24"
 
 # =========================== app model id ===========================
 
+@pytest.mark.parametrize("app, model, expected", [
+    ("dcim", "console_port_templates", "dcim.consoleporttemplate"),
+    ("dcim", "interfaces", "dcim.interface"),
+    ("dcim", "virtual_chassis", "dcim.virtualchassis"),
+    ("ipam", "ip_addresses", "ipam.ipaddress"),
+    ("ipam", "prefixes", "ipam.prefix"),
+    ("virtualization", "interfaces", "virtualization.vminterface"),
+])
+def test__am_to_object_type(app, model, expected):
+    """helpers.am_to_object_type()."""
+    actual = h.am_to_object_type(app=app, model=model)
+
+    assert actual == expected
+
 
 def test__attr_name():
     """helpers.attr_name()"""
@@ -93,9 +107,6 @@ def test__nested_urls(nb_objects, expected):
     assert actual == expected
 
 
-
-
-
 @pytest.mark.parametrize("path, expected", [
     ("", ValueError),
     ("typo", ValueError),
@@ -112,6 +123,22 @@ def test__path_to_attrs(path, expected: Any):
     else:
         with pytest.raises(expected):
             h.path_to_attrs(path)
+
+
+@pytest.mark.parametrize("plural, expected", [
+    ("console_port_templates", "consoleporttemplate"),
+    ("console-port-templates", "consoleporttemplate"),
+    ("interfaces", "interface"),
+    ("virtual_chassis", "virtualchassis"),
+    ("ip_addresses", "ipaddress"),
+    ("prefixes", "prefix"),
+    ("interfaces", "interface"),
+])
+def test__object_type_to_am(plural, expected):
+    """helpers._plural_to_singular()."""
+    actual = h.plural_to_singular(plural=plural)
+
+    assert actual == expected
 
 
 @pytest.mark.parametrize("word, expected", [
@@ -235,6 +262,7 @@ def test__url_to_ami_url(url, expected):
         with pytest.raises(expected):
             h.url_to_ami_url(url=url)
 
+
 @pytest.mark.parametrize("url, expected", [
     # ui
     ("https://domain.com/ipam/ip-address/1?k=v", "https://domain.com/api/ipam/ip-address/1/"),
@@ -260,6 +288,7 @@ def test__url_to_api_url(url, expected):
     else:
         with pytest.raises(expected):
             h.url_to_api_url(url=url)
+
 
 @pytest.mark.parametrize("url, expected", [
     # ui

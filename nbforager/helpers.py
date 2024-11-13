@@ -14,6 +14,21 @@ from nbforager.types_ import LTInt2, DAny, SeqStr, SStr, TValues, TLists, T2Str,
 
 # =========================== app model id ===========================
 
+def am_to_object_type(app: str, model: str) -> str:
+    """Convert application and model to object_type.
+
+    :param app: Application value.
+    :param model: Model value.
+    :return: Object type.
+
+    :example:
+        am_to_object_type("ipam", "ip-address") -> "ipam.ipaddress"
+    """
+    model_singular = plural_to_singular(model)
+    if app == "virtualization":
+        if model_singular == "interface":
+            model_singular = f"vm{model_singular}"
+    return f"{app}.{model_singular}"
 
 def attr_name(obj: Any) -> str:
     """Transform the class name to the attribute name, lowercase without postfix.
@@ -155,6 +170,24 @@ def path_to_attrs(path: str) -> T2Str:
     model = model_to_attr(model)
     return app, model
 
+def plural_to_singular(plural: str) -> str:
+    """Convert a plural model name to a singular model name.
+
+    :param plural: A plural model name.
+    :return: A singular model name.
+    """
+    singular = plural.replace("_", "").replace("-", "")
+    if singular.endswith("ies"):
+        singular = singular[:-3] + "y"  # entries -> entry
+    elif singular.endswith("ses"):
+        singular = singular[:-2]  # ipaddresses -> ipaddress
+    elif singular.endswith("xes"):
+        singular = singular[:-2]  # prefixes -> prefix
+    elif singular.endswith("sis"):
+        pass  # chassis -> chassis
+    elif singular.endswith("s"):
+        singular = singular[:-1]  # types -> type
+    return singular
 
 def replace_upper(word: str) -> str:
     """Replace upper character with underscore and lower.
@@ -297,6 +330,20 @@ def url_to_api_url(url: str) -> str:
     return ui_url
 
 
+def url_to_object_type(url: str) -> str:
+    """Convert url to object_type.
+
+    :param url: URL to Netbox object.
+    :return: Object type.
+
+    :example:
+        url_to_object_type("/api/ipam/ip-addresses/1/") -> "ipam.ipaddress"
+    """
+    app, model, id_ = url_to_ami(url)
+    object_type = am_to_object_type(app, model)
+    return object_type
+
+
 def url_to_ui_url(url: str) -> str:
     """Convert Netbox API URl to UI URL.
 
@@ -312,6 +359,7 @@ def url_to_ui_url(url: str) -> str:
     if id_:
         ui_url += f"{id_}/"
     return ui_url
+
 
 
 # ============================== params ==============================

@@ -240,6 +240,9 @@ class NbTree(BaseModel):
 ONbTree = Optional[NbTree]
 
 
+
+
+
 def insert_tree(src: NbTree, dst: NbTree) -> None:
     """Insert the data from the source NbTree object into the destination NbTree object.
 
@@ -310,6 +313,7 @@ def missed_urls(urls: LStr, tree: NbTree) -> LStr:
     return urls_
 
 
+
 def object_type_to_am(object_type: str, path: bool = False) -> T2Str:
     """Convert object_type value (used in extras/changelog) to app/model values.
 
@@ -317,6 +321,7 @@ def object_type_to_am(object_type: str, path: bool = False) -> T2Str:
     :param path: True - model as path with `-` character,
         False - model as attribute with `_` character,
     :return: Tuple of app, model.
+
     :example:
         object_type_to_ami("ipam.ipaddress") -> "ipam", "ip_addresses"
     """
@@ -334,25 +339,17 @@ def object_type_to_am(object_type: str, path: bool = False) -> T2Str:
             if model[:2] != model_type[:2]:
                 continue
 
-            # plural to singular
-            modified = model.replace("_", "")
-            if modified.endswith("ies"):
-                modified = modified[:-3] + "y"  # entries -> entry
-            elif modified.endswith("ses"):
-                modified = modified[:-2]  # ipaddresses -> ipaddress
-            elif modified.endswith("xes"):
-                modified = modified[:-2]  # prefixes -> prefix
-            elif modified.endswith("sis"):
-                pass # chassis -> chassis
-            elif modified.endswith("s"):
-                modified = modified[:-1]  # types -> type
-
-            if modified == model_type:
+            model_singular = h.plural_to_singular(model)
+            if model_singular == model_type:
                 if path:
                     model = model.replace("_", "-")
                 return app, model
 
     raise ValueError(f"{object_type=} is not defined.")
+
+
+
+
 
 # ============================= helpers ==============================
 
@@ -381,3 +378,5 @@ def _get_child(child: DAny, tree: NbTree) -> DAny:
             return {}
 
     return {}
+
+

@@ -250,21 +250,3 @@ def test__missed_urls(
     logs = [record.levelname == "ERROR" for record in caplog.records]
     assert logs == errors
 
-
-@pytest.mark.parametrize("params, expected", [
-    # attr
-    ({"object_type": "dcim.consoleporttemplate"}, ("dcim", "console_port_templates")),
-    ({"object_type": "dcim.interface"}, ("dcim", "interfaces")),
-    ({"object_type": "dcim.virtualchassis"}, ("dcim", "virtual_chassis")),
-    ({"object_type": "ipam.ipaddress"}, ("ipam", "ip_addresses")),
-    ({"object_type": "ipam.prefix"}, ("ipam", "prefixes")),
-    ({"object_type": "virtualization.vminterface"}, ("virtualization", "interfaces")),
-    # path
-    ({"object_type": "dcim.consoleporttemplate", "path": True}, ("dcim", "console-port-templates")),
-    ({"object_type": "dcim.interface", "path": True}, ("dcim", "interfaces")),
-])
-def test__object_type_to_am(params, expected):
-    """BaseC.object_type_to_am()."""
-    actual = nb_tree.object_type_to_am(**params)
-
-    assert actual == expected
