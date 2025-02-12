@@ -134,8 +134,8 @@ def test__path_to_attrs(path, expected: Any):
     ("prefixes", "prefix"),
     ("interfaces", "interface"),
 ])
-def test__object_type_to_am(plural, expected):
-    """helpers._plural_to_singular()."""
+def test__plural_to_singular(plural, expected):
+    """helpers.plural_to_singular()."""
     actual = h.plural_to_singular(plural=plural)
 
     assert actual == expected

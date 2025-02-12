@@ -240,9 +240,6 @@ class NbTree(BaseModel):
 ONbTree = Optional[NbTree]
 
 
-
-
-
 def insert_tree(src: NbTree, dst: NbTree) -> None:
     """Insert the data from the source NbTree object into the destination NbTree object.
 
@@ -313,7 +310,6 @@ def missed_urls(urls: LStr, tree: NbTree) -> LStr:
     return urls_
 
 
-
 def object_type_to_am(object_type: str, path: bool = False) -> T2Str:
     """Convert object_type value (used in extras/changelog) to app/model values.
 
@@ -348,9 +344,6 @@ def object_type_to_am(object_type: str, path: bool = False) -> T2Str:
     raise ValueError(f"{object_type=} is not defined.")
 
 
-
-
-
 # ============================= helpers ==============================
 
 
@@ -378,5 +371,3 @@ def _get_child(child: DAny, tree: NbTree) -> DAny:
             return {}
 
     return {}
-
-

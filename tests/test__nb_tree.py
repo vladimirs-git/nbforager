@@ -239,14 +239,35 @@ def test__join_dcim_devices__circuit():
     (["/api/typo/vrfs/1"], [], [True]),
     (["/api/ipam/typo/1"], [], [True]),
 ])
-def test__missed_urls(
-        caplog,
-        urls, expected, errors,
-):
+def test__missed_urls(caplog, urls, expected, errors):
     """nb_tree.missed_urls()"""
     tree = func.full_tree()
+
     actual = nb_tree.missed_urls(urls=urls, tree=tree)
+
     assert actual == expected
     logs = [record.levelname == "ERROR" for record in caplog.records]
     assert logs == errors
 
+
+@pytest.mark.parametrize("object_type, path, expected", [
+    # path=False
+    ("ipam.ipaddress", False, ("ipam", "ip_addresses")),
+    ("dcim.interface", False, ("dcim", "interfaces")),
+    ("dcim.vminterface", False, ("dcim", "interfaces")),
+    # path=True
+    ("ipam.ipaddress", True, ("ipam", "ip-addresses")),
+    ("dcim.interface", True, ("dcim", "interfaces")),
+    ("dcim.vminterface", True, ("dcim", "interfaces")),
+    # errors
+    ("ipam.typo", False, ValueError),
+    ("", False, ValueError),
+])
+def test__object_type_to_am(object_type, path, expected: Any):
+    """nb_tree.object_type_to_am()"""
+    if isinstance(expected, tuple):
+        actual = nb_tree.object_type_to_am(object_type=object_type, path=path)
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nb_tree.object_type_to_am(object_type=object_type, path=path)
