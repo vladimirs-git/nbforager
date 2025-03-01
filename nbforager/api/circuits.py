@@ -2,7 +2,7 @@
 
 """Circuits connectors."""
 
-from nbforager.api.base_ca import BaseAC
+from nbforager.api.base_ac import BaseAC
 from nbforager.api.connector import Connector
 
 

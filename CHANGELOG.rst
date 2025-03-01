@@ -4,10 +4,12 @@
 CHANGELOG
 =========
 
-0.4.2 (2025-03-01)
+0.5.0 (2025-03-01)
 ------------------
 
 **Fixed:** NbForager.clear() tree
+**Fixed:** rename base_ca.py > base_ac.py
+**Added:** APPS replaced by NbApi.apps()
 
 
 0.4.1 (2024-11-13)

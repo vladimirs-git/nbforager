@@ -26,15 +26,3 @@ ConnectorA = Union[
     WirelessAC,
 ]
 
-APPS = [
-    "circuits",
-    "core",
-    "dcim",
-    "extras",
-    "ipam",
-    "plugins",
-    "tenancy",
-    "users",
-    "virtualization",
-    "wireless",
-]

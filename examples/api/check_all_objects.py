@@ -3,7 +3,6 @@ import logging
 from datetime import datetime
 
 from nbforager import NbApi
-from nbforager.api import APPS
 from nbforager.types_ import LStr
 
 # Enable logging DEBUG mode
@@ -18,7 +17,7 @@ start = datetime.now()
 status = api.status.get()
 logging.info("version=%s", status["netbox-version"])
 
-for apps in APPS:
+for apps in api.apps():
     app_o = getattr(api, apps)
     models: LStr = [s for s in dir(app_o) if s[0].islower()]
     for model in models:

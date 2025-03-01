@@ -138,13 +138,7 @@ def test__threads():
     assert api.dcim.devices.threads == expected
 
 
-def test__version(
-        api: NbApi,
-        mock_requests_status: Mocker,  # pylint: disable=unused-argument
-):
-    """NbApi.version()."""
-    actual = api.version()
-    assert actual == "3.6.5"
+# ============================= methods ==============================
 
 
 @pytest.mark.parametrize("host, expected", [
@@ -156,29 +150,6 @@ def test__copy(api: NbApi, host, expected):
 
     actual = api_.host
     assert actual == expected
-
-
-@pytest.mark.parametrize("params, expected", [
-    ({"id": 1, "url": "https://domain.com/ipam/ip-addresses/1", "key": "value"}, 201),
-    ({"id": 1, "url": "https://domain.com/ipam/typo/", "key": "value"}, AttributeError),
-    ({"id": 1, "url": "https://domain.com/ipam/", "key": "value"}, NbApiError),
-])
-def test__create(
-        api: NbApi,
-        monkeypatch: MonkeyPatch,
-        params: DAny,
-        expected: Any,
-):
-    """NbApi.create()."""
-    monkeypatch.setattr(Session, "post", mock_session(expected))
-    if isinstance(expected, int):
-        response: Response = api.create(**params)
-
-        actual = response.status_code
-        assert actual == expected
-    else:
-        with pytest.raises(expected):
-            api.create(**params)
 
 
 @pytest.mark.parametrize("params, expected", [
@@ -216,6 +187,52 @@ def test__get_d(
     actual = result["id"]
     assert actual == expected
 
+
+@pytest.mark.parametrize("params, expected", [
+    ({"id": 1, "url": "https://domain.com/ipam/ip-addresses/1", "key": "value"}, 201),
+    ({"id": 1, "url": "https://domain.com/ipam/typo/", "key": "value"}, AttributeError),
+    ({"id": 1, "url": "https://domain.com/ipam/", "key": "value"}, NbApiError),
+])
+def test__create(
+        api: NbApi,
+        monkeypatch: MonkeyPatch,
+        params: DAny,
+        expected: Any,
+):
+    """NbApi.create()."""
+    monkeypatch.setattr(Session, "post", mock_session(expected))
+    if isinstance(expected, int):
+        response: Response = api.create(**params)
+
+        actual = response.status_code
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            api.create(**params)
+
+
+@pytest.mark.parametrize("params, expected", [
+    ({"id": 1, "url": "https://domain.com/ipam/ip-addresses/1", "key": "value"}, 201),
+    ({"id": 1, "url": "https://domain.com/ipam/typo/", "key": "value"}, AttributeError),
+    ({"id": 1, "url": "https://domain.com/ipam/", "key": "value"}, NbApiError),
+])
+def test__create_d(
+        api: NbApi,
+        monkeypatch: MonkeyPatch,
+        params: DAny,
+        expected: Any,
+):
+    """NbApi.create_d()."""
+    content = '{"1": {"id": "1"}}'
+    monkeypatch.setattr(Session, "post", mock_session(status_code=expected, content=content))
+    if isinstance(expected, int):
+        actual: DAny = api.create_d(**params)
+
+        expected = {"1": {"id": "1"}}
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            api.create_d(**params)
 
 @pytest.mark.parametrize("url, expected", [
     ("https://domain.com/ipam/ip-addresses/1", 204),
@@ -264,3 +281,12 @@ def test__update(
     else:
         with pytest.raises(expected):
             api.update(**params)
+
+
+def test__version(
+        api: NbApi,
+        mock_requests_status: Mocker,  # pylint: disable=unused-argument
+):
+    """NbApi.version()."""
+    actual = api.version()
+    assert actual == "3.6.5"

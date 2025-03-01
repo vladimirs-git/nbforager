@@ -4,7 +4,6 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
-from nbforager.api import APPS
 from nbforager.nb_forager import NbForager
 from nbforager.types_ import DAny, LStr
 
@@ -67,7 +66,7 @@ def create_foragers() -> None:
 def _get_app_models() -> DAny:
     """Get names of application, model, method from NbApi."""
     data = {}
-    for app in APPS:
+    for app in NBF.api.apps():
         app_o = getattr(NBF.api, app)
         models = [s for s in dir(app_o) if s[0].islower()]
 

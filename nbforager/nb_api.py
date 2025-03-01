@@ -22,7 +22,20 @@ from nbforager.api.virtualization import VirtualizationAC
 from nbforager.api.wireless import WirelessAC
 from nbforager.nb_tree import NbTree
 from nbforager.parser.nb_parser import NbParser
-from nbforager.types_ import ODLStr, ODDAny, DAny, LDAny
+from nbforager.types_ import ODLStr, ODDAny, DAny, LDAny, LStr
+
+APPS = (
+    "circuits",
+    "core",
+    "dcim",
+    "extras",
+    "ipam",
+    "plugins",
+    "tenancy",
+    "users",
+    "virtualization",
+    "wireless",
+)
 
 
 class NbApi:
@@ -199,6 +212,8 @@ class NbApi:
             loners=connector.loners,
         )
 
+    # ============================= property =============================
+
     @property
     def host(self) -> str:
         """Netbox host name."""
@@ -227,6 +242,17 @@ class NbApi:
             for model in getattr(tree, app).models():
                 connector = getattr(getattr(self, app), model)
                 setattr(connector, "threads", threads)
+
+    # ============================= methods ==============================
+
+    @staticmethod
+    def apps() -> LStr:
+        """Get list of application names.
+
+        :return: Applications.
+        :rtype: List[str]
+        """
+        return list(APPS)
 
     def copy(self, **kwargs) -> NbApi:
         """Create a duplicate of the object.
@@ -317,7 +343,7 @@ class NbApi:
         url = str(kwargs.get("url") or "")
         app, model, _ = h.url_to_ami(url)
         data: DAny = {k: v for k, v in kwargs.items() if k not in ["url", "id"]}
-        method: Callable = getattr(getattr(getattr(self, app), model), "create")
+        method: Callable = getattr(getattr(getattr(self, app), model), "create_d")
         return method(**data)
 
     def delete(self, **kwargs) -> Response:
