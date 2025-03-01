@@ -246,7 +246,7 @@ class NbForager:
                     data: dict = getattr(getattr(self.root, app), model)
                     data.clear()
         if tree:
-            self.tree = NbTree()
+            self.tree.clear()
 
     def copy(self) -> NbForager:
         """Copy data in the NbForager.root and NbForager.tree.

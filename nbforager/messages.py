@@ -59,7 +59,7 @@ class Messages:
 
     def clear(self) -> None:
         """Delete all messages."""
-        self.items = []
+        self.items.clear()
 
     def add(self, level: str, name: str, text: str) -> None:
         """Add message to messages."""
