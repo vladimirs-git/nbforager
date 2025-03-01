@@ -20,9 +20,8 @@ from nbforager.api.tenancy import TenancyAC
 from nbforager.api.users import UsersAC
 from nbforager.api.virtualization import VirtualizationAC
 from nbforager.api.wireless import WirelessAC
-from nbforager.nb_tree import NbTree
 from nbforager.parser.nb_parser import NbParser
-from nbforager.types_ import ODLStr, ODDAny, DAny, LDAny, LStr
+from nbforager.types_ import ODLStr, ODDAny, DAny, LDAny, LStr, LT2Str
 
 APPS = (
     "circuits",
@@ -237,9 +236,9 @@ class NbApi:
 
         :return: None. Update threads in all connectors.
         """
-        tree = NbTree()
-        for app in tree.apps():
-            for model in getattr(tree, app).models():
+        for app in self.apps():
+            models: LStr = [s for s in dir(getattr(self, app)) if s[0].islower()]
+            for model in models:
                 connector = getattr(getattr(self, app), model)
                 setattr(connector, "threads", threads)
 
@@ -253,6 +252,35 @@ class NbApi:
         :rtype: List[str]
         """
         return list(APPS)
+
+    def app_models(self) -> LT2Str:
+        """Get list of application model names.
+
+        :return: Application model names.
+        :rtype: List[Tuple[str, str]]
+        """
+        app_models: LT2Str = []
+        for app in self.apps():
+            models: LStr = [s for s in dir(getattr(self, app)) if s[0].islower()]
+            for model in models:
+                app_models.append((app, model))
+        return app_models
+
+    def app_paths(self) -> LStr:
+        """Get list of application/model paths.
+
+        :return: Application/model paths.
+        :rtype: List[str]
+        """
+        app_paths: LStr = []
+        for app in self.apps():
+            models: LStr = [s for s in dir(getattr(self, app)) if s[0].islower()]
+            for model in models:
+                connector = getattr(getattr(self, app), model)
+                path = getattr(connector, "path")
+                path = path.rstrip("/")
+                app_paths.append(path)
+        return app_paths
 
     def copy(self, **kwargs) -> NbApi:
         """Create a duplicate of the object.
