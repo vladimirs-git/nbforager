@@ -1,4 +1,5 @@
 """Tree of pynetbox model objects."""
+
 from typing import Dict
 
 from pydantic import BaseModel, Field, ConfigDict

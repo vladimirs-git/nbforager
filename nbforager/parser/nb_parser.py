@@ -1,6 +1,7 @@
 # pylint: disable=R0904
 
 """NbParser."""
+
 from functools import wraps
 from typing import Any, Type, Dict, List
 

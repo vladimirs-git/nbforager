@@ -1,4 +1,5 @@
 """Typing."""
+
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple, Union, Sequence, TypeVar
@@ -76,4 +77,3 @@ UParam = Union[LParam, SParam, TParam]
 
 # 5 level
 OUParam = Optional[UParam]
-

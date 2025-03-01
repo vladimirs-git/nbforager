@@ -1,4 +1,5 @@
 """Wrappers for logging."""
+
 import logging
 import time
 

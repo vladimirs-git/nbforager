@@ -1,4 +1,5 @@
 """Map parameter {name} to {name}_id."""
+
 from typing import Dict
 
 from pydantic import BaseModel, Field

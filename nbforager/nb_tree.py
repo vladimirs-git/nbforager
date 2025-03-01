@@ -1,4 +1,5 @@
 """Tree of Netbox model objects."""
+
 import logging
 from copy import deepcopy
 from typing import Optional

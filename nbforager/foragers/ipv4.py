@@ -1,4 +1,5 @@
 """IPv4"""
+
 from ciscoconfparse import IPv4Obj  # type: ignore
 
 

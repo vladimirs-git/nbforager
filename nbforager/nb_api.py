@@ -60,27 +60,27 @@ class NbApi:
     """
 
     def __init__(
-            self,
-            host: str,
-            token: str = "",
-            scheme: str = "https",
-            port: int = 0,
-            verify: bool = True,
-            limit: int = 1000,
-            url_length: int = 2047,
-            # Multithreading
-            threads: int = 1,
-            interval: float = 0.0,
-            # Errors processing
-            timeout: int = 60,
-            max_retries: int = 0,
-            sleep: int = 10,
-            strict: bool = False,
-            # Settings
-            extended_get: bool = True,
-            default_get: ODDAny = None,
-            loners: ODLStr = None,
-            **kwargs,
+        self,
+        host: str,
+        token: str = "",
+        scheme: str = "https",
+        port: int = 0,
+        verify: bool = True,
+        limit: int = 1000,
+        url_length: int = 2047,
+        # Multithreading
+        threads: int = 1,
+        interval: float = 0.0,
+        # Errors processing
+        timeout: int = 60,
+        max_retries: int = 0,
+        sleep: int = 10,
+        strict: bool = False,
+        # Settings
+        extended_get: bool = True,
+        default_get: ODDAny = None,
+        loners: ODLStr = None,
+        **kwargs,
     ):
         """Init NbApi.
 

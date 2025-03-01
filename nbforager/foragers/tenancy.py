@@ -1,6 +1,7 @@
 # pylint: disable=R0902,R0903
 
 """Tenancy Forager."""
+
 from nbforager.foragers.base_fa import BaseAF
 from nbforager.foragers.forager import Forager
 from nbforager.nb_api import NbApi

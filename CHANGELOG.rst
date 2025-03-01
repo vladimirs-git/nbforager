@@ -10,6 +10,7 @@ CHANGELOG
 **Fixed:** NbForager.clear() tree
 **Fixed:** rename base_ca.py > base_ac.py
 **Added:** APPS replaced by NbApi.apps()
+**Changed:** dependencies
 
 
 0.4.1 (2024-11-13)

@@ -1,6 +1,7 @@
 # pylint: disable=too-many-public-methods
 
 """NbValue."""
+
 import re
 
 from nbforager.exceptions import NbParserError

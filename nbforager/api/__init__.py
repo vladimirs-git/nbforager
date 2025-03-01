@@ -25,4 +25,3 @@ ConnectorA = Union[
     VirtualizationAC,
     WirelessAC,
 ]
-

@@ -1,6 +1,7 @@
 # pylint: disable=R0902,R0903
 
 """IPAM connectors."""
+
 from nbforager.api.connector import Connector
 from nbforager.api.ip_addresses import IpAddressesC
 
