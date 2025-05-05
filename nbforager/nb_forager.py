@@ -10,8 +10,6 @@ from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 
-import pynetbox
-from pynetbox.core.endpoint import Endpoint
 from vhelpers import vstr
 
 from nbforager import nb_tree
@@ -30,7 +28,6 @@ from nbforager.nb_api import NbApi
 from nbforager.nb_cache import NbCache
 from nbforager.nb_tree import NbTree
 from nbforager.parser.nb_value import NbValue
-from nbforager.py_tree import PyTree
 from nbforager.types_ import LStr, DAny, DiDAny, ODLStr, ODDAny
 
 
@@ -130,8 +127,6 @@ class NbForager:
         :ivar obj root: :py:class:`NbTree` object that holds raw Netbox objects.
             It is data source for the tree.
         :ivar obj tree: :py:class:`NbTree` object that holds joined Netbox objects.
-        :ivar obj pynb: :py:class:`PyTree` object that holds pynetbox objects,
-            documented on https://pynetbox.readthedocs.io/
         :ivar dict status: Result from Netbox status endpoint. Netbox version.
 
         Application/model foragers:
@@ -168,24 +163,22 @@ class NbForager:
         # data
         self.root: NbTree = NbTree()  # original data
         self.tree: NbTree = NbTree()  # data with joined objects within itself
-        self.pynb: PyTree = PyTree()  # data with pynetbox objects
         self.status: DAny = {}  # updated Netbox status data
 
         self.api = NbApi(**kwargs)
-        self.pyapi = pynetbox.api(url=f"{scheme}://{host}", token=token)
         self.cache: str = make_cache_path(cache, **kwargs)
         self.msgs = Messages(name=self.api.host)
 
         # application foragers
-        self.circuits = CircuitsAF(self.api, self.root, self.tree, self.pynb)
-        self.core = CoreAF(self.api, self.root, self.tree, self.pynb)
-        self.dcim = DcimAF(self.api, self.root, self.tree, self.pynb)
-        self.extras = ExtrasAF(self.api, self.root, self.tree, self.pynb)
-        self.ipam = IpamAF(self.api, self.root, self.tree, self.pynb)
-        self.tenancy = TenancyAF(self.api, self.root, self.tree, self.pynb)
-        self.users = UsersAF(self.api, self.root, self.tree, self.pynb)
-        self.virtualization = VirtualizationAF(self.api, self.root, self.tree, self.pynb)
-        self.wireless = WirelessAF(self.api, self.root, self.tree, self.pynb)
+        self.circuits = CircuitsAF(self.api, self.root, self.tree)
+        self.core = CoreAF(self.api, self.root, self.tree)
+        self.dcim = DcimAF(self.api, self.root, self.tree)
+        self.extras = ExtrasAF(self.api, self.root, self.tree)
+        self.ipam = IpamAF(self.api, self.root, self.tree)
+        self.tenancy = TenancyAF(self.api, self.root, self.tree)
+        self.users = UsersAF(self.api, self.root, self.tree)
+        self.virtualization = VirtualizationAF(self.api, self.root, self.tree)
+        self.wireless = WirelessAF(self.api, self.root, self.tree)
 
     def __repr__(self) -> str:
         """__repr__."""
@@ -279,23 +272,6 @@ class NbForager:
         if not isinstance(status, dict):
             status = {}
         self.status = status
-
-    def join_pynb(self) -> None:
-        """Create self.pynb objects based on self.root dictionaries.
-
-        :return: PyTree object with the pynetbox objects.
-
-        :rtype: PyTree
-        """
-        for app in self.root.apps():  # pylint: disable=R1702
-            for model in getattr(self.root, app).models():
-                objects_d = getattr(getattr(self.root, app), model)
-                for id_, nb_object in objects_d.items():
-                    endpoint: Endpoint = getattr(pynetbox.core.app.App(self.pyapi, app), model)
-                    class_ = endpoint.return_obj
-                    obj = class_(nb_object, self.pyapi, endpoint)
-                    data = getattr(getattr(self.pynb, app), model)
-                    data[id_] = obj
 
     def join_tree(self, dcim: bool = False, ipam: bool = False) -> None:
         """Assemble Netbox objects in NbForager.tree within itself.

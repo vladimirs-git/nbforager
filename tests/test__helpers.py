@@ -1,7 +1,9 @@
 """Tests helpers.py."""
 from typing import Any
 from urllib.parse import urlencode
+
 import pytest
+
 from nbforager import helpers as h, NbForager
 from nbforager.exceptions import NbApiError
 

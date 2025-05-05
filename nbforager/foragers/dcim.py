@@ -6,20 +6,19 @@ from nbforager.foragers.base_fa import BaseAF
 from nbforager.foragers.forager import Forager
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
-from nbforager.py_tree import PyTree
 
 
 class DcimAF(BaseAF):
     """DCIM Forager."""
 
-    def __init__(self, api: NbApi, root: NbTree, tree: NbTree, pynb: PyTree):
+    def __init__(self, api: NbApi, root: NbTree, tree: NbTree):
         """Init DcimAF.
 
         :param api: NbApi object, connector to Netbox API.
         :param root: NbTree object where raw data from Netbox needs to be saved.
         :param tree: NbTree object where transformed data from Netbox needs to be saved.
         """
-        super().__init__(api, root, tree, pynb)
+        super().__init__(api, root, tree)
         self.cable_terminations = self.CableTerminationsF(self)
         self.cables = self.CablesF(self)
         # connected_device, is not model

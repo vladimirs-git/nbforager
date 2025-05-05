@@ -120,7 +120,7 @@ def test__last_modified_date():
     actual = vre.find1(regex, text, re.M)
 
     extensions = [r"\.py$", r"\.toml$"]
-    files = [s for ext in extensions for s in vpath.get_files(ROOT, pattern=ext)]
+    files = [s for ext in extensions for s in vpath.get_files(ROOT, ext)]
     expected = vdate.last_modified(files)
     assert actual == expected, "last modified file"
 
@@ -131,7 +131,7 @@ def test__tested_function_names():
     skip_tests: LStr = ["test__init_extra_keys"]
 
     root = ROOT.joinpath("tests")
-    paths: LPath = [Path(s) for s in vpath.get_files(root, pattern=r"\btest_\S+\.py$")]
+    paths: LPath = [Path(s) for s in vpath.get_files(root, r"\btest_\S+\.py$")]
     paths = [o for o in paths if not o.name == skip_files]
 
     for path in paths:

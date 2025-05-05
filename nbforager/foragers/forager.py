@@ -16,8 +16,7 @@ from nbforager import nb_tree
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
 from nbforager.parser import nb_parser
-from nbforager.py_tree import PyTree
-from nbforager.types_ import LDAny, DiDAny, LStr, LT2StrDAny, DList, LDList, DiAny, SInt, DAny
+from nbforager.types_ import LDAny, DiDAny, LStr, LT2StrDAny, DList, LDList, SInt, DAny
 
 
 class Forager:
@@ -40,7 +39,6 @@ class Forager:
         self.root_d: DiDAny = getattr(getattr(self.root, app), model)
         self.tree: NbTree = forager_a.tree
         self.tree_d: DiDAny = getattr(getattr(self.tree, app), model)
-        self.pynb: PyTree = forager_a.pynb
 
     def __repr__(self) -> str:
         """__repr__."""
@@ -339,17 +337,6 @@ class Forager:
             if idx not in model_d:
                 data["_nested"] = False
                 model_d[idx] = data
-
-    def _get_pynb_data(self, path: str) -> DiAny:
-        """Get data in self pynb by app/model path.
-
-        :param path: The app/model path.
-
-        :return: The model data.
-        """
-        app, model = h.path_to_attrs(path)
-        data = getattr(getattr(self.pynb, app), model)
-        return data
 
     def _get_root_data(self, path: str) -> DiDAny:
         """Get data in self root by app/model path.

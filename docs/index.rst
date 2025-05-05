@@ -24,7 +24,6 @@ This project on `GitHub`_.
     NbApi <api/nb_api.rst>
     NbForager <foragers/nb_forager.rst>
     NbTree <foragers/nb_tree.rst>
-    PyTree <foragers/py_tree.rst>
     NbParser <parser/nb_parser.rst>
     NbValue <parser/nb_value.rst>
     Examples <examples.rst>

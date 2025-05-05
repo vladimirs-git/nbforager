@@ -355,12 +355,12 @@ class BaseC:
         :return: Max limit value, update params_d["limit"] value
         """
         limit = 0
-        if limit_ := vdict.pop(params_d, key="limit") or []:
+        if limit_ := list(vdict.pop(data=params_d, key="limit") or []):
             limit = int(limit_[0])
         if not limit:
             limit = self.limit
         max_limit = 0
-        if max_limit_ := vdict.pop(params_d, key="max_limit") or []:
+        if max_limit_ := list(vdict.pop(data=params_d, key="max_limit") or []):
             max_limit = int(max_limit_[0])
         if max_limit and max_limit < limit:
             limit = max_limit

@@ -13,7 +13,6 @@ NbForager
     copy,
     count,
     get_status,
-    join_pynb,
     join_tree,
     read_cache,
     write_cache,
