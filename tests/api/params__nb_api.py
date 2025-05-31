@@ -139,7 +139,7 @@ APP_MODELS = [
     ("wireless", "wireless_lans"),
     ("wireless", "wireless_links"),
 ]
-APP_PATHS = expected = [
+APP_PATHS = [
     "circuits/circuit-terminations",
     "circuits/circuit-types",
     "circuits/circuits",
