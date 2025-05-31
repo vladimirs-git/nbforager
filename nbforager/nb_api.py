@@ -10,6 +10,7 @@ from requests import Response
 
 from nbforager import helpers as h
 from nbforager.api.circuits import CircuitsAC
+from nbforager.api.connector import Connector, GConnector
 from nbforager.api.core import CoreAC
 from nbforager.api.dcim import DcimAC
 from nbforager.api.extras import ExtrasAC
@@ -20,21 +21,9 @@ from nbforager.api.tenancy import TenancyAC
 from nbforager.api.users import UsersAC
 from nbforager.api.virtualization import VirtualizationAC
 from nbforager.api.wireless import WirelessAC
+from nbforager.constants import APPS
 from nbforager.parser.nb_parser import NbParser
 from nbforager.types_ import ODLStr, ODDAny, DAny, LDAny, LStr, LT2Str
-
-APPS = (
-    "circuits",
-    "core",
-    "dcim",
-    "extras",
-    "ipam",
-    "plugins",
-    "tenancy",
-    "users",
-    "virtualization",
-    "wireless",
-)
 
 
 class NbApi:
@@ -282,8 +271,17 @@ class NbApi:
                 app_paths.append(path)
         return app_paths
 
-    def connectors(self) -> ODDAny:
-        """Return list of Connector instances ordered"""
+    def connectors(self) -> GConnector:
+        """Return generator of Connector instances ordered based on dependencies.
+            Connectors to models with the lowes count of dependencies will be first.
+
+        :return: Generator of Connector instances.
+        """
+        paths: LStr = h.dependency_ordered_paths()
+        for path in paths:
+            app, model = h.path_to_attrs(path)
+            connector: Connector = getattr(getattr(self, app), model)
+            yield connector
 
     def copy(self, **kwargs) -> NbApi:
         """Create a duplicate of the object.

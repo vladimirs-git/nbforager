@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import json
+from typing import Generator
 
 from requests import Response
 from vhelpers import vdict
@@ -169,3 +170,6 @@ class Connector(BaseC):
         html: str = response.content.decode("utf-8")
         data: DAny = dict(json.loads(html))
         return data
+
+
+GConnector = Generator[Connector, None, None]

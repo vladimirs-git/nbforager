@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union, Sequence, TypeVar
+from typing import Any, Dict, List, Optional, Sequence, Set, TypeVar, Tuple, Union
 
 # 1 level
 DAny = Dict[str, Any]
@@ -10,6 +10,7 @@ DInt = Dict[str, int]
 DObj = Dict[str, object]
 DStr = Dict[str, str]
 Int = int
+IntStr = Union[int, str]
 LBool = List[bool]
 LInt = List[int]
 LPath = List[Path]
@@ -22,11 +23,10 @@ SInt = Set[int]
 SStr = Set[str]
 SeqStr = Sequence[str]
 Str = str
-IntStr = Union[int, str]
 T = TypeVar("T")
 T2Str = Tuple[str, str]
-T3StrInt = Tuple[str, str, int]
 T3Str = Tuple[str, str, str]
+T3StrInt = Tuple[str, str, int]
 TLists = (list, set, tuple)
 TStr = Tuple[str, ...]
 TValues = (str, int, float)

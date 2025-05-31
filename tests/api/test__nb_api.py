@@ -14,28 +14,8 @@ from nbforager.exceptions import NbApiError
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
 from nbforager.types_ import DAny, LDAny
+from tests.api import params__nb_api as p
 from tests.api.test__base_c import mock_session
-
-ATTRS = [
-    "self",
-    "host",
-    "token",
-    "scheme",
-    "port",
-    "verify",
-    "limit",
-    "url_length",
-    "threads",
-    "interval",
-    "timeout",
-    "max_retries",
-    "sleep",
-    "strict",
-    "extended_get",
-    "default_get",
-    "loners",
-    "kwargs",
-]
 
 
 @pytest.fixture
@@ -100,7 +80,7 @@ def test__init__(api: NbApi):
     """NbApi.__init__()."""
     actual = list(inspect.signature(type(api).__init__).parameters)
 
-    expected = ATTRS
+    expected = p.ATTRS
     assert set(actual).symmetric_difference(set(expected)) == set()
     assert actual == expected
 
@@ -140,253 +120,44 @@ def test__threads():
 
 # ============================= methods ==============================
 
-
-def test__apps(api: NbApi):
+@pytest.mark.parametrize("expected", [
+    p.APPS,
+])
+def test__apps(api: NbApi, expected):
     """NbApi.apps()."""
     actual = api.apps()
 
-    expected = [
-        "circuits",
-        "core",
-        "dcim",
-        "extras",
-        "ipam",
-        "plugins",
-        "tenancy",
-        "users",
-        "virtualization",
-        "wireless",
-    ]
     assert actual == expected
 
 
-def test__app_models(api: NbApi):
+@pytest.mark.parametrize("expected", [
+    p.APP_MODELS,
+])
+def test__app_models(api: NbApi, expected):
     """NbApi.app_models()."""
     actual = api.app_models()
 
-    expected = [
-        ("circuits", "circuit_terminations"),
-        ("circuits", "circuit_types"),
-        ("circuits", "circuits"),
-        ("circuits", "provider_accounts"),
-        ("circuits", "provider_networks"),
-        ("circuits", "providers"),
-        ("core", "data_files"),
-        ("core", "data_sources"),
-        ("core", "jobs"),
-        ("dcim", "cable_terminations"),
-        ("dcim", "cables"),
-        ("dcim", "connected_device"),
-        ("dcim", "console_port_templates"),
-        ("dcim", "console_ports"),
-        ("dcim", "console_server_port_templates"),
-        ("dcim", "console_server_ports"),
-        ("dcim", "device_bay_templates"),
-        ("dcim", "device_bays"),
-        ("dcim", "device_roles"),
-        ("dcim", "device_types"),
-        ("dcim", "devices"),
-        ("dcim", "front_port_templates"),
-        ("dcim", "front_ports"),
-        ("dcim", "interface_templates"),
-        ("dcim", "interfaces"),
-        ("dcim", "inventory_item_roles"),
-        ("dcim", "inventory_item_templates"),
-        ("dcim", "inventory_items"),
-        ("dcim", "locations"),
-        ("dcim", "manufacturers"),
-        ("dcim", "module_bay_templates"),
-        ("dcim", "module_bays"),
-        ("dcim", "module_types"),
-        ("dcim", "modules"),
-        ("dcim", "platforms"),
-        ("dcim", "power_feeds"),
-        ("dcim", "power_outlet_templates"),
-        ("dcim", "power_outlets"),
-        ("dcim", "power_panels"),
-        ("dcim", "power_port_templates"),
-        ("dcim", "power_ports"),
-        ("dcim", "rack_reservations"),
-        ("dcim", "rack_roles"),
-        ("dcim", "racks"),
-        ("dcim", "rear_port_templates"),
-        ("dcim", "rear_ports"),
-        ("dcim", "regions"),
-        ("dcim", "site_groups"),
-        ("dcim", "sites"),
-        ("dcim", "virtual_chassis"),
-        ("dcim", "virtual_device_contexts"),
-        ("extras", "bookmarks"),
-        ("extras", "config_contexts"),
-        ("extras", "config_templates"),
-        ("extras", "content_types"),
-        ("extras", "custom_field_choice_sets"),
-        ("extras", "custom_fields"),
-        ("extras", "custom_links"),
-        ("extras", "export_templates"),
-        ("extras", "image_attachments"),
-        ("extras", "journal_entries"),
-        ("extras", "object_changes"),
-        ("extras", "reports"),
-        ("extras", "saved_filters"),
-        ("extras", "scripts"),
-        ("extras", "tags"),
-        ("extras", "webhooks"),
-        ("ipam", "aggregates"),
-        ("ipam", "asn_ranges"),
-        ("ipam", "asns"),
-        ("ipam", "fhrp_group_assignments"),
-        ("ipam", "fhrp_groups"),
-        ("ipam", "ip_addresses"),
-        ("ipam", "ip_ranges"),
-        ("ipam", "l2vpn_terminations"),
-        ("ipam", "l2vpns"),
-        ("ipam", "prefixes"),
-        ("ipam", "rirs"),
-        ("ipam", "roles"),
-        ("ipam", "route_targets"),
-        ("ipam", "service_templates"),
-        ("ipam", "services"),
-        ("ipam", "vlan_groups"),
-        ("ipam", "vlans"),
-        ("ipam", "vrfs"),
-        ("plugins", "installed_plugins"),
-        ("tenancy", "contact_assignments"),
-        ("tenancy", "contact_groups"),
-        ("tenancy", "contact_roles"),
-        ("tenancy", "contacts"),
-        ("tenancy", "tenant_groups"),
-        ("tenancy", "tenants"),
-        ("users", "config"),
-        ("users", "groups"),
-        ("users", "permissions"),
-        ("users", "tokens"),
-        ("users", "users"),
-        ("virtualization", "cluster_groups"),
-        ("virtualization", "cluster_types"),
-        ("virtualization", "clusters"),
-        ("virtualization", "interfaces"),
-        ("virtualization", "virtual_machines"),
-        ("wireless", "wireless_lan_groups"),
-        ("wireless", "wireless_lans"),
-        ("wireless", "wireless_links"),
-    ]
     assert actual == expected
 
 
-def test__app_paths(api: NbApi):
+@pytest.mark.parametrize("expected", [
+    p.APP_PATHS,
+])
+def test__app_paths(api: NbApi, expected):
     """NbApi.app_paths()."""
     actual = api.app_paths()
 
-    expected = [
-        "circuits/circuit-terminations",
-        "circuits/circuit-types",
-        "circuits/circuits",
-        "circuits/provider-accounts",
-        "circuits/provider-networks",
-        "circuits/providers",
-        "core/data-files",
-        "core/data-sources",
-        "core/jobs",
-        "dcim/cable-terminations",
-        "dcim/cables",
-        "dcim/connected-device",
-        "dcim/console-port-templates",
-        "dcim/console-ports",
-        "dcim/console-server-port-templates",
-        "dcim/console-server-ports",
-        "dcim/device-bay-templates",
-        "dcim/device-bays",
-        "dcim/device-roles",
-        "dcim/device-types",
-        "dcim/devices",
-        "dcim/front-port-templates",
-        "dcim/front-ports",
-        "dcim/interface-templates",
-        "dcim/interfaces",
-        "dcim/inventory-item-roles",
-        "dcim/inventory-item-templates",
-        "dcim/inventory-items",
-        "dcim/locations",
-        "dcim/manufacturers",
-        "dcim/module-bay-templates",
-        "dcim/module-bays",
-        "dcim/module-types",
-        "dcim/modules",
-        "dcim/platforms",
-        "dcim/power-feeds",
-        "dcim/power-outlet-templates",
-        "dcim/power-outlets",
-        "dcim/power-panels",
-        "dcim/power-port-templates",
-        "dcim/power-ports",
-        "dcim/rack-reservations",
-        "dcim/rack-roles",
-        "dcim/racks",
-        "dcim/rear-port-templates",
-        "dcim/rear-ports",
-        "dcim/regions",
-        "dcim/site-groups",
-        "dcim/sites",
-        "dcim/virtual-chassis",
-        "dcim/virtual-device-contexts",
-        "extras/bookmarks",
-        "extras/config-contexts",
-        "extras/config-templates",
-        "extras/content-types",
-        "extras/custom-field-choice-sets",
-        "extras/custom-fields",
-        "extras/custom-links",
-        "extras/export-templates",
-        "extras/image-attachments",
-        "extras/journal-entries",
-        "extras/object-changes",
-        "extras/reports",
-        "extras/saved-filters",
-        "extras/scripts",
-        "extras/tags",
-        "extras/webhooks",
-        "ipam/aggregates",
-        "ipam/asn-ranges",
-        "ipam/asns",
-        "ipam/fhrp-group-assignments",
-        "ipam/fhrp-groups",
-        "ipam/ip-addresses",
-        "ipam/ip-ranges",
-        "ipam/l2vpn-terminations",
-        "ipam/l2vpns",
-        "ipam/prefixes",
-        "ipam/rirs",
-        "ipam/roles",
-        "ipam/route-targets",
-        "ipam/service-templates",
-        "ipam/services",
-        "ipam/vlan-groups",
-        "ipam/vlans",
-        "ipam/vrfs",
-        "plugins/installed-plugins",
-        "tenancy/contact-assignments",
-        "tenancy/contact-groups",
-        "tenancy/contact-roles",
-        "tenancy/contacts",
-        "tenancy/tenant-groups",
-        "tenancy/tenants",
-        "users/config",
-        "users/groups",
-        "users/permissions",
-        "users/tokens",
-        "users/users",
-        "virtualization/cluster-groups",
-        "virtualization/cluster-types",
-        "virtualization/clusters",
-        "virtualization/interfaces",
-        "virtualization/virtual-machines",
-        "wireless/wireless-lan-groups",
-        "wireless/wireless-lans",
-        "wireless/wireless-links",
-    ]
     assert actual == expected
 
+@pytest.mark.parametrize("expected", [
+    p.CONNECTORS,
+])
+def test__connectors(api: NbApi, expected):
+    """NbApi.connectors()."""
+    generator_ = api.connectors()
+
+    actual = [o.__class__.__name__ for o in list(generator_)]
+    assert actual == expected
 
 @pytest.mark.parametrize("host, expected", [
     ("netbox2", "netbox2"),

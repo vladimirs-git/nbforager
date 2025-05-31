@@ -4,10 +4,11 @@
 CHANGELOG
 =========
 
-0.8.0 (2025-05-31)
+0.8.1 (2025-05-31)
 ------------------
 
 **Added:** helpers DEPENDENT_MODELS, dependency_ordered_paths()
+**Added:** NbApi.connectors()
 
 
 0.7.0 (2025-05-17)

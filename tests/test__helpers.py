@@ -7,125 +7,11 @@ import pytest
 from nbforager import helpers as h, NbForager
 from nbforager.exceptions import NbApiError
 from nbforager.helpers import DEPENDENT_MODELS
-
-IP1 = "10.0.0.1/24"
-IP2 = "10.0.0.2/24"
-IP3 = "10.0.0.3/24"
-IP4 = "10.0.0.4/24"
-SLASH = "%2F"
-IP1_ = f"10.0.0.1{SLASH}24"
-IP2_ = f"10.0.0.2{SLASH}24"
-ORDERED_MODELS = [
-    "extras/content-types",
-    "extras/custom-fields",
-    "extras/custom-links",
-    "extras/export-templates",
-    "extras/image-attachments",
-    "extras/tags",
-    "extras/webhooks",
-    "ipam/rirs",
-    "ipam/roles",
-    "ipam/service-templates",
-    "ipam/vlan-groups",
-    "taggit/tagged-items",
-    "tenancy/contact-groups",
-    "tenancy/contact-roles",
-    "tenancy/contacts",
-    "tenancy/tenant-groups",
-    "tenancy/tenants",
-    "users/groups",
-    "users/users",
-    "virtualization/cluster-groups",
-    "virtualization/cluster-types",
-    "wireless/wireless-lan-groups",
-    "wireless/wireless-links",
-    "circuits/circuit-types",
-    "core/data-sources",
-    "core/jobs",
-    "dcim/cables",
-    "dcim/inventory-item-roles",
-    "dcim/manufacturers",
-    "dcim/module-types",
-    "dcim/rack-roles",
-    "dcim/regions",
-    "dcim/site-groups",
-    "extras/branchs",
-    "extras/config-templates",
-    "extras/dashboards",
-    "extras/journal-entries",
-    "extras/object-changes",
-    "extras/saved-filters",
-    "extras/tagged-items",
-    "ipam/aggregates",
-    "ipam/asn-ranges",
-    "ipam/asns",
-    "ipam/route-targets",
-    "ipam/vrfs",
-    "nb_config_checker/tasks",
-    "social_django/user-social-auths",
-    "tenancy/contact-assignments",
-    "users/permissions",
-    "users/tokens",
-    "users/user-preferences",
-    "circuits/providers",
-    "core/data-files",
-    "dcim/device-roles",
-    "dcim/device-types",
-    "dcim/interface-templates",
-    "dcim/inventory-item-templates",
-    "dcim/module-bay-templates",
-    "dcim/platforms",
-    "dcim/power-port-templates",
-    "dcim/rear-port-templates",
-    "dcim/sites",
-    "ipam/ip-addresses",
-    "ipam/ip-ranges",
-    "ipam/l2vpns",
-    "virtualization/clusters",
-    "circuits/provider-accounts",
-    "circuits/provider-networks",
-    "dcim/console-port-templates",
-    "dcim/console-server-port-templates",
-    "dcim/device-bay-templates",
-    "dcim/front-port-templates",
-    "dcim/locations",
-    "dcim/power-outlet-templates",
-    "dcim/power-panels",
-    "dcim/racks",
-    "extras/config-contexts",
-    "ipam/fhrp-groups",
-    "ipam/l2vpn-terminations",
-    "ipam/vlans",
-    "wireless/wireless-lans",
-    "circuits/circuits",
-    "dcim/devices",
-    "dcim/inventory-items",
-    "dcim/module-bays",
-    "dcim/modules",
-    "dcim/rack-reservations",
-    "dcim/virtual-chassis",
-    "dcim/virtual-device-contexts",
-    "ipam/fhrp-group-assignments",
-    "ipam/prefixes",
-    "virtualization/virtual-machines",
-    "dcim/cable-terminations",
-    "dcim/console-ports",
-    "dcim/console-server-ports",
-    "dcim/device-bays",
-    "dcim/power-feeds",
-    "dcim/power-ports",
-    "dcim/rear-ports",
-    "ipam/services",
-    "virtualization/interfaces",
-    "circuits/circuit-terminations",
-    "dcim/front-ports",
-    "dcim/interfaces",
-    "dcim/power-outlets",
-]
+from tests import params__helpers as p
 
 
 @pytest.mark.parametrize("dependency, expected", [
-    (DEPENDENT_MODELS, ORDERED_MODELS),
+    (DEPENDENT_MODELS, p.ORDERED_MODELS),
     ({"a": ["b"], "b": ["a"]}, ValueError),  # circular dependency
 ])
 def test__dependency_ordered_paths(dependency, expected):
@@ -511,13 +397,13 @@ def test__change_params_or(params_ld, expected):
 
 @pytest.mark.parametrize("max_len, values, expected", [
     (2047, [], [(0, 1)]),
-    (2047, [IP1], [(0, 1)]),
-    (1, [IP1], [(0, 1)]),
-    (1, [IP1, IP2], [(0, 1), (1, 2)]),
-    (1, [IP1, IP2, IP3], [(0, 1), (1, 2), (2, 3)]),
-    (130, [IP1, IP2, IP3], [(0, 2), (2, 3)]),
-    (130, [IP1, IP2, IP3, IP4], [(0, 2), (2, 4)]),
-    (145, [IP1, IP2, IP3, IP4], [(0, 3), (3, 4)]),
+    (2047, [p.IP1], [(0, 1)]),
+    (1, [p.IP1], [(0, 1)]),
+    (1, [p.IP1, p.IP2], [(0, 1), (1, 2)]),
+    (1, [p.IP1, p.IP2, p.IP3], [(0, 1), (1, 2), (2, 3)]),
+    (130, [p.IP1, p.IP2, p.IP3], [(0, 2), (2, 3)]),
+    (130, [p.IP1, p.IP2, p.IP3, p.IP4], [(0, 2), (2, 4)]),
+    (145, [p.IP1, p.IP2, p.IP3, p.IP4], [(0, 3), (3, 4)]),
 ])
 def test__generate_slices(max_len, values, expected):
     """helpers.generate_slices()."""
@@ -532,12 +418,12 @@ def test__generate_slices(max_len, values, expected):
 
 
 @pytest.mark.parametrize("url, max_len, key, params_d, expected", [
-    ("https://domain.com", 2047, "address", {"address": [IP1, IP2], "family": 4},
-     [{"address": [IP1, IP2], "family": 4}]),
-    ("https://domain.com", 50, "address", {"address": [IP1, IP2], "family": 4},
-     [{"address": IP1, "family": 4}, {"address": IP2, "family": 4}]),
-    ("https://domain.com", 50, "prefix", {"prefix": [IP1, IP2], "family": 4},
-     [{"prefix": IP1, "family": 4}, {"prefix": IP2, "family": 4}]),
+    ("https://domain.com", 2047, "address", {"address": [p.IP1, p.IP2], "family": 4},
+     [{"address": [p.IP1, p.IP2], "family": 4}]),
+    ("https://domain.com", 50, "address", {"address": [p.IP1, p.IP2], "family": 4},
+     [{"address": p.IP1, "family": 4}, {"address": p.IP2, "family": 4}]),
+    ("https://domain.com", 50, "prefix", {"prefix": [p.IP1, p.IP2], "family": 4},
+     [{"prefix": p.IP1, "family": 4}, {"prefix": p.IP2, "family": 4}]),
 ])
 def test__slice_params_d(url, max_len, key, params_d, expected):
     """helpers.slice_params_d()."""
@@ -548,13 +434,13 @@ def test__slice_params_d(url, max_len, key, params_d, expected):
 @pytest.mark.parametrize("url, max_len, keys, params, expected", [
     ("https://domain.com", 2047, ["address"], [], [{}]),
     ("https://domain.com", 2047, ["address"], [{}], [{}]),  # no need slice
-    ("https://domain.com", 50, [], [{"address": [IP1, IP2], "family": [4]}],
-     [{"address": [IP1, IP2], "family": [4]}]),  # need slice
+    ("https://domain.com", 50, [], [{"address": [p.IP1, p.IP2], "family": [4]}],
+     [{"address": [p.IP1, p.IP2], "family": [4]}]),  # need slice
 
-    ("https://domain.com", 50, ["prefix"], [{"address": [IP1, IP2], "family": [4]}],
-     [{"address": [IP1, IP2], "family": [4]}]),  # no need slice
-    ("https://domain.com", 50, ["address"], [{"address": [IP1, IP2], "family": [4]}],
-     [{"address": IP1, "family": [4]}, {"address": IP2, "family": [4]}]),  # need slice
+    ("https://domain.com", 50, ["prefix"], [{"address": [p.IP1, p.IP2], "family": [4]}],
+     [{"address": [p.IP1, p.IP2], "family": [4]}]),  # no need slice
+    ("https://domain.com", 50, ["address"], [{"address": [p.IP1, p.IP2], "family": [4]}],
+     [{"address": p.IP1, "family": [4]}, {"address": p.IP2, "family": [4]}]),  # need slice
 ])
 def test__slice_params_ld(url, max_len, keys, params, expected):
     """helpers.slice_params_ld()."""
@@ -563,10 +449,10 @@ def test__slice_params_ld(url, max_len, keys, params, expected):
 
 
 @pytest.mark.parametrize("url, max_len, expected", [
-    (f"https://domain.com?address={IP1}&address={IP2}", 2047,
-     [f"https://domain.com?address={IP1_}&address={IP2_}"]),
-    (f"https://domain.com?address={IP1}&address={IP2}", 50,
-     [f"https://domain.com?address={IP1_}", f"https://domain.com?address={IP2_}"]),
+    (f"https://domain.com?address={p.IP1}&address={p.IP2}", 2047,
+     [f"https://domain.com?address={p.IP1_}&address={p.IP2_}"]),
+    (f"https://domain.com?address={p.IP1}&address={p.IP2}", 50,
+     [f"https://domain.com?address={p.IP1_}", f"https://domain.com?address={p.IP2_}"]),
 ])
 def test__slice_url(url, max_len, expected):
     """helpers.slice_url()."""
