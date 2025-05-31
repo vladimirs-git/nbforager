@@ -282,6 +282,9 @@ class NbApi:
                 app_paths.append(path)
         return app_paths
 
+    def connectors(self) -> ODDAny:
+        """Return list of Connector instances ordered"""
+
     def copy(self, **kwargs) -> NbApi:
         """Create a duplicate of the object.
 

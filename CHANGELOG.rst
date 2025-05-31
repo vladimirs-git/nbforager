@@ -4,6 +4,12 @@
 CHANGELOG
 =========
 
+0.8.0 (2025-05-31)
+------------------
+
+**Added:** helpers DEPENDENT_MODELS, dependency_ordered_paths()
+
+
 0.7.0 (2025-05-17)
 ------------------
 
