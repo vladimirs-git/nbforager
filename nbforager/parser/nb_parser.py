@@ -117,7 +117,7 @@ class NbParser:
 
         :param keys: Chaining dictionary keys to retrieve the desired value.
 
-        :return: Boolean value or an empty string if the value is absent.
+        :return: Boolean value or False if the value is absent.
         :rtype: bool
         """
         return self._get_keys(type_=bool, keys=keys, data=self.data)
