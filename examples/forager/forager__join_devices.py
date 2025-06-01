@@ -16,7 +16,7 @@ nbf = NbForager(host=HOST, token=TOKEN)
 # Get only 1 device and site from Netbox.
 # Note that the site in the device only contains basic data and
 # does not include tags, region and other extended data.
-nbf.dcim.devices.get(max_limit=1)
+nbf.dcim.devices.get(id=1)
 nbf.dcim.sites.get()
 pprint(nbf.root.dcim.devices)
 # {88: {"id": 88,
@@ -41,13 +41,13 @@ print(list(nbf.tree.dcim.devices.values())[0]["site"]["region"]["name"])  # Nort
 
 # Get devices with site data using nested=True.
 nbf.clear()
-nbf.dcim.devices.get(max_limit=1, nested=True)
+device_id = 5393
+nbf.dcim.devices.get(id=device_id, nested=True)
 nbf.join_tree()
 print(list(nbf.tree.dcim.devices.values())[0]["site"]["region"]["name"])  # North Carolina
 
 # INTERFACES
 # Get only 1 device and related interfaces from Netbox.
-device_id = 5393
 nbf.dcim.devices.get(id=device_id)
 nbf.dcim.interfaces.get(device_id=device_id)
 nbf.join_tree(dcim=True)

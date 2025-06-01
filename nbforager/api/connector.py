@@ -102,13 +102,6 @@ class Connector(BaseC):
         - Examples https://github.com/vladimirs-git/nbforager/tree/main/examples,
         - Official documentation (if you're lucky).
 
-
-        :param max_limit: Maximum count of objects that need to be requested.
-            This is useful in development to prevent script blocking when
-            receiving only part of the requested data is acceptable.
-            Default is `0` no limit.
-        :type max_limit: int
-
         :param or_{parameter}: List of parameters that need to be requested
             in an ``OR`` manner, where ``{parameter}`` is the name of the
             Netbox REST API `Schema ip_addresses`_.
