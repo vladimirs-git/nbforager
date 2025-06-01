@@ -19,7 +19,7 @@ import netports
 import requests
 from requests import Session, Response
 from requests.exceptions import ReadTimeout, ConnectionError as RequestsConnectionError
-from vhelpers import vdict, vlist, vparam
+from vhelpers import vlist, vparam
 
 from nbforager import helpers as h
 from nbforager.api import extended_get
