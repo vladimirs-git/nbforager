@@ -4,11 +4,12 @@
 CHANGELOG
 =========
 
-0.8.2 (2025-06-01)
+0.8.3 (2025-06-01)
 ------------------
 
 **Added:** helpers DEPENDENT_MODELS, dependency_ordered_paths()
 **Added:** NbApi.connectors()
+**Added:** BaseC._add_params_limit_offset()
 **Fixed:** threading mode for nested URLs
 
 

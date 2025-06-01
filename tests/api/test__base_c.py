@@ -280,6 +280,19 @@ def test__retry_requests(monkeypatch: MonkeyPatch,
 
 # ============================= helpers ==============================
 
+
+@pytest.mark.parametrize("params_d, expected", [
+    ({}, {"limit": [1000], "offset": [0]}),
+    ({"limit": [2]}, {"limit": [2], "offset": [0]}),
+    ({"offset": [3]}, {"limit": [1000], "offset": [3]}),
+    ({"limit": [2], "offset": [3]}, {"limit": [2], "offset": [3]}),
+])
+def test__add_params_limit_offset(api: NbApi, params_d, expected):
+    """BaseC._add_params_limit_offset()."""
+    actual = api.ipam.ip_addresses._add_params_limit_offset(params_d=params_d)
+    assert actual == expected
+
+
 @pytest.mark.parametrize("status_code, text, expected", [
     (400, "text", "status_code=400 text='text' url='netbox'"),
     (400, "<title>Page Not Found. text<title>",

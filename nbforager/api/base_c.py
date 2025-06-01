@@ -316,12 +316,7 @@ class BaseC:
 
         :return: Netbox objects. Update self _results.
         """
-        params_d = params_d.copy()
-        if "limit" not in params_d:
-            params_d["limit"] = [self.limit]
-        if "offset" not in params_d:
-            params_d["offset"] = [0]
-
+        params_d = self._add_params_limit_offset(params_d)
         params_l: LParam = vparam.from_dict(params_d)
         url = f"{self.url_base}{path}?{urllib.parse.urlencode(params_l)}"
 
@@ -359,6 +354,7 @@ class BaseC:
 
         :return: Netbox objects. Update self _results.
         """
+        params_d = self._add_params_limit_offset(params_d)
         params_l: LParam = vparam.from_dict(params_d)
         url = f"{self.url_base}{path}?{urllib.parse.urlencode(params_l)}"
 
@@ -430,6 +426,19 @@ class BaseC:
             queue.task_done()
 
     # ============================== helper ==============================
+
+    def _add_params_limit_offset(self, params_d: DList) -> DList:
+        """Add `limit` and `offset` default values to the params_d if they are not already present.
+
+        :param params_d: Parameters that need to update.
+        :return: Updated parameters.
+        """
+        params_d = params_d.copy()
+        if "limit" not in params_d:
+            params_d["limit"] = [self.limit]
+        if "offset" not in params_d:
+            params_d["offset"] = [0]
+        return params_d
 
     def _get_d(self) -> DAny:
         """Get dictionary from the Netbox.
