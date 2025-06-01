@@ -13,7 +13,7 @@ from operator import itemgetter
 from queue import Queue
 from threading import Thread
 from typing import Callable
-from urllib.parse import urlencode, ParseResult
+from urllib.parse import ParseResult
 
 import netports
 import requests
@@ -293,7 +293,7 @@ class BaseC:
         params_d_["brief"] = 1
         params_d_["limit"] = 1
         params_l: LParam = vparam.from_dict(params_d_)
-        url = f"{self.url_base}{path}?{urlencode(params_l)}"
+        url = f"{self.url_base}{path}?{urllib.parse.urlencode(params_l)}"
         response: Response = self._retry_requests(url)
 
         count = 0
@@ -316,62 +316,43 @@ class BaseC:
 
         :return: Netbox objects. Update self _results.
         """
-        offset = 0
-        if offsets := params_d.get("offset"):
-            offset = int(offsets[0])
+        params_d = params_d.copy()
+        if "limit" not in params_d:
+            params_d["limit"] = [self.limit]
+        if "offset" not in params_d:
+            params_d["offset"] = [0]
 
-        max_limit: int = self._set_limit(params_d)
         params_l: LParam = vparam.from_dict(params_d)
+        url = f"{self.url_base}{path}?{urllib.parse.urlencode(params_l)}"
 
         results: LDAny = []
         while True:
-            params_i = [*params_l, ("offset", offset)]
-            url = f"{self.url_base}{path}?{urlencode(params_i)}"
             response: Response = self._retry_requests(url)
-            if response.ok:
-                html: str = response.content.decode("utf-8")
-                data: DAny = json.loads(html)
-                results_: LDAny = list(data["results"])
-                results.extend(results_)
+            if not response.ok:
+                break
+
+            html: str = response.content.decode("utf-8")
+            data: DAny = json.loads(html)
+            results_: LDAny = list(data["results"])
+            results.extend(results_)
+
+            # retrieve next offset from Response
+            if url_next := str(data.get("next") or ""):
+                url = url_next
             else:
-                results_ = []
-
-            # stop requests if limit reached
-            if self.limit != len(results_):
-                break
-            if max_limit and max_limit <= len(results):
                 break
 
-            # next iteration
+            # Sleep before the next iteration to reduce server load
             if self.interval:
                 time.sleep(self.interval)
-            offset += self.limit
 
         return results
 
-    def _set_limit(self, params_d: DList) -> int:
-        """Update limit valur in params_d based on limit and max_limit
-
-        :return: Max limit value, update params_d["limit"] value
-        """
-        limit = 0
-        if limit_ := list(vdict.pop(data=params_d, key="limit") or []):
-            limit = int(limit_[0])
-        if not limit:
-            limit = self.limit
-        max_limit = 0
-        if max_limit_ := list(vdict.pop(data=params_d, key="max_limit") or []):
-            max_limit = int(max_limit_[0])
-        if max_limit and max_limit < limit:
-            limit = max_limit
-        params_d["limit"] = [limit]
-        return max_limit
-
     def _query_data_thread(self, path: str, params_d: DAny) -> None:
-        """Retrieve data from the Netbox.
+        """Retrieve data from the Netbox and appends results to the internal results list.
 
-        If the number of items in the result exceeds the limit, iterate through the offset
-        in a loop mode.
+        If the params_d does not have `offset` and the received Response contains "next" URL,
+            the method will recurse to fetch the next set of data.
 
         :param path: Section of the URL that points to the model.
         :param params_d: Parameters to request from the Netbox.
@@ -379,12 +360,26 @@ class BaseC:
         :return: Netbox objects. Update self _results.
         """
         params_l: LParam = vparam.from_dict(params_d)
-        url = f"{self.url_base}{path}?{urlencode(params_l)}"
+        url = f"{self.url_base}{path}?{urllib.parse.urlencode(params_l)}"
+
         response: Response = self._retry_requests(url)
-        if response.ok:
-            html: str = response.content.decode("utf-8")
-            data: DAny = json.loads(html)
-            results_: LDAny = list(data["results"])
+        if not response.ok:
+            return
+
+        html: str = response.content.decode("utf-8")
+        data: DAny = json.loads(html)
+        results_: LDAny = list(data["results"])
+        self._results.extend(results_)
+
+        # threading mode manage offset in top level method
+        if "offset" in params_d:
+            return
+
+        # retrieve next offset from Response
+        if url_next := str(data.get("next") or ""):
+            url_o: ParseResult = urllib.parse.urlparse(url_next)
+            params_d_: DAny = urllib.parse.parse_qs(url_o.query)
+            results_ = self._query_loop(path=path, params_d=params_d_)
             self._results.extend(results_)
 
     def _query_pages_count(self, params_ld: LDList) -> LDAny:
