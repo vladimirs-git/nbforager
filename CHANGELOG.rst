@@ -4,6 +4,14 @@
 CHANGELOG
 =========
 
+0.8.4 (2025-06-08)
+------------------
+
+**Changed:** IPv4 using ipaddress
+
+**Deleted:** ciscoconfparse
+
+
 0.8.3 (2025-06-01)
 ------------------
 

@@ -304,7 +304,7 @@ class NbForager:
 
             In ipam.aggregate, ipam.prefixes, ipam.ip_addresses:
 
-            - ``_ipv4`` IPv4 object, child of ciscoconfparse.IPv4Obj
+            - ``_ipv4`` IPv4 object
             - ``_aggregate`` Aggregate data for ipam.prefixes and ipam.ip_addresses
             - ``_super_prefix`` Related parent prefix data for ipam.prefixes and ipam.ip_addresses
             - ``_sub_prefixes`` Related child prefixes data for ipam.prefixes and ipam.ip_addresses
