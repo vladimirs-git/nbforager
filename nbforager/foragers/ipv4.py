@@ -17,7 +17,8 @@ class IPv4:
         :param strict: If True, IP must be valid network address (not host address).
         :raises ValueError: If strict is True and a network address is not supplied.
         """
-        _ = IPv4Network(cidr, strict=strict)  # Validate network with strictness
+        if strict:
+            IPv4Network(cidr, strict=strict)
         self._interface = IPv4Interface(cidr)
 
     def __repr__(self):
