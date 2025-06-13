@@ -70,6 +70,17 @@ class IPv4:
         return str(self.interface.with_prefixlen)
 
     @property
+    def is_private(self) -> bool:
+        """IPv4 address is private."""
+        return bool(self.interface.ip.is_private)
+
+    @property
+    def prefixlen(self) -> int:
+        """IPv4 network with prefixlen, A.B.C.D/LEN."""
+        return self.interface.network.prefixlen
+
+
+    @property
     def net(self) -> str:
         """IPv4 network with prefixlen, A.B.C.D/LEN."""
         return str(self.interface.network)

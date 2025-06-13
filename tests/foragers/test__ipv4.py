@@ -11,7 +11,7 @@ def test__init():
     assert ipv4.ipv4 == "10.0.0.1/24"
     assert ipv4.net == "10.0.0.0/24"
     assert ipv4.prefixlen == 24
-    assert ipv4.interface.ip.is_private == True
+    assert ipv4.is_private is True
 
     with pytest.raises(ValueError):
         IPv4("10.0.0.1/24", strict=True)
@@ -21,7 +21,7 @@ def test__init():
     assert ipv4.ipv4 == "10.0.0.1/32"
     assert ipv4.net == "10.0.0.1/32"
     assert ipv4.prefixlen == 32
-    assert ipv4.interface.ip.is_private == True
+    assert ipv4.is_private is True
 
 
 @pytest.mark.parametrize("cidr1, cidr2, expected", [
