@@ -8,7 +8,7 @@ def test__init():
     """IPv4.__init__()."""
     ipv4 = IPv4("10.0.0.1/24")
     assert ipv4.ip == "10.0.0.1"
-    assert ipv4.ipv4 == "10.0.0.1/24"
+    assert ipv4.cidr == "10.0.0.1/24"
     assert ipv4.net == "10.0.0.0/24"
     assert ipv4.prefixlen == 24
     assert ipv4.is_private is True
@@ -18,7 +18,7 @@ def test__init():
 
     ipv4 = IPv4("10.0.0.1/32")
     assert ipv4.ip == "10.0.0.1"
-    assert ipv4.ipv4 == "10.0.0.1/32"
+    assert ipv4.cidr == "10.0.0.1/32"
     assert ipv4.net == "10.0.0.1/32"
     assert ipv4.prefixlen == 32
     assert ipv4.is_private is True

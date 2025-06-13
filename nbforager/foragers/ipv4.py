@@ -23,14 +23,14 @@ class IPv4:
 
     def __repr__(self):
         """Representation of the object."""
-        return f"IPv4('{self.ipv4}')"
+        return f"IPv4('{self.cidr}')"
 
     def __str__(self):
         """String representation
 
         :return: IPv4 address with prefixlen, A.B.C.D/LEN.
         """
-        return self.ipv4
+        return self.cidr
 
     def __hash__(self) -> int:
         """Hash value of the object."""
@@ -65,7 +65,7 @@ class IPv4:
         return str(self.interface.ip)
 
     @property
-    def ipv4(self) -> str:
+    def cidr(self) -> str:
         """IPv4 address with prefixlen, A.B.C.D/LEN."""
         return str(self.interface.with_prefixlen)
 
@@ -73,12 +73,6 @@ class IPv4:
     def is_private(self) -> bool:
         """IPv4 address is private."""
         return bool(self.interface.ip.is_private)
-
-    @property
-    def prefixlen(self) -> int:
-        """IPv4 network with prefixlen, A.B.C.D/LEN."""
-        return self.interface.network.prefixlen
-
 
     @property
     def net(self) -> str:
