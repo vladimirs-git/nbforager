@@ -19,7 +19,7 @@ class IPv4:
         """
         if strict:
             IPv4Network(cidr, strict=strict)
-        self._interface = IPv4Interface(cidr)
+        self.interface = IPv4Interface(cidr)
 
     def __repr__(self):
         """Representation of the object."""
@@ -34,7 +34,7 @@ class IPv4:
 
     def __hash__(self) -> int:
         """Hash value of the object."""
-        return hash(self._interface.network)
+        return hash(self.interface.network)
 
     def __eq__(self, other: IPv4, /) -> bool:
         """Check if two objects are equal.
@@ -44,7 +44,7 @@ class IPv4:
         """
         if not isinstance(other, IPv4):
             return False
-        return self._interface == other._interface
+        return self.interface == other.interface
 
     def __lt__(self, other: IPv4, /) -> bool:
         """Compare two objects.
@@ -53,28 +53,28 @@ class IPv4:
         """
         if not isinstance(other, IPv4):
             return False
-        return self._interface < other._interface
+        return self.interface < other.interface
 
     def __contains__(self, other: IPv4, /) -> bool:
         """Check if all IPs in the other subnet are part of this network."""
-        return other._interface.network.subnet_of(self._interface.network)
+        return other.interface.network.subnet_of(self.interface.network)
 
     @property
     def ip(self) -> str:
         """IPv4 address without prefixlen, A.B.C.D."""
-        return str(self._interface.ip)
+        return str(self.interface.ip)
 
     @property
     def ipv4(self) -> str:
         """IPv4 address with prefixlen, A.B.C.D/LEN."""
-        return str(self._interface.with_prefixlen)
+        return str(self.interface.with_prefixlen)
 
     @property
     def net(self) -> str:
         """IPv4 network with prefixlen, A.B.C.D/LEN."""
-        return str(self._interface.network)
+        return str(self.interface.network)
 
     @property
     def prefixlen(self) -> int:
         """IPv4 network with prefixlen, A.B.C.D/LEN."""
-        return self._interface.network.prefixlen
+        return self.interface.network.prefixlen
