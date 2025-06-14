@@ -6,7 +6,7 @@ from vhelpers import vlist
 
 from nbforager import helpers as h
 from nbforager.api.base_c import BaseC
-from nbforager.foragers.ipv4 import IPv4
+from netports import IPv4
 from nbforager.nb_tree import NbTree
 from nbforager.parser import nb_parser
 from nbforager.parser.nb_value import NbValue

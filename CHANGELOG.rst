@@ -4,10 +4,10 @@
 CHANGELOG
 =========
 
-0.8.8 (2025-06-13)
+0.8.9 (2025-06-14)
 ------------------
 
-**Added:** IPv4.is_private
+**Deleted:** IPv4, moved to netports-0.18.1
 
 **Changed:** IPv4.ipv4 > IPv4.cidr
 

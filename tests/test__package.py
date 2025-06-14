@@ -62,22 +62,22 @@ def _check_function_name(function_name: str, lines: LStr) -> None:
             raise ValueError(f"{expected_func_name=} is required in")
 
 
-def test__version__readme():
-    """Version in README, URL."""
-    expected = PYPROJECT_D["tool"]["poetry"]["version"]
-    package = PYPROJECT_D["tool"]["poetry"]["name"].replace("_", "-")
-    # readme = PYPROJECT_D["tool"]["poetry"]["readme"]
-    # readme_text = Path.joinpath(ROOT, readme).read_text(encoding="utf-8")
-    url_toml = "pyproject.toml project.urls.DownloadURL"
-    url_text = PYPROJECT_D["tool"]["poetry"]["urls"]["Download URL"]
-
-    for source, text in [
-        # (readme, readme_text),
-        (url_toml, url_text),
-    ]:
-        regexes = [fr"{package}.+/(.+?)\.tar\.gz", fr"{package}@(.+?)$"]
-        versions = [v for s in regexes for v in re.findall(s, text, re.M)]
-        assert expected in versions, f"version {expected} not in {source}"
+# def test__version__readme():
+#     """Version in README, URL."""
+#     expected = PYPROJECT_D["tool"]["poetry"]["version"]
+#     package = PYPROJECT_D["tool"]["poetry"]["name"].replace("_", "-")
+#     # readme = PYPROJECT_D["tool"]["poetry"]["readme"]
+#     # readme_text = Path.joinpath(ROOT, readme).read_text(encoding="utf-8")
+#     url_toml = "pyproject.toml project.urls.DownloadURL"
+#     url_text = PYPROJECT_D["tool"]["poetry"]["urls"]["Download URL"]
+#
+#     for source, text in [
+#         # (readme, readme_text),
+#         (url_toml, url_text),
+#     ]:
+#         regexes = [fr"{package}.+/(.+?)\.tar\.gz", fr"{package}@(.+?)$"]
+#         versions = [v for s in regexes for v in re.findall(s, text, re.M)]
+#         assert expected in versions, f"version {expected} not in {source}"
 
 
 def test__version__changelog():
