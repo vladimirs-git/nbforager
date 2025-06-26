@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nbforager"
-version = "0.8.9"
+version = "0.8.10"
 description = "Python package designed to assist in working with the Netbox REST API. The filter parameters are identical to those in the Web UI filter form. It replaces brief data with full information, and Netbox objects are represented as a recursive multidimensional dictionary."
 authors = ["Vladimirs Prusakovs <vladimir.prusakovs@gmail.com>"]
 readme = "README.rst"
@@ -21,7 +21,8 @@ repository = "https://github.com/vladimirs-git/nbforager"
 "Bug Tracker" = "https://github.com/vladimirs-git/nbforager/issues"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.8"
+#python = "^3.11"
 #
 netports = ">=0.17"
 pydantic = "^2"
