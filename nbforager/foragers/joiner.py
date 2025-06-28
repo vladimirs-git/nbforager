@@ -248,7 +248,7 @@ class Joiner:
                 super_prefixes = sub_prefixes
                 continue
             for super_prefix in super_prefixes:
-                if super_prefix["_ipv4"].prefixlen == 32:
+                if super_prefix["_ipv4"].len == 32:
                     continue
                 for sub_prefix in sub_prefixes:
                     if sub_prefix["_ipv4"] in (super_prefix["_ipv4"]):
