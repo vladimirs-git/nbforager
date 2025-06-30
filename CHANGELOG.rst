@@ -4,10 +4,10 @@
 CHANGELOG
 =========
 
-0.8.11 (2025-06-28)
+0.8.12 (2025-06-30)
 -------------------
 
-**Changed:** dependencies python-3.8, netports-1.0.0
+**Changed:** dependencies python-3.8, netports-1.0.3
 
 
 0.8.9 (2025-06-14)
