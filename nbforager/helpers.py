@@ -277,10 +277,10 @@ def url_to_ami_items(url: str) -> T3Str:
 
     app = str(items[0])
     model = str(items[1])
-    port = ""
+    id_ = ""
     if len(items) == 3:
-        port = str(items[2])
-    return app, model, port
+        id_ = str(items[2])
+    return app, model, id_
 
 
 def url_to_ami(url: str, path: bool = False) -> T3StrInt:
