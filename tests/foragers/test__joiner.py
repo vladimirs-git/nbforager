@@ -1,9 +1,9 @@
 """Tests nbforager.foragers.joiner.py."""
 import pytest
+from netports import IPv4
 
 from nbforager import nb_tree
 from nbforager.api.base_c import BaseC
-from netports import IPv4
 from nbforager.foragers.joiner import Joiner
 from nbforager.nb_tree import NbTree
 from nbforager.types_ import LStr, DAny

@@ -1,5 +1,3 @@
-# pylint: disable=R0902,R0903
-
 """Plugins connectors."""
 
 from nbforager.api.connector import Connector
@@ -14,7 +12,7 @@ class PluginsAC:
         self.installed_plugins = self.InstalledPluginsC(**kwargs)
 
     class InstalledPluginsC(Connector):
-        """InstalledPluginsC."""
+        """InstalledPluginsC, v3."""
 
         path = "plugins/installed-plugins/"
 

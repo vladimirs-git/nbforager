@@ -1,5 +1,3 @@
-# pylint: disable=R0902,R0903
-
 """Core Forager."""
 
 from nbforager.foragers.base_fa import BaseAF
@@ -19,9 +17,22 @@ class CoreAF(BaseAF):
         :param tree: NbTree object where transformed data from Netbox needs to be saved.
         """
         super().__init__(api, root, tree)
+        self.background_queues = self.BackgroundQueuesF(self)
+        self.background_tasks = self.BackgroundTasksF(self)
+        self.background_workers = self.BackgroundWorkersF(self)
         self.data_files = self.DataFilesF(self)
         self.data_sources = self.DataSourcesF(self)
         self.jobs = self.JobsF(self)
+        self.object_changes = self.ObjectChangesF(self)
+
+    class BackgroundQueuesF(Forager):
+        """BackgroundQueuesF."""
+
+    class BackgroundTasksF(Forager):
+        """BackgroundTasksF."""
+
+    class BackgroundWorkersF(Forager):
+        """BackgroundWorkersF."""
 
     class DataFilesF(Forager):
         """DataFilesF."""
@@ -31,3 +42,6 @@ class CoreAF(BaseAF):
 
     class JobsF(Forager):
         """JobsF."""
+
+    class ObjectChangesF(Forager):
+        """ObjectChangesC."""

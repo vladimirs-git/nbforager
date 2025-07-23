@@ -1,5 +1,3 @@
-# pylint: disable=R0902,R0903
-
 """Tenancy connectors."""
 
 from nbforager.api.connector import Connector
@@ -18,31 +16,31 @@ class TenancyAC:
         self.tenants = self.TenantsC(**kwargs)
 
     class ContactAssignmentsC(Connector):
-        """ContactAssignmentsC."""
+        """ContactAssignmentsC, v3."""
 
         path = "tenancy/contact-assignments/"
 
     class ContactGroupsC(Connector):
-        """ContactGroupsC."""
+        """ContactGroupsC, v3."""
 
         path = "tenancy/contact-groups/"
 
     class ContactRolesC(Connector):
-        """ContactRolesC."""
+        """ContactRolesC, v3."""
 
         path = "tenancy/contact-roles/"
 
     class ContactsC(Connector):
-        """ContactsC."""
+        """ContactsC, v3."""
 
         path = "tenancy/contacts/"
 
     class TenantGroupsC(Connector):
-        """TenantGroupsC."""
+        """TenantGroupsC, v3."""
 
         path = "tenancy/tenant-groups/"
 
     class TenantsC(Connector):
-        """TenantsC."""
+        """TenantsC, v3."""
 
         path = "tenancy/tenants/"

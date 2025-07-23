@@ -1,5 +1,3 @@
-# pylint: disable=R0902,R0903
-
 """Wireless Forager."""
 
 from nbforager.foragers.base_fa import BaseAF

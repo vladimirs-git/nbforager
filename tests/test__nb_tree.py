@@ -1,11 +1,12 @@
 """Tests nb_tree.py."""
+import difflib
 from typing import Any
 
 import pytest
 
-from nbforager import nb_tree
+from nbforager import nb_tree, NbApi
 from nbforager.nb_tree import NbTree
-from nbforager.types_ import DAny
+from nbforager.types_ import DAny, LStr
 from tests import functions as func
 from tests import params as p
 
@@ -28,19 +29,14 @@ def test__insert_tree():
 def test__apps():
     """NbTree.apps()"""
     tree = NbTree()
+    api = NbApi(host="netbox")
+
     actual = tree.apps()
-    expected = [
-        "circuits",
-        "core",
-        "dcim",
-        "extras",
-        "ipam",
-        "tenancy",
-        "users",
-        "virtualization",
-        "wireless",
-    ]
-    assert actual == expected
+    expected = [s for s in api.apps() if s != "plugins"]
+
+    diff: LStr = list(difflib.ndiff(actual, expected))
+    diff = [s for s in diff if s.startswith("- ") or s.startswith("+ ")]
+    assert not diff
 
 
 def test__clear():
@@ -84,16 +80,17 @@ def test__count():
 def test__models():
     """NbTree.models()"""
     tree = NbTree()
-    actual = tree.circuits.models()
-    expected = [
-        "circuit_terminations",
-        "circuit_types",
-        "circuits",
-        "provider_accounts",
-        "provider_networks",
-        "providers",
-    ]
-    assert actual == expected
+    api = NbApi(host="netbox")
+    apps: LStr = [s for s in api.apps() if s != "plugins"]
+
+    for app in apps:
+        actual: LStr = list(getattr(tree, app).__annotations__)
+        expected: LStr = [s for s in dir(getattr(api, app)) if s[0].islower()]
+        expected = [s for s in expected if s not in ["connected_device", "config"]]
+
+        diff: LStr = list(difflib.ndiff(actual, expected))
+        diff = [s for s in diff if s.startswith("- ") or s.startswith("+ ")]
+        assert not diff
 
 
 @pytest.mark.parametrize("child, exp_id, exp_object", [

@@ -2,11 +2,11 @@
 
 from operator import itemgetter
 
+from netports import IPv4
 from vhelpers import vlist
 
-from nbforager import helpers as h
+from nbforager import ami
 from nbforager.api.base_c import BaseC
-from netports import IPv4
 from nbforager.nb_tree import NbTree
 from nbforager.parser import nb_parser
 from nbforager.parser.nb_value import NbValue
@@ -37,7 +37,7 @@ class Joiner:
             ("virtualization", "virtual_machines"),
             ("virtualization", "interfaces"),
         ]:
-            key = h.attr_to_model(f"{app}/{model}/")
+            key = ami.attr_to_model(f"{app}/{model}/")
             extra_keys: LStr = BaseC._extra_keys[key]  # pylint: disable=W0212
             objects_d: DiDAny = getattr(getattr(self.tree, app), model)
             for object_d in objects_d.values():

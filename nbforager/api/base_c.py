@@ -1,5 +1,3 @@
-# pylint: disable=R0902,R0903
-
 """Connector Base."""
 
 from __future__ import annotations
@@ -21,18 +19,19 @@ from requests import Session, Response
 from requests.exceptions import ReadTimeout, ConnectionError as RequestsConnectionError
 from vhelpers import vlist, vparam
 
-from nbforager import helpers as h
+from nbforager import nb_helpers
 from nbforager.api import extended_get
 from nbforager.api.extended_get import ParamPath, DParamPath
 from nbforager.exceptions import NbApiError
-from nbforager.types_ import DAny, DStr, LDAny, LStr, DLInt, DList, LDList, DLStr, DDAny
+from nbforager.types_ import DAny, DStr, LDAny, LStr, DLInt, DList, LDList, DLStr
 from nbforager.types_ import TLists, OUParam, LParam
 
 LONERS: DLStr = {
     "any": ["q"],
     "dcim/devices/": ["airflow"],
-    "ipam/aggregates/": ["prefix"],
-    "ipam/prefixes/": ["within_include"],
+    "ipam/aggregates/": ["family", "prefix"],
+    "ipam/prefixes/": ["family", "within_include"],
+    "ipam/ip-addresses/": ["family"],
     "ipam/vlan-groups/": ["site"],
     "extras/content-types/": ["id", "app_label", "model"],
 }
@@ -67,7 +66,6 @@ class BaseC:
         "timeout",
         "max_retries",
         "sleep",
-        "default_get",
         "loners",
     ]
     _extra_keys: DLStr = {
@@ -165,9 +163,6 @@ class BaseC:
         :param bool extended_get: True - Extend filtering parameters in GET request,
             ``{parameter}`` can be used instead of ``{parameter}_id``. Default is `True`.
 
-        :param dict default_get: Set default filtering parameters, to be used in each
-            GET request.
-
         :param dict loners: Set :ref:`Filtering parameters in an OR manner`.
         """
         self.host: str = _init_host(**kwargs)
@@ -187,10 +182,8 @@ class BaseC:
         self.strict: bool = bool(kwargs.get("strict"))
         # Settings
         self.extended_get: bool = bool(kwargs.get("extended_get"))
-        self.default_get: DDAny = dict(kwargs.get("default_get") or {})
         self.loners: DLStr = dict(kwargs.get("loners") or {})
 
-        self._default_get: DList = self._init_default_get()
         self._loners: LStr = self._init_loners()
         self._results: LDAny = []  # cache for received objects from Netbox
         self._session: Session = requests.session()
@@ -257,7 +250,7 @@ class BaseC:
         self._results = []
 
         # slice params
-        params_ld = h.slice_params_ld(
+        params_ld = nb_helpers.slice_params_ld(
             url=self.url,
             max_len=self.url_length,
             keys=self._slices,
@@ -316,7 +309,11 @@ class BaseC:
 
         :return: Netbox objects. Update self _results.
         """
-        params_d = self._add_params_limit_offset(params_d)
+        is_brief: bool = "brief" in params_d
+        is_offset: bool = "offset" in params_d
+
+        if not is_brief:
+            params_d = self._add_default_limit_offset(params_d)
         params_l: LParam = vparam.from_dict(params_d)
         url = f"{self.url_base}{path}?{urllib.parse.urlencode(params_l)}"
 
@@ -332,6 +329,8 @@ class BaseC:
             results.extend(results_)
 
             # retrieve next offset from Response
+            if is_offset:
+                break
             if url_next := str(data.get("next") or ""):
                 url = url_next
             else:
@@ -354,7 +353,7 @@ class BaseC:
 
         :return: Netbox objects. Update self _results.
         """
-        params_d = self._add_params_limit_offset(params_d)
+        params_d = self._add_default_limit_offset(params_d)
         params_l: LParam = vparam.from_dict(params_d)
         url = f"{self.url_base}{path}?{urllib.parse.urlencode(params_l)}"
 
@@ -427,7 +426,7 @@ class BaseC:
 
     # ============================== helper ==============================
 
-    def _add_params_limit_offset(self, params_d: DList) -> DList:
+    def _add_default_limit_offset(self, params_d: DList) -> DList:
         """Add `limit` and `offset` default values to the params_d if they are not already present.
 
         :param params_d: Parameters that need to update.
@@ -540,9 +539,8 @@ class BaseC:
         params_d: DList = _lists_wo_dupl(kwargs)
         params_d = self._change_params_name_to_id(params_d)
         params_d = self._change_params_exceptions(params_d)
-        params_ld: LDList = h.make_combinations(self._loners, params_d)
-        params_ld = h.change_params_or(params_ld)
-        params_ld = h.join_params(params_ld, self._default_get)
+        params_ld: LDList = nb_helpers.make_combinations(self._loners, params_d)
+        params_ld = nb_helpers.change_params_or(params_ld)
         return params_ld
 
     def _headers(self) -> DStr:
@@ -583,7 +581,7 @@ class BaseC:
             params_d = result["params_d"]
             if not result["count"]:
                 continue
-            params_: LDAny = h.generate_offsets(count, self.limit, params_d)
+            params_: LDAny = nb_helpers.generate_offsets(count, self.limit, params_d)
             params.extend(params_)
         return params
 
@@ -619,15 +617,6 @@ class BaseC:
         return False
 
     # =========================== helpers ===========================
-
-    def _init_default_get(self) -> DList:
-        """Init default filtering parameters."""
-        params_d_: DList = {}
-        for path, params_d in self.default_get.items():
-            if path == self.path:
-                params_d_ = _lists_wo_dupl(params_d)
-                break
-        return params_d_
 
     def _init_loners(self) -> LStr:
         """Init loners filtering parameters."""

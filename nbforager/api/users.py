@@ -1,5 +1,3 @@
-# pylint: disable=R0902,R0903
-
 """Users connectors."""
 
 from nbforager.api.connector import Connector
@@ -18,7 +16,7 @@ class UsersAC:
         self.users = self.UsersC(**kwargs)
 
     class ConfigC(Connector):
-        """ConfigC."""
+        """ConfigC, v3."""
 
         path = "users/config/"
 
@@ -28,21 +26,21 @@ class UsersAC:
             return self._get_d()
 
     class GroupsC(Connector):
-        """GroupsC."""
+        """GroupsC, v3."""
 
         path = "users/groups/"
 
     class PermissionsC(Connector):
-        """PermissionsC."""
+        """PermissionsC, v3."""
 
         path = "users/permissions/"
 
     class TokensC(Connector):
-        """TokensC."""
+        """TokensC, v3."""
 
         path = "users/tokens/"
 
     class UsersC(Connector):
-        """UsersC."""
+        """UsersC, v3."""
 
         path = "users/users/"

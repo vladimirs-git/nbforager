@@ -7,7 +7,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 from vhelpers import vstr
 
-from nbforager import helpers as h
+from nbforager import ami
 from nbforager.types_ import DiDAny, LStr, DAny, T2Str
 
 
@@ -44,20 +44,29 @@ class BaseTree(BaseModel):
 class CircuitsM(BaseTree):
     """Base for Circuits application."""
 
+    circuit_group_assignments: DiDAny = Field(default={})
+    circuit_groups: DiDAny = Field(default={})
     circuit_terminations: DiDAny = Field(default={})
     circuit_types: DiDAny = Field(default={})
     circuits: DiDAny = Field(default={})
     provider_accounts: DiDAny = Field(default={})
     provider_networks: DiDAny = Field(default={})
     providers: DiDAny = Field(default={})
+    virtual_circuit_terminations: DiDAny = Field(default={})
+    virtual_circuit_types: DiDAny = Field(default={})
+    virtual_circuits: DiDAny = Field(default={})
 
 
 class CoreM(BaseTree):
     """Base for Core application."""
 
+    background_queues: DiDAny = Field(default={})
+    background_tasks: DiDAny = Field(default={})
+    background_workers: DiDAny = Field(default={})
     data_files: DiDAny = Field(default={})
     data_sources: DiDAny = Field(default={})
     jobs: DiDAny = Field(default={})
+    object_changes: DiDAny = Field(default={})
 
 
 class DcimM(BaseTree):
@@ -83,9 +92,11 @@ class DcimM(BaseTree):
     inventory_item_templates: DiDAny = Field(default={})
     inventory_items: DiDAny = Field(default={})
     locations: DiDAny = Field(default={})
+    mac_addresses: DiDAny = Field(default={})
     manufacturers: DiDAny = Field(default={})
     module_bay_templates: DiDAny = Field(default={})
     module_bays: DiDAny = Field(default={})
+    module_type_profiles: DiDAny = Field(default={})
     module_types: DiDAny = Field(default={})
     modules: DiDAny = Field(default={})
     platforms: DiDAny = Field(default={})
@@ -97,6 +108,7 @@ class DcimM(BaseTree):
     power_ports: DiDAny = Field(default={})
     rack_reservations: DiDAny = Field(default={})
     rack_roles: DiDAny = Field(default={})
+    rack_types: DiDAny = Field(default={})
     racks: DiDAny = Field(default={})
     rear_port_templates: DiDAny = Field(default={})
     rear_ports: DiDAny = Field(default={})
@@ -117,13 +129,20 @@ class ExtrasM(BaseTree):
     custom_field_choice_sets: DiDAny = Field(default={})
     custom_fields: DiDAny = Field(default={})
     custom_links: DiDAny = Field(default={})
+    event_rules: DiDAny = Field(default={})
     export_templates: DiDAny = Field(default={})
     image_attachments: DiDAny = Field(default={})
     journal_entries: DiDAny = Field(default={})
+    notification_groups: DiDAny = Field(default={})
+    notifications: DiDAny = Field(default={})
     object_changes: DiDAny = Field(default={})
+    object_types: DiDAny = Field(default={})
     reports: DiDAny = Field(default={})
     saved_filters: DiDAny = Field(default={})
     scripts: DiDAny = Field(default={})
+    subscriptions: DiDAny = Field(default={})
+    table_configs: DiDAny = Field(default={})
+    tagged_objects: DiDAny = Field(default={})
     tags: DiDAny = Field(default={})
     webhooks: DiDAny = Field(default={})
 
@@ -147,6 +166,8 @@ class IpamM(BaseTree):
     service_templates: DiDAny = Field(default={})
     services: DiDAny = Field(default={})
     vlan_groups: DiDAny = Field(default={})
+    vlan_translation_policies: DiDAny = Field(default={})
+    vlan_translation_rules: DiDAny = Field(default={})
     vlans: DiDAny = Field(default={})
     vrfs: DiDAny = Field(default={})
 
@@ -180,7 +201,23 @@ class VirtualizationM(BaseTree):
     cluster_types: DiDAny = Field(default={})
     clusters: DiDAny = Field(default={})
     interfaces: DiDAny = Field(default={})
+    virtual_disks: DiDAny = Field(default={})
     virtual_machines: DiDAny = Field(default={})
+
+
+class VpnM(BaseTree):
+    """Base for Vpn application."""
+
+    ike_policies: DiDAny = Field(default={})
+    ike_proposal: DiDAny = Field(default={})
+    ipsec_policies: DiDAny = Field(default={})
+    ipsec_profiles: DiDAny = Field(default={})
+    ipsec_proposals: DiDAny = Field(default={})
+    l2vpn_terminations: DiDAny = Field(default={})
+    l2vpns: DiDAny = Field(default={})
+    tunnel_groups: DiDAny = Field(default={})
+    tunnel_terminations: DiDAny = Field(default={})
+    tunnels: DiDAny = Field(default={})
 
 
 class WirelessM(BaseTree):
@@ -207,9 +244,11 @@ class NbTree(BaseModel):
     dcim: DcimM = Field(default=DcimM())
     extras: ExtrasM = Field(default=ExtrasM())
     ipam: IpamM = Field(default=IpamM())
+    # plugins have different model
     tenancy: TenancyM = Field(default=TenancyM())
     users: UsersM = Field(default=UsersM())
     virtualization: VirtualizationM = Field(default=VirtualizationM())
+    vpn: VpnM = Field(default=VpnM())
     wireless: WirelessM = Field(default=WirelessM())
 
     def __repr__(self):
@@ -296,14 +335,13 @@ def missed_urls(urls: LStr, tree: NbTree) -> LStr:
     for url in urls:
         url = url.rstrip("/")
         app, model, digit = url.split("/")[-3:]
-        model = h.model_to_attr(model)
+        model = ami.model_to_attr(model)
         id_ = int(digit)
 
         try:
-            data = getattr(getattr(tree, app), model).get(id_)
+            data: DAny = getattr(getattr(tree, app), model).get(id_)
         except AttributeError as ex:
-            msg = f"{type(ex).__name__}: {ex}"
-            logging.error(msg)
+            logging.error(str(f"{type(ex).__name__}: {ex}"))
             continue
 
         if not data:
@@ -336,7 +374,7 @@ def object_type_to_am(object_type: str, path: bool = False) -> T2Str:
             if model[:2] != model_type[:2]:
                 continue
 
-            model_singular = h.plural_to_singular(model)
+            model_singular = ami.model_singular(model)
             if model_singular == model_type:
                 if path:
                     model = model.replace("_", "-")
@@ -358,8 +396,8 @@ def _get_child(child: DAny, tree: NbTree) -> DAny:
     """
     if child.get("url"):
         url = str(child["url"]).strip("/")
-        app, model, digit = h.url_to_ami_items(url)
-        model = h.model_to_attr(model)
+        app, model, digit = ami.url_to_ami_items(url)
+        model = ami.model_to_attr(model)
         if model_d := getattr(getattr(tree, app), model):
             if child_full := model_d.get(int(digit)):
                 return child_full

@@ -11,8 +11,7 @@ from urllib.parse import urlparse, parse_qs
 
 from vhelpers import vstr
 
-from nbforager import helpers as h
-from nbforager import nb_tree
+from nbforager import ami, nb_helpers, nb_tree
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
 from nbforager.parser import nb_parser
@@ -28,8 +27,8 @@ class Forager:
         :param forager_a: Parent forager.
         :type forager_a: CircuitsF or DcimF or IpamF or TenancyF
         """
-        app = h.attr_name(forager_a)
-        model = h.attr_name(self)
+        app = ami.attr_name(forager_a)
+        model = ami.attr_name(self)
         self.app = app
         self.model = model
         self.api: NbApi = forager_a.api
@@ -105,14 +104,14 @@ class Forager:
         # loop
         else:
             for url in urls:
-                app, model, _ = h.url_to_ami_items(url)
+                app, model, _ = ami.url_to_ami_items(url)
                 path = f"{app}/{model}/"
                 connector = self._get_connector(path)
                 params_d: DList = parse_qs(urlparse(url).query)
                 params_ld: LDList = connector._validate_params(**params_d)  # pylint: disable=W0212
 
                 # slice params
-                params_ld = h.slice_params_ld(
+                params_ld = nb_helpers.slice_params_ld(
                     url=url,
                     max_len=connector.url_length,
                     keys=connector._slices,  # pylint: disable=W0212
@@ -219,15 +218,15 @@ class Forager:
 
         :return: Nested URLs.
         """
-        urls: LStr = h.nested_urls(nb_objects)
+        urls: LStr = ami.nested_urls(nb_objects)
         urls = nb_tree.missed_urls(urls=urls, tree=self.root)
-        urls = h.join_urls(urls)
-        urls = [s for s in urls if h.url_to_ami_items(s)[0]]
+        urls = nb_helpers.join_urls(urls)
+        urls = [s for s in urls if ami.url_to_ami_items(s)[0]]
 
         urls_: LStr = []
 
         for url in urls:
-            app, model, _ = h.url_to_ami_items(url)
+            app, model, _ = ami.url_to_ami_items(url)
             path = f"{app}/{model}/"
             connector = self._get_connector(path)
             urls_sliced = h.slice_url(url, max_len=connector.url_length)
@@ -245,11 +244,11 @@ class Forager:
         """
         path_params: LT2StrDAny = []
         for url in urls:
-            app, model, _ = h.url_to_ami_items(url)
+            app, model, _ = ami.url_to_ami_items(url)
             path = f"{app}/{model}/"
             connector = self._get_connector(path)
             params_d = parse_qs(urlparse(url).query)
-            params_ld: LDAny = h.slice_params_ld(
+            params_ld: LDAny = nb_helpers.slice_params_ld(
                 url=connector.url,
                 max_len=connector.url_length,
                 keys=connector._slices,  # pylint: disable=W0212
@@ -319,7 +318,7 @@ class Forager:
 
         :rtype:  DeviceRolesC or DeviceTypesC or LocationsC or RacksC or etc.
         """
-        app, model = h.path_to_attrs(path)
+        app, model = ami.path_to_attrs(path)
         connector = getattr(getattr(self.api, app), model)
         return connector
 
@@ -330,7 +329,7 @@ class Forager:
         :return: None. root NbTree object.
         """
         for data in results:
-            app, model, idx_ = h.url_to_ami_items(data["url"])
+            app, model, idx_ = ami.url_to_ami_items(data["url"])
             idx = int(idx_)
             path = f"{app}/{model}"
             model_d: DiDAny = self._get_root_data(path)
@@ -345,6 +344,6 @@ class Forager:
 
         :return: The model data.
         """
-        app, model = h.path_to_attrs(path)
+        app, model = ami.path_to_attrs(path)
         data = getattr(getattr(self.root, app), model)
         return data

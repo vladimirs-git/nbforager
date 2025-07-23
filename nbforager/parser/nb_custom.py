@@ -3,9 +3,10 @@
 import re
 import string
 
+from netports.ipv4 import RE_PREFIX
 from vhelpers import vlist, vre
 
-from nbforager.parser.nb_value import NbValue, RE_PREFIX
+from nbforager.parser.nb_value import NbValue
 from nbforager.types_ import SStr, T2Str, LStr, LInt
 
 

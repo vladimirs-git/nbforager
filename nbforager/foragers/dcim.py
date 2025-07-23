@@ -1,5 +1,3 @@
-# pylint: disable=R0902,R0903
-
 """DCIM Forager."""
 
 from nbforager.foragers.base_fa import BaseAF
@@ -39,9 +37,11 @@ class DcimAF(BaseAF):
         self.inventory_item_templates = self.InventoryItemTemplatesF(self)
         self.inventory_items = self.InventoryItemsF(self)
         self.locations = self.LocationsF(self)
+        self.mac_addresses = self.MacAddressesF(self)
         self.manufacturers = self.ManufacturersF(self)
         self.module_bay_templates = self.ModuleBayTemplatesF(self)
         self.module_bays = self.ModuleBaysF(self)
+        self.module_type_profiles = self.ModuleTypeProfilesF(self)
         self.module_types = self.ModuleTypesF(self)
         self.modules = self.ModulesF(self)
         self.platforms = self.PlatformsF(self)
@@ -53,6 +53,7 @@ class DcimAF(BaseAF):
         self.power_ports = self.PowerPortsF(self)
         self.rack_reservations = self.RackReservationsF(self)
         self.rack_roles = self.RackRolesF(self)
+        self.rack_types = self.RackTypesF(self)
         self.racks = self.RacksF(self)
         self.rear_port_templates = self.RearPortTemplatesF(self)
         self.rear_ports = self.RearPortsF(self)
@@ -119,6 +120,9 @@ class DcimAF(BaseAF):
     class LocationsF(Forager):
         """LocationsF."""
 
+    class MacAddressesF(Forager):
+        """MacAddressesF."""
+
     class ManufacturersF(Forager):
         """ManufacturersF."""
 
@@ -127,6 +131,9 @@ class DcimAF(BaseAF):
 
     class ModuleBaysF(Forager):
         """ModuleBaysF."""
+
+    class ModuleTypeProfilesF(Forager):
+        """ModuleTypeProfilesF."""
 
     class ModuleTypesF(Forager):
         """ModuleTypesF."""
@@ -160,6 +167,9 @@ class DcimAF(BaseAF):
 
     class RackRolesF(Forager):
         """RackRolesF."""
+
+    class RackTypesF(Forager):
+        """RackTypesF."""
 
     class RacksF(Forager):
         """RacksF."""

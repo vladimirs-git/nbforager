@@ -1,5 +1,3 @@
-# pylint: disable=R0902,R0903
-
 """Wireless connectors."""
 
 from nbforager.api.connector import Connector

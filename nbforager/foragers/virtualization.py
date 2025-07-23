@@ -1,5 +1,3 @@
-# pylint: disable=R0902,R0903
-
 """Tenancy Virtualization."""
 
 from nbforager.foragers.base_fa import BaseAF
@@ -9,7 +7,7 @@ from nbforager.nb_tree import NbTree
 
 
 class VirtualizationAF(BaseAF):
-    """Virtualization Virtualization."""
+    """Virtualization Forager."""
 
     def __init__(self, api: NbApi, root: NbTree, tree: NbTree):
         """Init VirtualizationAF.
@@ -23,6 +21,7 @@ class VirtualizationAF(BaseAF):
         self.cluster_types = self.ClusterTypesF(self)
         self.clusters = self.ClustersF(self)
         self.interfaces = self.InterfacesF(self)
+        self.virtual_disks = self.VirtualDisksF(self)
         self.virtual_machines = self.VirtualMachinesF(self)
 
     class ClusterGroupsF(Forager):
@@ -36,6 +35,9 @@ class VirtualizationAF(BaseAF):
 
     class InterfacesF(Forager):
         """InterfacesF."""
+
+    class VirtualDisksF(Forager):
+        """VirtualDisksF."""
 
     class VirtualMachinesF(Forager):
         """VirtualMachinesF."""

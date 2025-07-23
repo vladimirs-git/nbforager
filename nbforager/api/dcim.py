@@ -1,5 +1,3 @@
-# pylint: disable=R0902,R0903
-
 """DCIM connectors."""
 
 from nbforager.api.connector import Connector
@@ -30,9 +28,11 @@ class DcimAC:
         self.inventory_item_templates = self.InventoryItemTemplatesC(**kwargs)
         self.inventory_items = self.InventoryItemsC(**kwargs)
         self.locations = self.LocationsC(**kwargs)
+        self.mac_addresses = self.MacAddressesC(**kwargs)
         self.manufacturers = self.ManufacturersC(**kwargs)
         self.module_bay_templates = self.ModuleBayTemplatesC(**kwargs)
         self.module_bays = self.ModuleBaysC(**kwargs)
+        self.module_type_profiles = self.ModuleTypeProfilesC(**kwargs)
         self.module_types = self.ModuleTypesC(**kwargs)
         self.modules = self.ModulesC(**kwargs)
         self.platforms = self.PlatformsC(**kwargs)
@@ -44,6 +44,7 @@ class DcimAC:
         self.power_ports = self.PowerPortsC(**kwargs)
         self.rack_reservations = self.RackReservationsC(**kwargs)
         self.rack_roles = self.RackRolesC(**kwargs)
+        self.rack_types = self.RackTypesC(**kwargs)
         self.racks = self.RacksC(**kwargs)
         self.rear_port_templates = self.RearPortTemplatesC(**kwargs)
         self.rear_ports = self.RearPortsC(**kwargs)
@@ -54,211 +55,226 @@ class DcimAC:
         self.virtual_device_contexts = self.VirtualDeviceContextsC(**kwargs)
 
     class CableTerminationsC(Connector):
-        """CableTerminationsC."""
+        """CableTerminationsC, v3."""
 
         path = "dcim/cable-terminations/"
 
     class CablesC(Connector):
-        """CablesC."""
+        """CablesC, v3."""
 
         path = "dcim/cables/"
 
     class ConnectedDeviceC(Connector):
-        """ConnectedDeviceC."""
+        """ConnectedDeviceC, v3."""
 
         path = "dcim/connected-device/"
 
     class ConsolePortTemplatesC(Connector):
-        """ConsolePortTemplatesC."""
+        """ConsolePortTemplatesC, v3."""
 
         path = "dcim/console-port-templates/"
 
     class ConsolePortsC(Connector):
-        """ConsolePortsC."""
+        """ConsolePortsC, v3."""
 
         path = "dcim/console-ports/"
 
     class ConsoleServerPortTemplatesC(Connector):
-        """ConsoleServerPortTemplatesC."""
+        """ConsoleServerPortTemplatesC, v3."""
 
         path = "dcim/console-server-port-templates/"
 
     class ConsoleServerPortsC(Connector):
-        """ConsoleServerPortsC."""
+        """ConsoleServerPortsC, v3."""
 
         path = "dcim/console-server-ports/"
 
     class DeviceBayTemplatesC(Connector):
-        """DeviceBayTemplatesC."""
+        """DeviceBayTemplatesC, v3."""
 
         path = "dcim/device-bay-templates/"
 
     class DeviceBaysC(Connector):
-        """DeviceBaysC."""
+        """DeviceBaysC, v3."""
 
         path = "dcim/device-bays/"
 
     class DeviceRolesC(Connector):
-        """DeviceRolesC."""
+        """DeviceRolesC, v3."""
 
         path = "dcim/device-roles/"
 
     class DeviceTypesC(Connector):
-        """DeviceTypesC."""
+        """DeviceTypesC, v3."""
 
         path = "dcim/device-types/"
 
     class DevicesC(Connector):
-        """DevicesC."""
+        """DevicesC, v3."""
 
         path = "dcim/devices/"
 
     class FrontPortTemplatesC(Connector):
-        """FrontPortTemplatesC."""
+        """FrontPortTemplatesC, v3."""
 
         path = "dcim/front-port-templates/"
 
     class FrontPortsC(Connector):
-        """FrontPortsC."""
+        """FrontPortsC, v3."""
 
         path = "dcim/front-ports/"
 
     class InterfaceTemplatesC(Connector):
-        """InterfaceTemplatesC."""
+        """InterfaceTemplatesC, v3."""
 
         path = "dcim/interface-templates/"
 
     class InterfacesC(Connector):
-        """InterfacesC."""
+        """InterfacesC, v3."""
 
         path = "dcim/interfaces/"
 
     class InventoryItemRolesC(Connector):
-        """InventoryItemRolesC."""
+        """InventoryItemRolesC, v3."""
 
         path = "dcim/inventory-item-roles/"
 
     class InventoryItemTemplatesC(Connector):
-        """InventoryItemTemplatesC."""
+        """InventoryItemTemplatesC, v3."""
 
         path = "dcim/inventory-item-templates/"
 
     class InventoryItemsC(Connector):
-        """InventoryItemsC."""
+        """InventoryItemsC, v3."""
 
         path = "dcim/inventory-items/"
 
     class LocationsC(Connector):
-        """LocationsC."""
+        """LocationsC, v3."""
 
         path = "dcim/locations/"
 
+    class MacAddressesC(Connector):
+        """MacAddressesC, v3."""
+
+        path = "dcim/mac-addresses/"
+
     class ManufacturersC(Connector):
-        """ManufacturersC."""
+        """ManufacturersC, v3."""
 
         path = "dcim/manufacturers/"
 
     class ModuleBayTemplatesC(Connector):
-        """ModuleBayTemplatesC."""
+        """ModuleBayTemplatesC, v3."""
 
         path = "dcim/module-bay-templates/"
 
     class ModuleBaysC(Connector):
-        """ModuleBaysC."""
+        """ModuleBaysC, v3."""
 
         path = "dcim/module-bays/"
 
+    class ModuleTypeProfilesC(Connector):
+        """ModuleTypeProfilesC, v4.3."""
+
+        path = "dcim/module-type-profiles/"
+
     class ModuleTypesC(Connector):
-        """ModuleTypesC."""
+        """ModuleTypesC, v3."""
 
         path = "dcim/module-types/"
 
     class ModulesC(Connector):
-        """ModulesC."""
+        """ModulesC, v3."""
 
         path = "dcim/modules/"
 
     class PlatformsC(Connector):
-        """PlatformsC."""
+        """PlatformsC, v3."""
 
         path = "dcim/platforms/"
 
     class PowerFeedsC(Connector):
-        """PowerFeedsC."""
+        """PowerFeedsC, v3."""
 
         path = "dcim/power-feeds/"
 
     class PowerOutletTemplatesC(Connector):
-        """PowerOutletTemplatesC."""
+        """PowerOutletTemplatesC, v3."""
 
         path = "dcim/power-outlet-templates/"
 
     class PowerOutletsC(Connector):
-        """PowerOutletsC."""
+        """PowerOutletsC, v3."""
 
         path = "dcim/power-outlets/"
 
     class PowerPanelsC(Connector):
-        """PowerPanelsC."""
+        """PowerPanelsC, v3."""
 
         path = "dcim/power-panels/"
 
     class PowerPortTemplatesC(Connector):
-        """PowerPortTemplatesC."""
+        """PowerPortTemplatesC, v3."""
 
         path = "dcim/power-port-templates/"
 
     class PowerPortsC(Connector):
-        """PowerPortsC."""
+        """PowerPortsC, v3."""
 
         path = "dcim/power-ports/"
 
     class RackReservationsC(Connector):
-        """RackReservationsC."""
+        """RackReservationsC, v3."""
 
         path = "dcim/rack-reservations/"
 
     class RackRolesC(Connector):
-        """RackRolesC."""
+        """RackRolesC, v3."""
 
         path = "dcim/rack-roles/"
 
+    class RackTypesC(Connector):
+        """RackTypesC, v4.1."""
+
+        path = "dcim/rack-types/"
+
     class RacksC(Connector):
-        """RacksC."""
+        """RacksC, v3."""
 
         path = "dcim/racks/"
 
     class RearPortTemplatesC(Connector):
-        """RearPortTemplatesC."""
+        """RearPortTemplatesC, v3."""
 
         path = "dcim/rear-port-templates/"
 
     class RearPortsC(Connector):
-        """RearPortsC."""
+        """RearPortsC, v3."""
 
         path = "dcim/rear-ports/"
 
     class RegionsC(Connector):
-        """RegionsC."""
+        """RegionsC, v3."""
 
         path = "dcim/regions/"
 
     class SiteGroupsC(Connector):
-        """SiteGroupsC."""
+        """SiteGroupsC, v3."""
 
         path = "dcim/site-groups/"
 
     class SitesC(Connector):
-        """SitesC."""
+        """SitesC, v3."""
 
         path = "dcim/sites/"
 
     class VirtualChassisC(Connector):
-        """VirtualChassisC."""
+        """VirtualChassisC, v3."""
 
         path = "dcim/virtual-chassis/"
 
     class VirtualDeviceContextsC(Connector):
-        """VirtualDeviceContextsC."""
+        """VirtualDeviceContextsC, v3."""
 
         path = "dcim/virtual-device-contexts/"

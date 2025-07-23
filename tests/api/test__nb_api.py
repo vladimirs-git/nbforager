@@ -1,4 +1,5 @@
 """Tests nb_pai.py."""
+import difflib
 import inspect
 from copy import copy
 from typing import Any
@@ -6,10 +7,11 @@ from typing import Any
 import pytest
 import requests_mock
 from _pytest.monkeypatch import MonkeyPatch
+from netports.types_ import LStr
 from requests import Response, Session
 from requests_mock import Mocker
 
-from nbforager import helpers as h
+from nbforager import ami
 from nbforager.exceptions import NbApiError
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
@@ -59,7 +61,7 @@ def test__app_model(api: NbApi):
     tree = NbTree()
     for app in tree.apps():
         app_o = getattr(api, app)
-        actual = h.attr_name(obj=app_o)
+        actual = ami.attr_name(obj=app_o)
         assert actual == app
 
         actual = app_o.__class__.__name__
@@ -68,7 +70,7 @@ def test__app_model(api: NbApi):
 
         for model in getattr(tree, app).models():
             model_o = getattr(app_o, model)
-            actual = h.attr_name(model_o)
+            actual = ami.attr_name(model_o)
             assert actual == model
 
             actual = model_o.__class__.__name__
@@ -137,7 +139,11 @@ def test__app_models(api: NbApi, expected):
     """NbApi.app_models()."""
     actual = api.app_models()
 
-    assert actual == expected
+    actual_ = [str(t) for t in actual]
+    expected_ = [str(t) for t in expected]
+    diff: LStr = list(difflib.ndiff(actual_, expected_))
+    diff = [s for s in diff if s.startswith("- ") or s.startswith("+ ")]
+    assert not diff
 
 
 @pytest.mark.parametrize("expected", [
@@ -149,6 +155,7 @@ def test__app_paths(api: NbApi, expected):
 
     assert actual == expected
 
+
 @pytest.mark.parametrize("expected", [
     p.CONNECTORS,
 ])
@@ -158,6 +165,7 @@ def test__connectors(api: NbApi, expected):
 
     actual = [o.__class__.__name__ for o in list(generator_)]
     assert actual == expected
+
 
 @pytest.mark.parametrize("host, expected", [
     ("netbox2", "netbox2"),

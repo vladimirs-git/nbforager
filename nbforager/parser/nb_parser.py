@@ -1,14 +1,50 @@
-# pylint: disable=R0904
-
 """NbParser."""
 
+import logging
 from functools import wraps
-from typing import Any, Type, Dict, List
+from typing import Any, Type, Dict, List, Tuple
 
+from netports import SwVersion
 from vhelpers import vstr, vlist
 
 from nbforager.exceptions import NbParserError
-from nbforager.types_ import DAny, Int, Str, LDAny, TLists, SeqUIntStr
+from nbforager.types_ import DAny, Int, Str, LDAny, TLists, SeqUIntStr, ODAny, LT3Str, LStr
+
+DEPRECATED_MODELS: LT3Str = [
+    ("circuits/circuit-terminations", "site", "scope"),
+    ("dcim/devices", "device_role", "role"),
+    ("dcim/platforms", "napalm_args", ""),  # key deleted
+    ("dcim/platforms", "napalm_driver", ""),  # key deleted
+    ("dcim/racks", "type", "form_factor"),
+    ("extras/custom-fields", "choices", "choice_set"),
+    ("extras/custom-fields", "content_types", "object_types"),
+    ("extras/custom-fields", "object_type", "related_object_type"),
+    ("extras/custom-fields", "ui_visibility", "ui_visible"),
+    ("extras/custom-links", "content_types", "object_types"),
+    ("extras/export-templates", "content_types", "object_types"),
+    ("extras/image-attachments", "content_type", "object_type"),
+    ("extras/object-changes", "", "core/object-changes"),  # model moved
+    ("extras/saved-filters", "content_types", "object_types"),
+    ("ipam/prefixes", "site", "scope"),
+    ("ipam/services", "device", "parent"),
+    ("ipam/services", "virtual_machine", "parent"),
+    ("ipam/vlan-groups", "max_vid", "vid_ranges"),
+    ("ipam/vlan-groups", "min_vid", "vid_ranges"),
+    ("tenancy/contact-assignments", "content_type", "object_type"),
+    ("tenancy/contacts", "group", "groups"),
+    ("virtualization/clusters", "site", "scope"),
+]
+"""Models deprecated in Netbox v4.2."""
+
+DEPRECATED_TYPES: List[Tuple[str, LStr, Type]] = [
+    ("dcim/inventory-items", ["component", "cable"], dict),
+    ("dcim/power-outlets", ["power_port", "cable"], dict),
+    ("dcim/cable-terminations", ["termination", "cable"], dict),
+    ("dcim/devices", ["primary_ip", "family"], dict),
+    ("dcim/devices", ["primary_ip4", "family"], dict),
+    ("ipam/ip-addresses", ["assigned_object", "cable"], dict),
+]
+"""Types deprecated in Netbox v4.2."""
 
 
 def check_strict(method):
@@ -83,7 +119,7 @@ class NbParser:
         """
         self.data = _init_data(data)
         self.strict = strict
-        self.version = str(kwargs.get("version") or "0")
+        self.version = str(kwargs.get("version") or "")
 
     def __repr__(self):
         """__repr__."""
@@ -108,7 +144,7 @@ class NbParser:
         :rtype: Any
         """
         try:
-            return self._get_keys(type_=type(None), keys=keys, data=self.data)
+            return self._get_keys(type_=type(None), keys=keys)
         except NbParserError:
             return None
 
@@ -120,7 +156,9 @@ class NbParser:
         :return: Boolean value or False if the value is absent.
         :rtype: bool
         """
-        return self._get_keys(type_=bool, keys=keys, data=self.data)
+        first_key = keys[0]
+        self._log_deprecated_key(first_key)
+        return self._get_keys(type_=bool, keys=keys)
 
     def dict(self, *keys) -> Dict:
         """Get dictionary value by keys.
@@ -132,7 +170,9 @@ class NbParser:
 
         :raise NbParserError: If strict=True and the value is not a dictionary or key is absent.
         """
-        return self._get_keys(type_=dict, keys=keys, data=self.data)
+        first_key = keys[0]
+        self._log_deprecated_key(first_key)
+        return self._get_keys(type_=dict, keys=keys)
 
     def int(self, *keys) -> int:
         """Get integer value by keys.
@@ -144,6 +184,10 @@ class NbParser:
 
         :raise NbParserError: If strict=True and the value is not a digit or key is absent.
         """
+        first_key = keys[0]
+        self._log_deprecated_key(first_key)
+        self._log_deprecated_type(first_key)
+
         data = self.data
         try:
             for key in keys:
@@ -174,7 +218,9 @@ class NbParser:
 
         :raise NbParserError: If strict=True and the value is not a list or key is absent.
         """
-        return self._get_keys(type_=list, keys=keys, data=self.data)
+        first_key = keys[0]
+        self._log_deprecated_key(first_key)
+        return self._get_keys(type_=list, keys=keys)
 
     def str(self, *keys) -> str:
         """Get string value by keys.
@@ -186,7 +232,67 @@ class NbParser:
 
         :raise NbParserError: If strict=True and the value is not a string or key is absent.
         """
-        return self._get_keys(type_=str, keys=keys, data=self.data)
+        first_key = keys[0]
+        self._log_deprecated_key(first_key)
+        return self._get_keys(type_=str, keys=keys)
+
+    def _log_deprecated_key(self, key: str) -> None:
+        """Log error if the key is deprecated for specific app/model.
+
+        :param key: First key in the chain of keys.
+        :return: None. Log error message.
+        """
+        # skip old version
+        if self.version and SwVersion(self.version) < SwVersion("4.2"):
+            return
+
+        # log deprecated key if version
+        url = self.data.get("url", "")
+        for model, key_old, key_new in DEPRECATED_MODELS:
+            if f"/api/{model}/" not in url:
+                continue
+
+            # model moved
+            if not key_old:
+                msg = f"Deprecated model {model!r} in {url}, please use {key_new!r}."
+                logging.error(msg)
+                return
+
+            # model changed
+            if key == key_old:
+                model_old = f"{model}.{key_old}"
+                # changed key
+                if key_new:
+                    model_new = f"{model}.{key_new}"
+                    msg = f"Deprecated model {model_old!r} in {url}, please use {model_new!r}."
+                    logging.error(msg)
+                # removed key
+                elif key_old in self.data:
+                    msg = f"Deprecated model {model_old!r} in {url}, please remove it."
+                    logging.error(msg)
+                return
+
+    def _log_deprecated_type(self, keys: LStr) -> None:
+        """Log error if the type is deprecated for specific app/model.
+
+        :param keys: Keys chain to get interested value.
+        :return: None. Log error message.
+        """
+        # skip old version
+        if self.version and SwVersion(self.version) < SwVersion("4.2"):
+            return
+
+        # log deprecated key if version
+        url = self.data.get("url", "")
+        for model, keys_old, type_new in DEPRECATED_TYPES:
+            keys_new = keys[: len(keys_old)]
+            value = self.any(*keys_new)
+            if f"/api/{model}/" in url and keys_new == keys_old and not isinstance(value, type_new):
+                type_old = type(value)
+                model_old = ".".join([model, *keys_old])
+                msg = f"Deprecated type {model_old} {type_old!r} in {url}, please use {type_new!r}."
+                logging.error(msg)
+                return
 
     # ======================== strict get methods ========================
 
@@ -247,7 +353,7 @@ class NbParser:
 
     # ============================= helpers ==============================
 
-    def _get_keys(self, type_: Type, keys: SeqUIntStr, data: Dict) -> Any:
+    def _get_keys(self, type_: Type, keys: SeqUIntStr, data: ODAny = None) -> Any:
         """Retrieve values from data using keys and check their data types.
 
         :param type_: Data type.
@@ -258,6 +364,8 @@ class NbParser:
 
         :raise NbParserError: If strict=True and key absent or type not match.
         """
+        if data is None:
+            data = self.data
         try:
             for key in keys:
                 data = data[key]  # type: ignore
@@ -312,6 +420,8 @@ def find_objects(objects: LDAny, **kwargs) -> LDAny:
 
     objects_: LDAny = []
     for data in objects:
+        if not isinstance(key, str):
+            raise TypeError(f"Key {str} expected.")
         keys = key.split("__")
         if len(keys) <= 1:
             keys = [key]

@@ -1,5 +1,3 @@
-# pylint: disable=R0902,R0903
-
 """Base for connectors."""
 
 from __future__ import annotations
@@ -116,6 +114,22 @@ class Connector(BaseC):
         items: LDAny = self._query_params_ld(params_ld)
         self._check_extra_keys(items=items)
         return items
+
+    # noinspection PyIncorrectDocstring
+    def get_count(self, **kwargs) -> int:
+        """Get the count of Netbox objects based on the provided filtering parameters.
+
+        :param kwargs: Filtering parameters.
+        :return: Count of Netbox objects based on the provided parameters.
+        :raises ValueError: If count for loners parameters is not supported.
+        """
+        kwargs = {k: v for k, v in kwargs.items() if k not in ["brief", "limit", "offset"]}
+        params_ld: LDList = self._validate_params(**kwargs)
+        if len(params_ld) > 1:
+            raise ValueError("Count for loners parameters is not supported.")
+        self._query_count(self.path, kwargs)
+        data: DAny = self._results[0]
+        return int(data["count"])
 
     # noinspection PyIncorrectDocstring
     def update(self, **kwargs) -> Response:

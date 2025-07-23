@@ -8,7 +8,7 @@ from requests_mock import Mocker
 
 from nbforager import nb_tree
 from nbforager.nb_forager import NbForager
-from nbforager.types_ import LT2StrDAny
+from nbforager.types_ import LT2StrDAny, DAny
 from tests import params as p
 from tests.foragers import params__forager as pf
 from tests.functions import full_tree
@@ -39,10 +39,15 @@ def nbf_t() -> NbForager:
 @pytest.fixture
 def prepare_connector_results(nbf: NbForager) -> Tuple[NbForager, LT2StrDAny]:
     """Fixture to prepare common connector_results test data."""
-    nbf.api.circuits.circuit_terminations._results = [{"url": "circuit/circuit-terminations/1"}]
-    nbf.api.ipam.vrfs._results = [{"url": "ipam/vrfs/1"}]
-    path_params = [("circuits/circuit-terminations", {"id": [1, 2]}), ("ipam/vrfs", {"id": [1, 2]})]
-    return nbf, path_params
+    nb_termination: DAny = {"url": "circuit/circuit-terminations/1"}
+    nbf.api.circuits.circuit_terminations._results = [nb_termination]
+
+    nb_vrf: DAny = {"url": "ipam/vrfs/1"}
+    nbf.api.ipam.vrfs._results = [nb_vrf]
+
+    params_termination = ("circuits/circuit-terminations", {"id": [1, 2]})
+    params_vrf = ("ipam/vrfs", {"id": [1, 2]})
+    return nbf, [params_termination, params_vrf]
 
 
 def test__interval():
@@ -112,7 +117,9 @@ def test__get_connector(nbf: NbForager, path, expected: Any):
 def test__clear_connector_results(prepare_connector_results):
     """Forager._clear_connector_results()."""
     nbf, path_params = prepare_connector_results
+
     nbf.ipam.vrfs._clear_connector_results(path_params=path_params)
+
     assert nbf.api.circuits.circuit_terminations._results == []
     assert nbf.api.ipam.vrfs._results == []
 

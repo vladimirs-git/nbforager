@@ -118,38 +118,17 @@ def test__url_base(params, expected):
 
 # ============================== helper ==============================
 
-# noinspection PyTestUnpassedFixture
-@pytest.mark.parametrize("default_get, expected", [
-    ({}, {}),
-    ({"ipam/prefixes/": {"family": 4}}, {"family": [4]}),
-    ({"ipam/prefixes/": {"family": [4, 6]}}, {"family": [4, 6]}),
-])
-def test__init_default_get(default_get, expected):
-    """BaseC._init_default_get()."""
-    api = NbApi(host="netbox", default_get=default_get)
-    actual = api.ipam.prefixes._default_get
-    assert actual == expected
-
-    api.ipam.prefixes.default_get = default_get
-    actual = api.ipam.prefixes._init_default_get()
-    assert actual == expected
-
-    nbf = NbForager(host="netbox", default_get=default_get)
-    actual = nbf.api.ipam.prefixes._default_get
-    assert actual == expected
-
-
 def test__loners(api: NbApi):
     """BaseC._loners default."""
     assert api.dcim.devices._loners == ["q", "airflow"]
-    assert api.ipam.aggregates._loners == ["q", "prefix"]
-    assert api.ipam.prefixes._loners == ["q", "within_include"]
-    assert api.ipam.ip_addresses._loners == ["q"]
+    assert api.ipam.aggregates._loners == ["q", "family", "prefix"]
+    assert api.ipam.prefixes._loners == ["q", "family", "within_include"]
+    assert api.ipam.ip_addresses._loners == ["q", "family"]
 
 
 # noinspection PyTestUnpassedFixture
 @pytest.mark.parametrize("loners, expected", [
-    ({}, ["q", "prefix"]),
+    ({}, ["q", "family", "prefix"]),
     ({"any": ["a1"], "ipam/aggregates/": ["a2"], "ipam/prefixes/": ["a3"]}, ["a1", "a2"]),
 ])
 def test__init_loners(loners, expected):
@@ -287,9 +266,9 @@ def test__retry_requests(monkeypatch: MonkeyPatch,
     ({"offset": [3]}, {"limit": [1000], "offset": [3]}),
     ({"limit": [2], "offset": [3]}, {"limit": [2], "offset": [3]}),
 ])
-def test__add_params_limit_offset(api: NbApi, params_d, expected):
-    """BaseC._add_params_limit_offset()."""
-    actual = api.ipam.ip_addresses._add_params_limit_offset(params_d=params_d)
+def test__add_default_limit_offset(api: NbApi, params_d, expected):
+    """BaseC._add_default_limit_offset()."""
+    actual = api.ipam.ip_addresses._add_default_limit_offset(params_d=params_d)
     assert actual == expected
 
 

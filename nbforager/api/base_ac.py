@@ -1,10 +1,8 @@
-# pylint: disable=R0902,R0903
-
 """Base for application connectors."""
 
 from __future__ import annotations
 
-from nbforager import helpers as h
+from nbforager import ami
 
 
 class BaseAC:
@@ -13,7 +11,7 @@ class BaseAC:
     def __repr__(self) -> str:
         """__repr__."""
         name = self.__class__.__name__
-        attrs = h.attr_names(self)
+        attrs = ami.attr_names(self)
         attr = attrs[0]
         host = getattr(self, attr).host
         return f"<{name}: {host}>"

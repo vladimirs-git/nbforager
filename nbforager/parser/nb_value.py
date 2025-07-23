@@ -4,11 +4,11 @@
 
 import re
 
+from netports.ipv4 import RE_PREFIX
+
 from nbforager.exceptions import NbParserError
 from nbforager.parser.nb_parser import NbParser, check_strict
 from nbforager.types_ import LStr, LInt, LDAny
-
-RE_PREFIX = r"\d+\.\d+\.\d+\.\d+/\d+"  # Regular expression for matching IP address prefix
 
 
 class NbValue(NbParser):
@@ -599,7 +599,7 @@ class NbValue(NbParser):
         return self.int("site", "id")
 
     @check_strict
-    def site_name(self, upper: bool = True) -> str:
+    def site_name(self) -> str:
         """ipam/prefixes/site/name, dcim/devices/sites/name.
 
         Convert site name to the same manner.
@@ -608,16 +608,11 @@ class NbValue(NbParser):
         devices/site/name="SITE1",
         vlans/site/name="site1".
 
-        :param upper: Whether to return the name in uppercase. Default is True.
-
         :return: Site name.
 
         :raise NbParserError: if strict=True and object has no site name.
         """
-        site = self.str("site", "name").lower()
-        if upper:
-            site = site.upper()
-        return site
+        return self.str("site", "name").lower()
 
     @check_strict
     def site_slug(self) -> str:
