@@ -11,8 +11,8 @@ from urllib.parse import urlparse, parse_qs
 
 from vhelpers import vstr
 
-from nbforager import helpers as h
 from nbforager import nb_tree
+from nbforager import nb_helpers as h
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
 from nbforager.parser import nb_parser

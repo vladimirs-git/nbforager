@@ -1,17 +1,17 @@
-"""Tests helpers.py."""
+"""Tests nb_helpers.py."""
 from typing import Any
 from urllib.parse import urlencode
 
 import pytest
 
-from nbforager import helpers as h, NbForager
+from nbforager import nb_helpers as h
 from nbforager.exceptions import NbApiError
-from nbforager.helpers import DEPENDENT_MODELS
+from nbforager.nb_forager import NbForager
 from tests import params__helpers as p
 
 
 @pytest.mark.parametrize("dependency, expected", [
-    (DEPENDENT_MODELS, p.ORDERED_MODELS),
+    (h.DEPENDENT_MODELS, p.ORDERED_MODELS),
     ({"a": ["b"], "b": ["a"]}, ValueError),  # circular dependency
 ])
 def test__dependency_ordered_paths(dependency, expected):
@@ -35,14 +35,14 @@ def test__dependency_ordered_paths(dependency, expected):
     ("virtualization", "interfaces", "virtualization.vminterface"),
 ])
 def test__am_to_object_type(app, model, expected):
-    """helpers.am_to_object_type()."""
+    """nb_helpers.am_to_object_type()."""
     actual = h.am_to_object_type(app=app, model=model)
 
     assert actual == expected
 
 
 def test__attr_name():
-    """helpers.attr_name()"""
+    """nb_helpers.attr_name()"""
     nbf = NbForager(host="netbox")
     actual = h.attr_name(nbf)
     assert actual == "nb_forager"
@@ -51,7 +51,7 @@ def test__attr_name():
 
 
 def test__attr_names():
-    """helpers.attr_names()"""
+    """nb_helpers.attr_names()"""
     nbf = NbForager(host="netbox")
     actual = h.attr_names(nbf.wireless)
     expected = ["wireless_lan_groups", "wireless_lans", "wireless_links"]
@@ -67,7 +67,7 @@ def test__attr_names():
     ("_model__group_", "-model--group-"),
 ])
 def test__attr_to_model(model, expected):
-    """helpers.attr_to_model()"""
+    """nb_helpers.attr_to_model()"""
     actual = h.attr_to_model(model)
     assert actual == expected
 
@@ -80,7 +80,7 @@ def test__attr_to_model(model, expected):
     (["a/b/c/d/2", "a/b/c/d/1", "a/b/c/D/3"], ["a/b/c/D?id=3", "a/b/c/d?id=1&id=2"]),
 ])
 def test__join_urls(urls, expected):
-    """helpers.join_urls()"""
+    """nb_helpers.join_urls()"""
     actual = h.join_urls(urls=urls)
     assert actual == expected
 
@@ -94,7 +94,7 @@ def test__join_urls(urls, expected):
     ("_model__group_", "_model__group_"),
 ])
 def test__model_to_attr(model, expected):
-    """helpers.model_to_attr()"""
+    """nb_helpers.model_to_attr()"""
     actual = h.model_to_attr(model)
     assert actual == expected
 
@@ -111,7 +111,7 @@ def test__model_to_attr(model, expected):
     ([{"tags": [{"url": "a"}, {"url": "a"}]}], ["a"]),
 ])
 def test__nested_urls(nb_objects, expected):
-    """helpers.nested_urls()"""
+    """nb_helpers.nested_urls()"""
     actual = h.nested_urls(nb_objects=nb_objects)
     assert actual == expected
 
@@ -125,7 +125,7 @@ def test__nested_urls(nb_objects, expected):
     ("app/model-group", ("app", "model_group")),
 ])
 def test__path_to_attrs(path, expected: Any):
-    """helpers.path_to_attrs()"""
+    """nb_helpers.path_to_attrs()"""
     if isinstance(expected, tuple):
         actual = h.path_to_attrs(path)
         assert actual == expected
@@ -143,9 +143,9 @@ def test__path_to_attrs(path, expected: Any):
     ("prefixes", "prefix"),
     ("interfaces", "interface"),
 ])
-def test__plural_to_singular(plural, expected):
-    """helpers.plural_to_singular()."""
-    actual = h.plural_to_singular(plural=plural)
+def test__model_singular(plural, expected):
+    """nb_helpers.model_singular()."""
+    actual = h.model_singular(plural=plural)
 
     assert actual == expected
 
@@ -157,7 +157,7 @@ def test__plural_to_singular(plural, expected):
     ("TextTextText", "text_text_text"),
 ])
 def test__replace_upper(word, expected):
-    """helpers.replace_upper()"""
+    """nb_helpers.replace_upper()"""
     actual = h.replace_upper(word)
     assert actual == expected
 
@@ -181,7 +181,7 @@ def test__replace_upper(word, expected):
 
 ])
 def test__url_to_ami_items(url, expected):
-    """helpers.url_to_ami_items()"""
+    """nb_helpers.url_to_ami_items()"""
     actual = h.url_to_ami_items(url=url)
     assert actual == expected
 
@@ -207,7 +207,7 @@ def test__url_to_ami_items(url, expected):
     ("https://domain.com/api/1/ip-addresses/1", False, NbApiError),
 ])
 def test__url_to_ami(url, path, expected):
-    """helpers.url_to_ami()"""
+    """nb_helpers.url_to_ami()"""
     if isinstance(expected, tuple):
         actual = h.url_to_ami(url=url, path=path)
         assert actual == expected
@@ -225,7 +225,7 @@ def test__url_to_ami(url, path, expected):
     ("typo", ValueError),
 ])
 def test__url_to_am_path(url, expected):
-    """helpers.url_to_am_path()"""
+    """nb_helpers.url_to_am_path()"""
     if isinstance(expected, str):
         actual = h.url_to_am_path(url=url)
         assert actual == expected
@@ -243,7 +243,7 @@ def test__url_to_am_path(url, expected):
     ("typo", ValueError),
 ])
 def test__url_to_ami_path(url, expected):
-    """helpers.url_to_ami_path()"""
+    """nb_helpers.url_to_ami_path()"""
     if isinstance(expected, str):
         actual = h.url_to_ami_path(url=url)
         assert actual == expected
@@ -263,7 +263,7 @@ def test__url_to_ami_path(url, expected):
     ("", NbApiError),
 ])
 def test__url_to_ami_url(url, expected):
-    """helpers.url_to_ami_url()"""
+    """nb_helpers.url_to_ami_url()"""
     if isinstance(expected, str):
         actual = h.url_to_ami_url(url=url)
         assert actual == expected
@@ -290,7 +290,7 @@ def test__url_to_ami_url(url, expected):
     ("", NbApiError),
 ])
 def test__url_to_api_url(url, expected):
-    """helpers.url_to_api_url()"""
+    """nb_helpers.url_to_api_url()"""
     if isinstance(expected, str):
         actual = h.url_to_api_url(url=url)
         assert actual == expected
@@ -317,7 +317,7 @@ def test__url_to_api_url(url, expected):
     ("", NbApiError),
 ])
 def test__url_to_ui_url(url, expected):
-    """helpers.url_to_ui_url()"""
+    """nb_helpers.url_to_ui_url()"""
     if isinstance(expected, str):
         actual = h.url_to_ui_url(url=url)
         assert actual == expected
@@ -327,23 +327,6 @@ def test__url_to_ui_url(url, expected):
 
 
 # ============================== params ==============================
-
-@pytest.mark.parametrize("params_ld, default, expected", [
-    ([], {}, []),
-    ([{}], {}, []),
-    ([{"a": ["A2"]}], {}, [{"a": ["A2"]}]),
-    ([{"a": ["A2"]}, {"b": ["B2"]}], {}, [{"a": ["A2"]}, {"b": ["B2"]}]),
-    ([{"a": ["A2"]}], {"a": ["A1"]}, [{"a": ["A2"]}]),
-    ([{"b": ["B2"]}], {"a": ["A1"]}, [{"a": ["A1"], "b": ["B2"]}]),
-    ([{"a": ["A2"]}], {"a": ["A1"], "b": ["B1"]}, [{"a": ["A2"], "b": ["B1"]}]),
-    ([{"a": ["A2"], "b": ["B2"]}],
-     {"a": ["A1"], "b": ["B1"]}, [{"a": ["A2"], "b": ["B2"]}]),
-])
-def test__join_params(params_ld, default, expected):
-    """helpers.join_params()."""
-    actual = h.join_params(params_ld=params_ld, default_get=default)
-    assert actual == expected
-
 
 @pytest.mark.parametrize("need_split, params_d, expected", [
     ([], {}, []),
@@ -367,7 +350,7 @@ def test__join_params(params_ld, default, expected):
       {"a": [2], "b": [2], "c": [1, 2], "d": [1]}]),
 ])
 def test__make_combinations(need_split, params_d, expected):
-    """helpers.make_combinations()."""
+    """nb_helpers.make_combinations()."""
     actual = h.make_combinations(need_split=need_split, params_d=params_d)
     assert actual == expected
 
@@ -378,7 +361,7 @@ def test__make_combinations(need_split, params_d, expected):
     (["a"], {"a": [1, 2], "b": [1, 2]}, {"a"}),
 ])
 def test__get_keys_need_split(need_split, params_d, expected):
-    """helpers._get_keys_need_split()."""
+    """nb_helpers._get_keys_need_split()."""
     actual = h._get_keys_need_split(need_split=need_split, params_d=params_d)
     assert actual == expected
 
@@ -390,7 +373,7 @@ def test__get_keys_need_split(need_split, params_d, expected):
     ([{"or_a": [1]}, {"or_a": [2]}, {"a_or": [3]}], [{"a": [1]}, {"a": [2]}, {"a_or": [3]}]),
 ])
 def test__change_params_or(params_ld, expected):
-    """helpers.change_params_or()."""
+    """nb_helpers.change_params_or()."""
     actual = h.change_params_or(params_ld=params_ld)
     assert actual == expected
 
@@ -406,7 +389,7 @@ def test__change_params_or(params_ld, expected):
     (145, [p.IP1, p.IP2, p.IP3, p.IP4], [(0, 3), (3, 4)]),
 ])
 def test__generate_slices(max_len, values, expected):
-    """helpers.generate_slices()."""
+    """nb_helpers.generate_slices()."""
     query: str = urlencode([("family", 4), ("status", "active"), ("offset", 1000), ("limit", 1000)])
     actual = h.generate_slices(
         url=f"https://domain.com?{query}",
@@ -426,7 +409,7 @@ def test__generate_slices(max_len, values, expected):
      [{"prefix": p.IP1, "family": 4}, {"prefix": p.IP2, "family": 4}]),
 ])
 def test__slice_params_d(url, max_len, key, params_d, expected):
-    """helpers.slice_params_d()."""
+    """nb_helpers.slice_params_d()."""
     actual = h.slice_params_d(url=url, max_len=max_len, key=key, params_d=params_d)
     assert actual == expected
 
@@ -443,7 +426,7 @@ def test__slice_params_d(url, max_len, key, params_d, expected):
      [{"address": p.IP1, "family": [4]}, {"address": p.IP2, "family": [4]}]),  # need slice
 ])
 def test__slice_params_ld(url, max_len, keys, params, expected):
-    """helpers.slice_params_ld()."""
+    """nb_helpers.slice_params_ld()."""
     actual = h.slice_params_ld(url=url, max_len=max_len, keys=keys, params_ld=params)
     assert actual == expected
 
@@ -455,7 +438,7 @@ def test__slice_params_ld(url, max_len, keys, params, expected):
      [f"https://domain.com?address={p.IP1_}", f"https://domain.com?address={p.IP2_}"]),
 ])
 def test__slice_url(url, max_len, expected):
-    """helpers.slice_url()."""
+    """nb_helpers.slice_url()."""
     actual = h.slice_url(url=url, max_len=max_len)
     assert actual == expected
 
@@ -469,7 +452,7 @@ def test__slice_url(url, max_len, expected):
     ([1, 2, 1], [1, 2]),
 ])
 def test__validate_values(values, expected):
-    """helpers._validate_values()."""
+    """nb_helpers._validate_values()."""
     actual = h._validate_values(values=values)
     assert actual == expected
 
@@ -481,7 +464,7 @@ def test__validate_values(values, expected):
     ({"a": [100, 200], "b": ["0001", "0002"]}, "b"),
 ])
 def test__get_key_of_longest_value(params_d, expected):
-    """helpers.get_key_of_longest_value()."""
+    """nb_helpers.get_key_of_longest_value()."""
     actual = h.get_key_of_longest_value(params_d=params_d)
     assert actual == expected
 
@@ -494,7 +477,7 @@ def test__get_key_of_longest_value(params_d, expected):
     (10, 0, {}, ValueError),
 ])
 def test__generate_offsets(count: int, limit: int, params_d, expected: Any):
-    """helpers.generate_offsets()."""
+    """nb_helpers.generate_offsets()."""
     if isinstance(expected, list):
         actual = h.generate_offsets(count, limit, params_d)
         assert actual == expected

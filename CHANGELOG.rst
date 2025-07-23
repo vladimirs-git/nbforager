@@ -4,6 +4,20 @@
 CHANGELOG
 =========
 
+1.0.0 (2025-07-25)
+-------------------
+
+**Added:** all models in v4.3.4
+
+**Changed:** Breaking changes. If offset is in filtering parameters, send only one request.
+
+**Added:** loners "family" to ipam/aggregates, ipam/prefixes, ipam/ip-addresses
+
+**Added:** Connector.get_count()
+
+**Deleted:** default_get parameter
+
+
 0.8.13 (2025-07-04)
 -------------------
 

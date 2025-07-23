@@ -1,5 +1,3 @@
-# pylint: disable=R0902,R0903
-
 """Extras Forager."""
 
 from nbforager.foragers.base_fa import BaseAF
@@ -26,13 +24,20 @@ class ExtrasAF(BaseAF):
         self.custom_field_choice_sets = self.CustomFieldChoiceSetsF(self)
         self.custom_fields = self.CustomFieldsF(self)
         self.custom_links = self.CustomLinksF(self)
+        self.event_rules = self.EventRulesF(self)
         self.export_templates = self.ExportTemplatesF(self)
         self.image_attachments = self.ImageAttachmentsF(self)
         self.journal_entries = self.JournalEntriesF(self)
+        self.notification_groups = self.NotificationGroupsF(self)
+        self.notifications = self.NotificationsF(self)
         self.object_changes = self.ObjectChangesF(self)
+        self.object_types = self.ObjectTypesF(self)
         self.reports = self.ReportsF(self)
         self.saved_filters = self.SavedFiltersF(self)
         self.scripts = self.ScriptsF(self)
+        self.subscriptions = self.SubscriptionsF(self)
+        self.table_configs = self.TableConfigsF(self)
+        self.tagged_objects = self.TaggedObjectsF(self)
         self.tags = self.TagsF(self)
         self.webhooks = self.WebhooksF(self)
 
@@ -57,6 +62,9 @@ class ExtrasAF(BaseAF):
     class CustomLinksF(Forager):
         """CustomLinksF."""
 
+    class EventRulesF(Forager):
+        """EventRulesF."""
+
     class ExportTemplatesF(Forager):
         """ExportTemplatesF."""
 
@@ -66,8 +74,17 @@ class ExtrasAF(BaseAF):
     class JournalEntriesF(Forager):
         """JournalEntriesF."""
 
+    class NotificationGroupsF(Forager):
+        """NotificationGroupsF."""
+
+    class NotificationsF(Forager):
+        """NotificationsF."""
+
     class ObjectChangesF(Forager):
         """ObjectChangesF."""
+
+    class ObjectTypesF(Forager):
+        """ObjectTypesF."""
 
     class ReportsF(Forager):
         """ReportsF."""
@@ -77,6 +94,15 @@ class ExtrasAF(BaseAF):
 
     class ScriptsF(Forager):
         """ScriptsF."""
+
+    class SubscriptionsF(Forager):
+        """SubscriptionsF."""
+
+    class TableConfigsF(Forager):
+        """TableConfigsF."""
+
+    class TaggedObjectsF(Forager):
+        """TaggedObjectsF."""
 
     class TagsF(Forager):
         """TagsF."""

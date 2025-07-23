@@ -8,7 +8,9 @@ import pytest
 import requests_mock
 from _pytest.monkeypatch import MonkeyPatch
 
-from nbforager import helpers as h, nb_forager, NbApi, nb_tree
+from nbforager import nb_forager, nb_tree
+from nbforager import nb_helpers as h
+from nbforager.nb_api import NbApi
 from nbforager.nb_cache import NbCache
 from nbforager.nb_forager import NbForager
 from nbforager.nb_tree import NbTree
@@ -82,7 +84,6 @@ def test__init(nbf: NbForager):
         "sleep",
         "strict",
         "extended_get",
-        "default_get",
         "loners",
         "cache",
         "kwargs",
@@ -102,8 +103,7 @@ def test__init(nbf: NbForager):
     assert nbf.api.ipam.aggregates.timeout == 60
     assert nbf.api.ipam.aggregates.max_retries == 0
     assert nbf.api.ipam.aggregates.sleep == 10
-    assert nbf.api.ipam.aggregates._default_get == {}
-    assert nbf.api.ipam.aggregates._loners == ["q", "prefix"]
+    assert nbf.api.ipam.aggregates._loners == ["q", "family", "prefix"]
     assert nbf.cache == "netbox.pickle"
 
     params = {
@@ -122,7 +122,6 @@ def test__init(nbf: NbForager):
         "max_retries": 1,
         "sleep": 1,
         # Settings
-        "default_get": {"any": ["a1"]},
         "loners": {"any": ["a1"]},
         "cache": "1.pickle"
     }

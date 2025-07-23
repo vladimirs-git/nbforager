@@ -22,13 +22,14 @@ from nbforager.foragers.joiner import Joiner
 from nbforager.foragers.tenancy import TenancyAF
 from nbforager.foragers.users import UsersAF
 from nbforager.foragers.virtualization import VirtualizationAF
+from nbforager.foragers.vpn import VpnAF
 from nbforager.foragers.wireless import WirelessAF
 from nbforager.messages import Messages
 from nbforager.nb_api import NbApi
 from nbforager.nb_cache import NbCache
 from nbforager.nb_tree import NbTree
 from nbforager.parser.nb_value import NbValue
-from nbforager.types_ import LStr, DAny, DiDAny, ODLStr, ODDAny
+from nbforager.types_ import LStr, DAny, DiDAny, ODLStr
 
 
 class NbForager:
@@ -57,7 +58,6 @@ class NbForager:
         strict: bool = False,
         # Settings
         extended_get: bool = True,
-        default_get: ODDAny = None,
         loners: ODLStr = None,
         cache: str = "",
         **kwargs,
@@ -117,9 +117,6 @@ class NbForager:
         :param bool extended_get: True - Extend filtering parameters in GET request,
             ``{parameter}`` can be used instead of ``{parameter}_id``. Default is `True`.
 
-        :param dict default_get: Set default filtering parameters, to be used in each
-            GET request.
-
         :param dict loners: Set :ref:`Filtering parameters in an OR manner`.
 
         Data attributes:
@@ -156,7 +153,6 @@ class NbForager:
             "sleep": sleep,
             "strict": strict,
             "extended_get": extended_get,
-            "default_get": default_get,
             "loners": loners,
             **kwargs,
         }
@@ -178,6 +174,7 @@ class NbForager:
         self.tenancy = TenancyAF(self.api, self.root, self.tree)
         self.users = UsersAF(self.api, self.root, self.tree)
         self.virtualization = VirtualizationAF(self.api, self.root, self.tree)
+        self.vpn = VpnAF(self.api, self.root, self.tree)
         self.wireless = WirelessAF(self.api, self.root, self.tree)
 
     def __repr__(self) -> str:

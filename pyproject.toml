@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nbforager"
-version = "0.8.13"
+version = "1.0.0"
 description = "Python package designed to assist in working with the Netbox REST API. The filter parameters are identical to those in the Web UI filter form. It replaces brief data with full information, and Netbox objects are represented as a recursive multidimensional dictionary."
 authors = ["Vladimirs Prusakovs <vladimir.prusakovs@gmail.com>"]
 readme = "README.rst"
@@ -70,19 +70,31 @@ max-locals = 20
 max-nested-blocks = 6
 
 [tool.pylint.message_control]
-enable = ["too-many-arguments"]
 max-args = 10
 
+[tool.pylint."nbforager.api.*"]
+disable = [
+    "too-few-public-methods",
+    "too-many-positional-arguments",
+]
+[tool.pylint."nbforager.foragers.*"]
+disable = [
+    "assigning-non-slot",
+    "too-many-instance-attributes",
+]
 [tool.pylint."tests.*"]
 disable = [
     "assigning-non-slot",
     "duplicate-code",
     "no-member",
     "protected-access",
-    "redefined-builtin",
     "redefined-outer-name",
+    "too-few-public-methods",
     "too-many-positional-arguments",
+    "too-many-public-methods",
     "too-many-statements",
+    "unsubscriptable-object",
+    "unused-argument",
     "unused-import",
     "use-dict-literal",
 ]

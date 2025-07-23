@@ -27,90 +27,102 @@ class IpamAC:
         self.service_templates = self.ServiceTemplatesC(**kwargs)
         self.services = self.ServicesC(**kwargs)
         self.vlan_groups = self.VlanGroupsC(**kwargs)
+        self.vlan_translation_policies = self.VlanTranslationPoliciesC(**kwargs)
+        self.vlan_translation_rules = self.VlanTranslationRulesC(**kwargs)
         self.vlans = self.VlansC(**kwargs)
         self.vrfs = self.VrfsC(**kwargs)
 
     class AggregatesC(Connector):
-        """AggregatesC."""
+        """AggregatesC, v3."""
 
         path = "ipam/aggregates/"
 
     class AsnRangesC(Connector):
-        """AsnRangesC."""
+        """AsnRangesC, v3."""
 
         path = "ipam/asn-ranges/"
 
     class AsnsC(Connector):
-        """AsnsC."""
+        """AsnsC, v3."""
 
         path = "ipam/asns/"
 
     class FhrpGroupAssignmentsC(Connector):
-        """FhrpGroupAssignmentsC."""
+        """FhrpGroupAssignmentsC, v3."""
 
         path = "ipam/fhrp-group-assignments/"
 
     class FhrpGroupsC(Connector):
-        """FhrpGroupsC."""
+        """FhrpGroupsC, v3."""
 
         path = "ipam/fhrp-groups/"
 
     class IpRangesC(Connector):
-        """IpRangesC."""
+        """IpRangesC, v3."""
 
         path = "ipam/ip-ranges/"
 
     class L2vpnTerminationsC(Connector):
-        """L2vpnTerminationsC."""
+        """L2vpnTerminationsC, v3, deprecated v4.3."""
 
         path = "ipam/l2vpn-terminations/"
 
     class L2vpnsC(Connector):
-        """L2vpnsC."""
+        """L2vpnsC, v3, deprecated v4.3."""
 
         path = "ipam/l2vpns/"
 
     class PrefixesC(Connector):
-        """PrefixesC."""
+        """PrefixesC, v3."""
 
         path = "ipam/prefixes/"
 
     class RirsC(Connector):
-        """RirsC."""
+        """RirsC, v3."""
 
         path = "ipam/rirs/"
 
     class RolesC(Connector):
-        """RolesC."""
+        """RolesC, v3."""
 
         path = "ipam/roles/"
 
     class RouteTargetsC(Connector):
-        """RouteTargetsC."""
+        """RouteTargetsC, v3."""
 
         path = "ipam/route-targets/"
 
     class ServiceTemplatesC(Connector):
-        """ServiceTemplatesC."""
+        """ServiceTemplatesC, v3."""
 
         path = "ipam/service-templates/"
 
     class ServicesC(Connector):
-        """ServicesC."""
+        """ServicesC, v3."""
 
         path = "ipam/services/"
 
     class VlanGroupsC(Connector):
-        """VlanGroupsC."""
+        """VlanGroupsC, v3."""
 
         path = "ipam/vlan-groups/"
 
+    class VlanTranslationRulesC(Connector):
+        """VlanTranslationRulesC, v4.2."""
+
+        path = "ipam/vlan-translation-rules/"
+
+    class VlanTranslationPoliciesC(Connector):
+        """VlanTranslationPoliciesC, v4.2."""
+
+        path = "ipam/vlan-translation-policies/"
+
     class VlansC(Connector):
-        """VlansC."""
+        """VlansC, v3."""
 
         path = "ipam/vlans/"
 
     class VrfsC(Connector):
-        """VrfsC."""
+        """VrfsC, v3."""
 
         path = "ipam/vrfs/"

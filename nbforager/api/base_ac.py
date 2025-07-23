@@ -1,10 +1,8 @@
-# pylint: disable=R0902,R0903
-
 """Base for application connectors."""
 
 from __future__ import annotations
 
-from nbforager import helpers as h
+from nbforager import nb_helpers as h
 
 
 class BaseAC:

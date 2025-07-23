@@ -1,6 +1,4 @@
-# pylint: disable=R0902,R0903
-
-"""IPAM Forager."""
+"""Ipam Forager."""
 
 from nbforager.foragers.base_fa import BaseAF
 from nbforager.foragers.forager import Forager
@@ -9,7 +7,7 @@ from nbforager.nb_tree import NbTree
 
 
 class IpamAF(BaseAF):
-    """IPAM Forager."""
+    """Ipam Forager."""
 
     def __init__(self, api: NbApi, root: NbTree, tree: NbTree):
         """Init IpamAF.
@@ -35,6 +33,8 @@ class IpamAF(BaseAF):
         self.service_templates = self.ServiceTemplatesF(self)
         self.services = self.ServicesF(self)
         self.vlan_groups = self.VlanGroupsF(self)
+        self.vlan_translation_rules = self.VlanTranslationRulesF(self)
+        self.vlan_translation_policies = self.VlanTranslationPoliciesF(self)
         self.vlans = self.VlansF(self)
         self.vrfs = self.VrfsF(self)
 
@@ -85,6 +85,12 @@ class IpamAF(BaseAF):
 
     class VlanGroupsF(Forager):
         """VlanGroupsF."""
+
+    class VlanTranslationRulesF(Forager):
+        """VlanTranslationRulesF."""
+
+    class VlanTranslationPoliciesF(Forager):
+        """VlanTranslationPoliciesF."""
 
     class VlansF(Forager):
         """VlansF."""

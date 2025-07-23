@@ -1,14 +1,13 @@
-# pylint: disable=R0904
-
 """NbParser."""
-
+import logging
 from functools import wraps
 from typing import Any, Type, Dict, List
 
+from netports import SwVersion
 from vhelpers import vstr, vlist
 
 from nbforager.exceptions import NbParserError
-from nbforager.types_ import DAny, Int, Str, LDAny, TLists, SeqUIntStr
+from nbforager.types_ import DAny, Int, Str, LDAny, TLists, SeqUIntStr, ODAny
 
 
 def check_strict(method):
@@ -83,7 +82,7 @@ class NbParser:
         """
         self.data = _init_data(data)
         self.strict = strict
-        self.version = str(kwargs.get("version") or "0")
+        self.version = str(kwargs.get("version") or "")
 
     def __repr__(self):
         """__repr__."""
@@ -108,7 +107,7 @@ class NbParser:
         :rtype: Any
         """
         try:
-            return self._get_keys(type_=type(None), keys=keys, data=self.data)
+            return self._get_keys(type_=type(None), keys=keys)
         except NbParserError:
             return None
 
@@ -120,7 +119,8 @@ class NbParser:
         :return: Boolean value or False if the value is absent.
         :rtype: bool
         """
-        return self._get_keys(type_=bool, keys=keys, data=self.data)
+        self._log_ipam_prefix_site(keys[0])
+        return self._get_keys(type_=bool, keys=keys)
 
     def dict(self, *keys) -> Dict:
         """Get dictionary value by keys.
@@ -132,7 +132,8 @@ class NbParser:
 
         :raise NbParserError: If strict=True and the value is not a dictionary or key is absent.
         """
-        return self._get_keys(type_=dict, keys=keys, data=self.data)
+        self._log_ipam_prefix_site(keys[0])
+        return self._get_keys(type_=dict, keys=keys)
 
     def int(self, *keys) -> int:
         """Get integer value by keys.
@@ -144,6 +145,8 @@ class NbParser:
 
         :raise NbParserError: If strict=True and the value is not a digit or key is absent.
         """
+        self._log_ipam_prefix_site(keys[0])
+
         data = self.data
         try:
             for key in keys:
@@ -174,7 +177,8 @@ class NbParser:
 
         :raise NbParserError: If strict=True and the value is not a list or key is absent.
         """
-        return self._get_keys(type_=list, keys=keys, data=self.data)
+        self._log_ipam_prefix_site(keys[0])
+        return self._get_keys(type_=list, keys=keys)
 
     def str(self, *keys) -> str:
         """Get string value by keys.
@@ -186,7 +190,52 @@ class NbParser:
 
         :raise NbParserError: If strict=True and the value is not a string or key is absent.
         """
-        return self._get_keys(type_=str, keys=keys, data=self.data)
+        self._log_circuits_circuit_terminations_site(keys[0])
+        self._log_ipam_prefix_site(keys[0])
+        return self._get_keys(type_=str, keys=keys)
+
+    def _log_circuits_circuit_terminations_site(self, key: str) -> None:
+        """Check if the value is valid for circuits/circuit-terminations site or scope.
+
+        :param key: First key in the chain of keys.
+        :return: Value or None if value is not found.
+        """
+        # skip not ipam/prefix.site
+        url = self.data.get("url", "")
+        if "/api/circuits/circuit-terminations/" not in url:
+            return
+        if key != "site":
+            return
+
+        # skip if version < 4.2
+        if self.version and SwVersion(self.version) < SwVersion("4.2"):
+            return
+
+        # log ipam/prefix.site if version >= 4.2
+        logging.warning(str(f"{url} `site` is deprecated. Please use `scope`."))
+
+    def _log_ipam_prefix_site(self, key: str) -> None:
+        """Check if the value is valid for ipam/prefix site or scope.
+
+        :param key: First key in the chain of keys.
+        :return: Value or None if value is not found.
+        """
+        # skip not ipam/prefix.site
+        if key != "site":
+            return
+
+        url = self.data.get("url", "")
+        for app_model in [
+            "/api/circuits/circuit-terminations/",
+            "/api/ipam/prefixes/",
+        ]:
+            if app_model in url:
+                # skip if version < 4.2
+                if self.version and SwVersion(self.version) < SwVersion("4.2"):
+                    return
+                # log ipam/prefix.site if version >= 4.2
+                logging.warning(str(f"{url} `site` is deprecated. Please use `scope`."))
+                return
 
     # ======================== strict get methods ========================
 
@@ -247,7 +296,7 @@ class NbParser:
 
     # ============================= helpers ==============================
 
-    def _get_keys(self, type_: Type, keys: SeqUIntStr, data: Dict) -> Any:
+    def _get_keys(self, type_: Type, keys: SeqUIntStr, data: ODAny = None) -> Any:
         """Retrieve values from data using keys and check their data types.
 
         :param type_: Data type.
@@ -258,6 +307,8 @@ class NbParser:
 
         :raise NbParserError: If strict=True and key absent or type not match.
         """
+        if data is None:
+            data = self.data
         try:
             for key in keys:
                 data = data[key]  # type: ignore
@@ -312,6 +363,8 @@ def find_objects(objects: LDAny, **kwargs) -> LDAny:
 
     objects_: LDAny = []
     for data in objects:
+        if not isinstance(key, str):
+            raise TypeError(f"Key {str} expected.")
         keys = key.split("__")
         if len(keys) <= 1:
             keys = [key]

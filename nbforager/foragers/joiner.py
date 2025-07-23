@@ -2,11 +2,11 @@
 
 from operator import itemgetter
 
+from netports import IPv4
 from vhelpers import vlist
 
-from nbforager import helpers as h
+from nbforager import nb_helpers as h
 from nbforager.api.base_c import BaseC
-from netports import IPv4
 from nbforager.nb_tree import NbTree
 from nbforager.parser import nb_parser
 from nbforager.parser.nb_value import NbValue

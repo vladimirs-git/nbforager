@@ -8,8 +8,8 @@ from urllib.parse import ParseResult, urlencode, urlparse, parse_qs
 
 from vhelpers import vlist, vparam, vint
 
-from nbforager.exceptions import NbApiError
 from nbforager.constants import DEPENDENT_MODELS
+from nbforager.exceptions import NbApiError
 from nbforager.types_ import LStr, LDAny, DDDLInt, LValue, LParam, LDList, DList, DLStr, ODLStr
 from nbforager.types_ import LTInt2, DAny, SeqStr, SStr, TValues, TLists, T2Str, T3Str, T3StrInt
 
@@ -62,11 +62,11 @@ def am_to_object_type(app: str, model: str) -> str:
     :example:
         am_to_object_type("ipam", "ip-address") -> "ipam.ipaddress"
     """
-    model_singular = plural_to_singular(model)
+    singular = model_singular(model)
     if app == "virtualization":
-        if model_singular == "interface":
-            model_singular = f"vm{model_singular}"
-    return f"{app}.{model_singular}"
+        if singular == "interface":
+            singular = f"vm{singular}"
+    return f"{app}.{singular}"
 
 
 def attr_name(obj: Any) -> str:
@@ -210,7 +210,7 @@ def path_to_attrs(path: str) -> T2Str:
     return app, model
 
 
-def plural_to_singular(plural: str) -> str:
+def model_singular(plural: str) -> str:
     """Convert a plural model name to a singular model name.
 
     :param plural: A plural model name.
@@ -405,28 +405,6 @@ def url_to_ui_url(url: str) -> str:
 # ============================== params ==============================
 
 
-def join_params(params_ld: LDList, default_get: DList) -> LDList:
-    """Join params_ld and default filtering parameters.
-
-    :param params_ld: Filtering parameters.
-    :param default_get: Default filtering parameters.
-    :return: Joined filtering parameters.
-    """
-    if not params_ld:
-        if not default_get:
-            return []
-        return [default_get.copy()]
-
-    params_ld_: LDList = []
-    for params_d in params_ld.copy():
-        if not params_d:
-            continue
-        default_d = {k: v for k, v in default_get.items() if k not in params_d}
-        params_d.update(default_d)
-        params_ld_.append(params_d)
-    return params_ld_
-
-
 def make_combinations(need_split: SeqStr, params_d: DList) -> LDList:
     """Split the parallel parameters from the kwargs dictionary to valid combinations.
 
@@ -548,7 +526,8 @@ def slice_params_d(url: str, max_len: int, key: str, params_d: DList) -> LDList:
     """
     values: LValue = _validate_values(values=params_d[key])
     params_common: LParam = [(k, v) for k, v in params_d.items() if k != key]
-    params_w_offset: LParam = [*params_common, ("offset", 1000), ("limit", 1000)]
+    max_length_helpers = [("offset", 1_000_000_000), ("limit", 1000)]
+    params_w_offset: LParam = [*params_common, *max_length_helpers]
 
     slices: LTInt2 = generate_slices(
         url=f"{url}?{urlencode(params_w_offset)}",

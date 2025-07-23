@@ -8,22 +8,23 @@ from typing import Callable
 
 from requests import Response
 
-from nbforager import helpers as h
+from nbforager import nb_helpers as h
 from nbforager.api.circuits import CircuitsAC
 from nbforager.api.connector import Connector, GConnector
 from nbforager.api.core import CoreAC
 from nbforager.api.dcim import DcimAC
 from nbforager.api.extras import ExtrasAC
 from nbforager.api.ipam import IpamAC
-from nbforager.api.plugins_ca import PluginsAC
+from nbforager.api.plugins import PluginsAC
 from nbforager.api.status import StatusC
 from nbforager.api.tenancy import TenancyAC
 from nbforager.api.users import UsersAC
 from nbforager.api.virtualization import VirtualizationAC
+from nbforager.api.vpn import VpnAC
 from nbforager.api.wireless import WirelessAC
 from nbforager.constants import APPS
 from nbforager.parser.nb_parser import NbParser
-from nbforager.types_ import ODLStr, ODDAny, DAny, LDAny, LStr, LT2Str
+from nbforager.types_ import ODLStr, DAny, LDAny, LStr, LT2Str
 
 
 class NbApi:
@@ -67,7 +68,6 @@ class NbApi:
         strict: bool = False,
         # Settings
         extended_get: bool = True,
-        default_get: ODDAny = None,
         loners: ODLStr = None,
         **kwargs,
     ):
@@ -120,9 +120,6 @@ class NbApi:
         :param bool extended_get: True - Extend filtering parameters in GET request,
             ``{parameter}`` can be used instead of ``{parameter}_id``. Default is `True`.
 
-        :param dict default_get: Set default filtering parameters, to be used in each
-            GET request.
-
         :param dict loners: Set :ref:`Filtering parameters in an OR manner`.
 
         Application/model connectors:
@@ -153,7 +150,6 @@ class NbApi:
             "sleep": sleep,
             "strict": strict,
             "extended_get": extended_get,
-            "default_get": default_get,
             "loners": loners,
             **kwargs,
         }
@@ -167,6 +163,7 @@ class NbApi:
         self.status = StatusC(**kwargs)  # connector
         self.tenancy = TenancyAC(**kwargs)
         self.users = UsersAC(**kwargs)
+        self.vpn = VpnAC(**kwargs)
         self.virtualization = VirtualizationAC(**kwargs)
         self.wireless = WirelessAC(**kwargs)
 
@@ -196,7 +193,6 @@ class NbApi:
             sleep=connector.sleep,
             strict=connector.strict,
             extended_get=connector.extended_get,
-            default_get=connector.default_get,
             loners=connector.loners,
         )
 
@@ -305,7 +301,6 @@ class NbApi:
             "sleep": connector.sleep,
             "strict": connector.strict,
             "extended_get": connector.extended_get,
-            "default_get": connector.default_get,
             "loners": connector.loners,
         }
         params.update(kwargs)

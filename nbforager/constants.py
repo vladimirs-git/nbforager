@@ -12,6 +12,7 @@ APPS = (
     "tenancy",
     "users",
     "virtualization",
+    "vpn",
     "wireless",
 )
 """Application names for NetBox v3.5."""

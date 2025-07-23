@@ -2,14 +2,15 @@
 import inspect
 from copy import copy
 from typing import Any
-
+import difflib
 import pytest
 import requests_mock
 from _pytest.monkeypatch import MonkeyPatch
+from netports.types_ import LStr
 from requests import Response, Session
 from requests_mock import Mocker
 
-from nbforager import helpers as h
+from nbforager import nb_helpers as h
 from nbforager.exceptions import NbApiError
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
@@ -137,7 +138,11 @@ def test__app_models(api: NbApi, expected):
     """NbApi.app_models()."""
     actual = api.app_models()
 
-    assert actual == expected
+    actual_ = [str(t) for t in actual]
+    expected_ = [str(t) for t in expected]
+    diff: LStr = list(difflib.ndiff(actual_, expected_))
+    diff = [s for s in diff if s.startswith("- ") or s.startswith("+ ")]
+    assert not diff
 
 
 @pytest.mark.parametrize("expected", [
@@ -149,6 +154,7 @@ def test__app_paths(api: NbApi, expected):
 
     assert actual == expected
 
+
 @pytest.mark.parametrize("expected", [
     p.CONNECTORS,
 ])
@@ -158,6 +164,7 @@ def test__connectors(api: NbApi, expected):
 
     actual = [o.__class__.__name__ for o in list(generator_)]
     assert actual == expected
+
 
 @pytest.mark.parametrize("host, expected", [
     ("netbox2", "netbox2"),
