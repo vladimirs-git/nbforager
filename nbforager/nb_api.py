@@ -261,7 +261,7 @@ class NbApi:
         for app in self.apps():
             models: LStr = [s for s in dir(getattr(self, app)) if s[0].islower()]
             for model in models:
-                connector = getattr(getattr(self, app), model)
+                connector: Connector = self.get_connector(f"{app}/{model}")
                 path = getattr(connector, "path")
                 path = path.rstrip("/")
                 app_paths.append(path)
@@ -288,8 +288,7 @@ class NbApi:
         """
         paths: LStr = nb_helpers.dependency_ordered_paths()
         for path in paths:
-            app, model = ami.path_to_attrs(path)
-            connector: Connector = getattr(getattr(self, app), model)
+            connector: Connector = self.get_connector(path)
             yield connector
 
     def copy(self, **kwargs) -> NbApi:
@@ -329,8 +328,10 @@ class NbApi:
         """
         url = str(kwargs.get("url") or "")
         app, model, id_ = ami.url_to_ami(url)
+        connector: Connector = self.get_connector(f"{app}/{model}")
+
+        method: Callable = getattr(connector, "get")
         params = {"id": id_} if id_ else {}
-        method: Callable = getattr(getattr(getattr(self, app), model), "get")
         return method(**params)
 
     def get_d(self, **kwargs) -> DAny:
@@ -345,7 +346,9 @@ class NbApi:
         app, model, id_ = ami.url_to_ami(url)
         if not id_:
             raise ValueError("ID is required in the URL.")
-        method: Callable = getattr(getattr(getattr(self, app), model), "get")
+        connector: Connector = self.get_connector(f"{app}/{model}")
+
+        method: Callable = getattr(connector, "get")
         if objects := method(id=id_):
             return objects[0]
         return {}
@@ -364,8 +367,10 @@ class NbApi:
         """
         url = str(kwargs.get("url") or "")
         app, model, _ = ami.url_to_ami(url)
+        connector: Connector = self.get_connector(f"{app}/{model}")
+
+        method: Callable = getattr(connector, "create")
         data: DAny = {k: v for k, v in kwargs.items() if k not in ["url", "id"]}
-        method: Callable = getattr(getattr(getattr(self, app), model), "create")
         return method(**data)
 
     def create_d(self, **kwargs) -> DAny:
@@ -379,8 +384,10 @@ class NbApi:
         """
         url = str(kwargs.get("url") or "")
         app, model, _ = ami.url_to_ami(url)
+        connector: Connector = self.get_connector(f"{app}/{model}")
+
         data: DAny = {k: v for k, v in kwargs.items() if k not in ["url", "id"]}
-        method: Callable = getattr(getattr(getattr(self, app), model), "create_d")
+        method: Callable = getattr(connector, "create_d")
         return method(**data)
 
     def delete(self, **kwargs) -> Response:
@@ -395,7 +402,9 @@ class NbApi:
         """
         url = str(kwargs.get("url") or "")
         app, model, idx = ami.url_to_ami(url)
-        method: Callable = getattr(getattr(getattr(self, app), model), "delete")
+        connector: Connector = self.get_connector(f"{app}/{model}")
+
+        method: Callable = getattr(connector, "delete")
         return method(id=idx)
 
     # noinspection PyIncorrectDocstring
@@ -415,9 +424,11 @@ class NbApi:
         """
         url = str(kwargs.get("url") or "")
         app, model, idx = ami.url_to_ami(url)
+        connector: Connector = self.get_connector(f"{app}/{model}")
+
+        method: Callable = getattr(connector, "update")
         data: DAny = {k: v for k, v in kwargs.items() if k not in ["url"]}
         data["id"] = idx
-        method: Callable = getattr(getattr(getattr(self, app), model), "update")
         return method(**data)
 
     def version(self) -> str:
