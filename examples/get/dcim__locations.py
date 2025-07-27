@@ -31,7 +31,7 @@ objects = nb.dcim.locations.get(parent_id=[1, 2])
 objects = nb.dcim.locations.get(status=["active", "planned"])
 
 # Tenant
-objects = nb.dcim.locations.get(tenant_group=["TENANT GROUP1", "TENANT GROUP2"])
+objects = nb.dcim.locations.get(tenant_group=["TG1", "TG2"])
 objects = nb.dcim.locations.get(tenant_group_id=[1, 2])
 objects = nb.dcim.locations.get(tenant=["TENANT1", "TENANT2"])
 objects = nb.dcim.locations.get(tenant_id=[1, 2])

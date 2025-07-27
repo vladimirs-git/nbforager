@@ -36,7 +36,7 @@ objects = nb.ipam.vlans.get(vid=[1, 2])
 objects = nb.ipam.vlans.get(l2vpn=[])
 
 # Tenant
-objects = nb.ipam.vlans.get(tenant_group=["TENANT GROUP1", "TENANT GROUP2"])
+objects = nb.ipam.vlans.get(tenant_group=["TG1", "TG2"])
 objects = nb.ipam.vlans.get(tenant_group_id=[1, 2])
 
 # Data Filter parameters

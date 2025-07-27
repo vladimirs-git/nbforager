@@ -24,7 +24,7 @@ objects = nb.ipam.aggregates.get(rir=["RFC 1918"])
 objects = nb.ipam.aggregates.get(rir_id=[1])
 
 # Tenant
-objects = nb.ipam.aggregates.get(tenant_group=["TENANT GROUP1"])
+objects = nb.ipam.aggregates.get(tenant_group=["TG1"])
 objects = nb.ipam.aggregates.get(tenant_group_id=[1])
 objects = nb.ipam.aggregates.get(tenant=["TENANT1", "TENANT2"])
 objects = nb.ipam.aggregates.get(tenant_id=[1, 2])

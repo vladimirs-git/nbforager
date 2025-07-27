@@ -51,7 +51,7 @@ objects = nb.dcim.devices.get(platform=["PLATFORM1", "PLATFORM2"])
 objects = nb.dcim.devices.get(platform_id=[1, 2])
 
 # Tenant
-objects = nb.dcim.devices.get(tenant_group=["TENANT GROUP1", "TENANT GROUP2"])
+objects = nb.dcim.devices.get(tenant_group=["TG1", "TG2"])
 objects = nb.dcim.devices.get(tenant_group=[1, 2])
 objects = nb.dcim.devices.get(tenant=["TENANT1", "TENANT2"])
 objects = nb.dcim.devices.get(tenant=["tenant1", "tenant2"])

@@ -34,7 +34,7 @@ objects = nb.dcim.racks.get(role=["RACK ROLE1", "RACK ROLE2"])
 # Hardware
 
 # Tenant
-objects = nb.dcim.racks.get(tenant_group=["TENANT GROUP1", "TENANT GROUP2"])
+objects = nb.dcim.racks.get(tenant_group=["TG1", "TG2"])
 objects = nb.dcim.racks.get(tenant_group_id=[1, 2])
 objects = nb.dcim.racks.get(tenant=["TENANT1", "TENANT2"])
 objects = nb.dcim.racks.get(tenant_id=[1, 2])

@@ -26,7 +26,7 @@ objects = nb.ipam.asns.get(site=["SITE1", "SITE2"])
 objects = nb.ipam.asns.get(site_id=[1, 2])
 
 # Tenant
-objects = nb.ipam.asns.get(tenant_group=["TENANT GROUP1", "TENANT GROUP2"])
+objects = nb.ipam.asns.get(tenant_group=["TG1", "TG2"])
 objects = nb.ipam.asns.get(tenant_group_id=[1, 2])
 objects = nb.ipam.asns.get(tenant=["TENANT1", "TENANT2"])
 objects = nb.ipam.asns.get(tenant_id=[1, 2])

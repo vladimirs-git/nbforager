@@ -47,7 +47,7 @@ objects = nb.ipam.prefixes.get(site=["SITE1", "SITE2"])
 objects = nb.ipam.prefixes.get(site_id=[1, 2])
 
 # Tenant
-objects = nb.ipam.prefixes.get(tenant_group=["TENANT GROUP1"])
+objects = nb.ipam.prefixes.get(tenant_group=["TG1"])
 objects = nb.ipam.prefixes.get(tenant_group_id=[1])
 objects = nb.ipam.prefixes.get(tenant=["TENANT1", "TENANT2"])
 objects = nb.ipam.prefixes.get(tenant_id=[1, 2])

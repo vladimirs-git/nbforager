@@ -29,7 +29,7 @@ objects = nb.dcim.sites.get(asn=[65101, 65102])
 objects = nb.dcim.sites.get(asn_id=[1, 2])
 
 # Tenant
-objects = nb.dcim.sites.get(tenant_group=["TENANT GROUP1", "TENANT GROUP2"])
+objects = nb.dcim.sites.get(tenant_group=["TG1", "TG2"])
 objects = nb.dcim.sites.get(tenant_group_id=[1, 2])
 objects = nb.dcim.sites.get(tenant=["TENANT1", "TENANT2"])
 objects = nb.dcim.sites.get(tenant_id=[1, 2])

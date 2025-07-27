@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 """Parameters for tests."""
+from copy import deepcopy
 
 from nbforager.types_ import DAny
 
@@ -55,7 +56,7 @@ S2 = 52
 S3 = 53
 TENANT1 = "TENANT1"
 TENANT1_ = "tenant1"
-TN1 = 53
+TN1 = 58
 
 # tags
 TAG1 = "TAG1"
@@ -106,17 +107,19 @@ PROVIDER1_D: DAny = {
 }
 PROVIDERS = {d["id"]: d for d in [PROVIDER1_D]}
 
+PA1 = 1
 PROVIDER_ACCOUNT1_D: DAny = {
-    "id": 1,
-    "url": "/api/circuits/provider-accounts/1/",
+    "id": PA1,
+    "url": f"/api/circuits/provider-accounts/{PA1}/",
     "name": "PROVIDER ACCOUNT1",
     "provider": {"id": PR1, "url": f"/api/circuits/providers/{PR1}/", "name": PROVIDER},
 }
 PROVIDER_ACCOUNTS = {d["id"]: d for d in [PROVIDER_ACCOUNT1_D]}
 
+PN1 = 1
 PROVIDER_NETWORK1_D: DAny = {
-    "id": 1,
-    "url": "/api/circuits/provider-networks/1/",
+    "id": PN1,
+    "url": f"/api/circuits/provider-networks/{PN1}/",
     "name": "PROVIDER NETWORK1",
     "provider": {"id": PR1, "url": f"/api/circuits/providers/{PR1}/", "name": PROVIDER},
 }
@@ -303,51 +306,119 @@ CONSOLE1_D: DAny = {
 }
 CONSOLES = {d["id"]: d for d in [CONSOLE1_D]}
 
+DR1 = 1
 DEVICE_ROLE1_D: DAny = {
-    "id": 1,
-    "url": "/api/dcim/device-roles/1/",
+    "id": DR1,
+    "url": f"/api/dcim/device-roles/{DR1}/",
     "name": "DEVICE ROLE1",
     "slug": "device-role1",
 }
+DR3 = 3
 DEVICE_ROLE3_D: DAny = {
-    "id": 3,
-    "url": "/api/dcim/device-roles/3/",
+    "id": DR3,
+    "url": f"/api/dcim/device-roles/{DR3}/",
     "name": "DEVICE ROLE3",
     "slug": "device-role3",
 }
 DEVICE_ROLES = {d["id"]: d for d in [DEVICE_ROLE1_D, DEVICE_ROLE3_D]}
 
-DEVICE_TYPE1_D: DAny = {
-    "id": 1,
-    "url": "/api/dcim/device-types/1/",
-    "name": "MODEL1",
-    "slug": "model1",
-    "manufacturer": {"id": 1, "url": "/api/dcim/manufacturers/1/", "name": "MANUFACTURER1"},
-}
-DEVICE_TYPES = {d["id"]: d for d in [DEVICE_TYPE1_D]}
-
-DEVICE_TYPE3_D: DAny = {
-    "id": 3,
-    "url": "/api/dcim/device-types/3/",
-    "name": "MODEL3",
-    "slug": "model3",
-    "manufacturer": {"id": 1, "url": "/api/dcim/manufacturers/1/", "name": "MANUFACTURER1"},
-}
+M1 = 1
 MANUFACTURER1_D: DAny = {
-    "id": 1,
-    "url": "/api/dcim/manufacturers/1/",
+    "id": M1,
+    "url": f"/api/dcim/manufacturers/{M1}/",
     "name": "MANUFACTURER1",
     "slug": "manufacturer1",
 }
 MANUFACTURERS = {d["id"]: d for d in [MANUFACTURER1_D]}
 
+DT1 = 1
+DEVICE_TYPE1_D: DAny = {
+    "id": DT1,
+    "url": f"/api/dcim/device-types/{DT1}/",
+    "name": "MODEL1",
+    "slug": "model1",
+    "manufacturer": MANUFACTURER1_D,
+}
+DEVICE_TYPES = {d["id"]: d for d in [DEVICE_TYPE1_D]}
+
+DT3 = 3
+DEVICE_TYPE3_D: DAny = {
+    "id": DT3,
+    "url": f"/api/dcim/device-types/{DT3}/",
+    "name": "MODEL3",
+    "slug": "model3",
+    "manufacturer": MANUFACTURER1_D,
+}
+
+PL1 = 1
 PLATFORM1_D: DAny = {
-    "id": 1,
-    "url": "/api/dcim/platforms/1/",
+    "id": PL1,
+    "url": f"/api/dcim/platforms/{PL1}/",
     "name": "PLATFORM1",
     "slug": "platform1",
 }
 PLATFORMS = {d["id"]: d for d in [PLATFORM1_D]}
+
+# tenancy
+TG1 = 1
+TENANT_GROUP1 = "TG1"
+TENANT_GROUP1_ = "tenant-group1"
+TENANT_GROUP1_D: DAny = {
+    "id": TG1,
+    "url": f"/api/tenancy/tenant-groups/{TG1}/",
+    "name": TENANT_GROUP1,
+    "slug": TENANT_GROUP1_,
+    "parent": None,
+}
+TENANT_GROUPS = {d["id"]: d for d in [TENANT_GROUP1_D]}
+
+TENANT1_D: DAny = {
+    "id": TN1,
+    "url": f"/api/tenancy/tenants/{TN1}/",
+    "name": TENANT1,
+    "tags": [{"id": T1, "url": f"/api/extras/tags/{T1}/", "name": TAG1}],
+    "slug": TENANT1_,
+    "group": {"id": TG1, "url": f"/api/tenancy/tenant-groups/{TG1}/", "name": TENANT_GROUP1},
+}
+TENANTS = {d["id"]: d for d in [TENANT1_D]}
+
+
+L1 = 1
+LOCATION1_D: DAny = {
+    "id": L1,
+    "url": f"/api/dcim/locations/{L1}/",
+    "name": "LOCATION1",
+    "tags": [{"id": T1, "url": f"/api/extras/tags/{T1}/", "name": TAG1}],
+    "site": {"id": S1, "url": f"/api/dcim/sites/{S1}/", "name": RIX1, "slug": RIX1_},
+    "parent": None,
+    "slug": "location1",
+    "tenant": {"id": TN1, "url": f"/api/tenancy/tenants/{TN1}/", "name": TENANT1},
+}
+LOCATIONS = {d["id"]: d for d in [LOCATION1_D]}
+
+RR1 = 1
+RACK_ROLE1_D: DAny = {
+    "id": RR1,
+    "url": f"/api/dcim/rack-roles/{RR1}/",
+    "name": "RACK ROLE1",
+    "tags": [{"id": T1, "url": f"/api/extras/tags/{T1}/", "name": TAG1}],
+    "slug": "rack-role1",
+}
+RACK_ROLES = {d["id"]: d for d in [RACK_ROLE1_D]}
+
+RK1 = 1
+RACK1_D: DAny = {
+    "id": RK1,
+    "url": f"/api/dcim/racks/{RK1}/",
+    "name": "RACK1",
+    "tags": [{"id": T1, "url": f"/api/extras/tags/{T1}/", "name": TAG1}],
+    "site": {"id": S1, "url": f"/api/dcim/sites/{S1}/", "name": RIX1, "slug": RIX1_},
+    "location": {"id": L1, "url": f"/api/dcim/locations/{L1}/", "name": "LOCATION1"},
+    "role": {"id": RR1, "url": f"/api/dcim/rack-roles/{RR1}/", "name": "RACK ROLE1"},
+    "tenant": {"id": TN1, "url": f"/api/tenancy/tenants/{TN1}/", "name": TENANT1},
+    "tenant_group": {"id": TG1, "url": f"/api/tenancy/tenant-groups/{TG1}/", "name": "TG1"},
+}
+RACKS = {d["id"]: d for d in [RACK1_D]}
 
 # DEVICE1 is similar to DEVICE2
 DEVICE1_D: DAny = {
@@ -357,11 +428,11 @@ DEVICE1_D: DAny = {
     "tags": [{"id": T1, "url": f"/api/extras/tags/{T1}/", "name": TAG1}],
     "primary_ip4": {"address": "10.1.1.1/24"},
     "serial": "SERIAL1",
-    "device_role": {"id": 1, "url": "/api/dcim/device-roles/1/", "name": "DEVICE ROLE1"},
-    "device_type": {"id": 1, "url": "/api/dcim/device-types/1/", "name": "MODEL1"},
-    "location": {"id": 1, "url": "/api/dcim/locations/1/", "name": "LOCATION1"},
-    "platform": {"id": 1, "url": "/api/dcim/platforms/1/", "name": "PLATFORM1"},
-    "rack": {"id": 1, "url": "/api/dcim/racks/1/", "name": "RACK1"},
+    "device_role": {"id": DR1, "url": f"/api/dcim/device-roles/{DR1}/", "name": "DEVICE ROLE1"},
+    "device_type": {"id": DT1, "url": f"/api/dcim/device-types/{DT1}/", "name": "MODEL1"},
+    "location": {"id": L1, "url": f"/api/dcim/locations/{L1}/", "name": "LOCATION1"},
+    "platform": {"id": PL1, "url": f"/api/dcim/platforms/{PL1}/", "name": "PLATFORM1"},
+    "rack": {"id": RK1, "url": f"/api/dcim/racks/{RK1}/", "name": "RACK1"},
     "site": {"id": S1, "url": f"/api/dcim/sites/{S1}/", "name": RIX1, "slug": RIX1_},
     "tenant": {"id": TN1, "url": f"/api/tenancy/tenants/{TN1}/", "name": TENANT1},
     "interface_count": 2,  # D1_INTERFACE1, D1_INTERFACE2
@@ -377,11 +448,11 @@ DEVICE2_D: DAny = {
     "tags": [{"id": T1, "url": f"/api/extras/tags/{T1}/", "name": TAG1}],
     "primary_ip4": {"address": "10.2.2.2/24"},
     "serial": "SERIAL2",
-    "device_role": {"id": 1, "url": "/api/dcim/device-roles/1/", "name": "DEVICE ROLE1"},
-    "device_type": {"id": 1, "url": "/api/dcim/device-types/1/", "name": "MODEL1"},
-    "location": {"id": 1, "url": "/api/dcim/locations/1/", "name": "LOCATION1"},
-    "platform": {"id": 1, "url": "/api/dcim/platforms/1/", "name": "PLATFORM1"},
-    "rack": {"id": 1, "url": "/api/dcim/racks/1/", "name": "RACK1"},
+    "device_role": {"id": DR1, "url": f"/api/dcim/device-roles/{DR1}/", "name": "DEVICE ROLE1"},
+    "device_type": {"id": DT1, "url": f"/api/dcim/device-types/{DT1}/", "name": "MODEL1"},
+    "location": {"id": L1, "url": f"/api/dcim/locations/{L1}/", "name": "LOCATION1"},
+    "platform": {"id": PL1, "url": f"/api/dcim/platforms/{PL1}/", "name": "PLATFORM1"},
+    "rack": {"id": RK1, "url": f"/api/dcim/racks/{RK1}/", "name": "RACK1"},
     "site": {"id": S1, "url": f"/api/dcim/sites/{S1}/", "name": RIX1, "slug": RIX1_},
     "tenant": {"id": TN1, "url": f"/api/tenancy/tenants/{TN1}/", "name": TENANT1},
     "interface_count": 1,  # D2_INTERFACE1
@@ -398,11 +469,11 @@ DEVICE3_D: DAny = {
     "tags": [{"id": T3, "url": f"/api/extras/tags/{T3}/", "name": TAG3}],  # different
     "primary_ip4": {"address": "10.3.3.3/24"},
     "serial": "SERIAL1",  # the same as in DEVICE1
-    "device_role": {"id": 3, "url": "/api/dcim/device-roles/3/", "name": "DEVICE ROLE3"},
-    "device_type": {"id": 1, "url": "/api/dcim/device-types/3/", "name": "MODEL3"},
-    "location": {"id": 1, "url": "/api/dcim/locations/1/", "name": "LOCATION1"},
-    "platform": {"id": 1, "url": "/api/dcim/platforms/1/", "name": "PLATFORM1"},
-    "rack": {"id": 1, "url": "/api/dcim/racks/1/", "name": "RACK1"},
+    "device_role": {"id": DR3, "url": f"/api/dcim/device-roles/{DR3}/", "name": "DEVICE ROLE3"},
+    "device_type": {"id": DT1, "url": f"/api/dcim/device-types/{DT1}/", "name": "MODEL3"},
+    "location": {"id": L1, "url": f"/api/dcim/locations/{L1}/", "name": "LOCATION1"},
+    "platform": {"id": PL1, "url": f"/api/dcim/platforms/{PL1}/", "name": "PLATFORM1"},
+    "rack": {"id": RK1, "url": f"/api/dcim/racks/{RK1}/", "name": "RACK1"},
     "site": {"id": S1, "url": f"/api/dcim/sites/{S1}/", "name": RIX1, "slug": RIX1_},
     "tenant": {"id": TN1, "url": f"/api/tenancy/tenants/{TN1}/", "name": TENANT1},
     "interface_count": 1,  # D3_INTERFACE1
@@ -425,11 +496,11 @@ DEVICE4_D: DAny = {
     "tags": [],
     "primary_ip4": None,
     "serial": "SERIAL4",
-    "device_role": {"id": 3, "url": "/api/dcim/device-roles/3/", "name": "DEVICE ROLE3"},
-    "device_type": {"id": 1, "url": "/api/dcim/device-types/3/", "name": "MODEL3"},
-    "location": {"id": 1, "url": "/api/dcim/locations/1/", "name": "LOCATION1"},
-    "platform": {"id": 1, "url": "/api/dcim/platforms/1/", "name": "PLATFORM1"},
-    "rack": {"id": 1, "url": "/api/dcim/racks/1/", "name": "RACK1"},
+    "device_role": {"id": DR3, "url": f"/api/dcim/device-roles/{DR3}/", "name": "DEVICE ROLE3"},
+    "device_type": {"id": DT1, "url": f"/api/dcim/device-types/{DT1}/", "name": "MODEL3"},
+    "location": {"id": L1, "url": f"/api/dcim/locations/{L1}/", "name": "LOCATION1"},
+    "platform": {"id": PL1, "url": f"/api/dcim/platforms/{PL1}/", "name": "PLATFORM1"},
+    "rack": {"id": RK1, "url": f"/api/dcim/racks/{RK1}/", "name": "RACK1"},
     "site": {"id": S1, "url": f"/api/dcim/sites/{S1}/", "name": RIX1, "slug": RIX1_},
     "tenant": {"id": TN1, "url": f"/api/tenancy/tenants/{TN1}/", "name": TENANT1},
     "interface_count": 1,  # D4_INTERFACE1
@@ -766,40 +837,6 @@ D4_INTERFACE1_D: DAny = {
 }
 INTERFACES_ = [D1_INTERFACE1_D, D1_INTERFACE2_D, D2_INTERFACE1_D, D3_INTERFACE1_D, D4_INTERFACE1_D]
 INTERFACES = {d["id"]: d for d in INTERFACES_}
-
-LOCATION1_D: DAny = {
-    "id": 1,
-    "url": "/api/dcim/locations/1/",
-    "name": "LOCATION1",
-    "tags": [{"id": T1, "url": f"/api/extras/tags/{T1}/", "name": TAG1}],
-    "site": {"id": S1, "url": f"/api/dcim/sites/{S1}/", "name": RIX1, "slug": RIX1_},
-    "parent": None,
-    "slug": "location1",
-    "tenant": {"id": TN1, "url": f"/api/tenancy/tenants/{TN1}/", "name": TENANT1},
-}
-LOCATIONS = {d["id"]: d for d in [LOCATION1_D]}
-
-RACK_ROLE1_D: DAny = {
-    "id": 1,
-    "url": "/api/dcim/rack-roles/1/",
-    "name": "RACK ROLE1",
-    "tags": [{"id": T1, "url": f"/api/extras/tags/{T1}/", "name": TAG1}],
-    "slug": "rack-role1",
-}
-RACK_ROLES = {d["id"]: d for d in [RACK_ROLE1_D]}
-
-RACK1_D: DAny = {
-    "id": 1,
-    "url": "/api/dcim/racks/1/",
-    "name": "RACK1",
-    "tags": [{"id": T1, "url": f"/api/extras/tags/{T1}/", "name": TAG1}],
-    "site": {"id": S1, "url": f"/api/dcim/sites/{S1}/", "name": RIX1, "slug": RIX1_},
-    "location": {"id": 1, "url": "/api/dcim/locations/1/", "name": "LOCATION1"},
-    "role": {"id": 1, "url": "/api/dcim/rack-roles/1/", "name": "RACK ROLE1"},
-    "tenant": {"id": TN1, "url": f"/api/tenancy/tenants/{TN1}/", "name": TENANT1},
-    "tenant_group": {"id": 1, "url": "/api/tenancy/tenant-groups/1/", "name": "TENANT GROUP1"},
-}
-RACKS = {d["id"]: d for d in [RACK1_D]}
 
 REGION1_D: DAny = {
     "id": 1,
@@ -1167,39 +1204,20 @@ VLAN2_D: DAny = {
 }
 VLANS = {d["id"]: d for d in [VLAN1_D, VLAN2_D]}
 
+VR1 = 1
 VRF1_D: DAny = {
-    "id": 1,
-    "url": "/api/ipam/vrfs/1/",
+    "id": VR1,
+    "url": f"/api/ipam/vrfs/{VR1}/",
     "name": "VRF1",
     "tags": [{"id": T1, "url": f"/api/extras/tags/{T1}/", "name": TAG1}],
     "tenant": {"id": TN1, "url": f"/api/tenancy/tenants/{TN1}/", "name": TENANT1},
     "import_targets": [{"id": 1, "name": "65000:1"}],
     "export_targets": [{"id": 1, "name": "65000:1"}],
 }
+VR2 = 2
+VRF2_D = deepcopy(VRF1_D)
+VRF2_D.update({"id": VR2, "url": f"/api/ipam/vrfs/{VR2}/", "name": "VRF2"})
 VRFS = {d["id"]: d for d in [VRF1_D]}
-
-# tenancy
-TNG = 1
-TENANT_GROUP1 = "TENANT GROUP1"
-TENANT_GROUP1_ = "tenant-group1"
-TENANT_GROUP1_D: DAny = {
-    "id": TNG,
-    "url": f"/api/tenancy/tenant-groups/{TNG}/",
-    "name": TENANT_GROUP1,
-    "slug": TENANT_GROUP1_,
-    "parent": None,
-}
-TENANT_GROUPS = {d["id"]: d for d in [TENANT_GROUP1_D]}
-
-TENANT1_D: DAny = {
-    "id": TN1,
-    "url": f"/api/tenancy/tenants/{TN1}/",
-    "name": TENANT1,
-    "tags": [{"id": T1, "url": f"/api/extras/tags/{T1}/", "name": TAG1}],
-    "slug": TENANT1_,
-    "group": {"id": TNG, "url": f"/api/tenancy/tenant-groups/{TNG}/", "name": TENANT_GROUP1},
-}
-TENANTS = {d["id"]: d for d in [TENANT1_D]}
 
 # virtualization
 CLUSTER_GROUP1_D: DAny = {
@@ -1267,6 +1285,25 @@ VIRTUAL_MACHINE1_D: DAny = {
     "device": {"id": D1, "url": f"/api/dcim/devices/{D1}/", "name": HOSTNAME1},
     "role": {"id": 1, "url": "/api/dcim/device-roles/1/", "name": "DEVICE ROLE1"},
     "tenant": {"id": TN1, "url": f"/api/tenancy/tenants/{TN1}/", "name": TENANT1},
-    "platform": {"id": 1, "url": "/api/dcim/platforms/1/", "name": "PLATFORM1"},
+    "platform": {"id": PL1, "url": f"/api/dcim/platforms/{PL1}/", "name": "PLATFORM1"},
 }
 VIRTUAL_MACHINES = {d["id"]: d for d in [VIRTUAL_MACHINE1_D]}
+
+# nested_urls
+NESTED_URLS_VRF1 = [
+    f":///api/extras/tags?id={T1}",
+    f":///api/ipam/vrfs?id={VR1}",
+    f":///api/tenancy/tenants?id={TN1}",
+]
+NESTED_URLS_VRF2 = [
+    f":///api/extras/tags?id={T1}",
+    f":///api/ipam/vrfs?id={VR1}&id={VR2}",
+    f":///api/tenancy/tenants?id={TN1}",
+]
+NESTED_URLS_WO_VRF1 = [
+    f":///api/extras/tags?id={T1}",
+    f":///api/tenancy/tenants?id={TN1}",
+]
+NESTED_URLS_WO_VRF1_TAG1 = [
+    f":///api/tenancy/tenants?id={TN1}",
+]

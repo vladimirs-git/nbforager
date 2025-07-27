@@ -26,7 +26,7 @@ objects = nb.ipam.route_targets.get(exporting_vrf=["VRF1", "VRF2"])
 objects = nb.ipam.route_targets.get(exporting_vrf_id=[1, 2])
 
 # Tenant
-objects = nb.ipam.route_targets.get(tenant_group=["TENANT GROUP1", "TENANT GROUP2"])
+objects = nb.ipam.route_targets.get(tenant_group=["TG1", "TG2"])
 objects = nb.ipam.route_targets.get(tenant_group_id=[1, 2])
 objects = nb.ipam.route_targets.get(tenant=["TENANT1", "TENANT2"])
 objects = nb.ipam.route_targets.get(tenant_id=[1, 2])

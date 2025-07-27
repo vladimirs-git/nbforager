@@ -37,8 +37,8 @@ def nbf_t() -> NbForager:
 
 
 @pytest.fixture
-def prepare_connector_results(nbf: NbForager) -> Tuple[NbForager, LT2StrDAny]:
-    """Fixture to prepare common connector_results test data."""
+def connector_results(nbf: NbForager) -> Tuple[NbForager, LT2StrDAny]:
+    """Fixture with common connector_results test data."""
     nb_termination: DAny = {"url": "circuit/circuit-terminations/1"}
     nbf.api.circuits.circuit_terminations._results = [nb_termination]
 
@@ -116,20 +116,37 @@ def test__get_connector(nbf: NbForager, path, expected: Any):
         with pytest.raises(expected):
             nbf.ipam.vrfs.get_connector(path)
 
+@pytest.mark.parametrize("nb_objects, nbf_data, expected", [
+    # without root data
+    ([p.VRF1_D], {}, p.NESTED_URLS_VRF1),
+    ([p.VRF1_D, p.VRF2_D], {}, p.NESTED_URLS_VRF2),
+    # with root data
+    ([p.VRF1_D], {p.VR1: p.VRF1_D}, p.NESTED_URLS_WO_VRF1),
+    ([p.VRF1_D, p.VRF2_D], {}, p.NESTED_URLS_VRF2),
+    # bordr condition
+    ([], {}, []),
+])
+def test__collect_nested_urls(nbf, nb_objects, nbf_data, expected):
+    """Forager._collect_nested_urls()."""
+    nbf.root.ipam.vrfs.update(nbf_data)
 
-def test__clear_connector_results(prepare_connector_results):
-    """Forager._clear_connector_results()."""
-    nbf, path_params = prepare_connector_results
+    actual = nbf.ipam.vrfs._collect_nested_urls(nb_objects=nb_objects)
+    assert actual == expected
 
-    nbf.ipam.vrfs._clear_connector_results(path_params=path_params)
+
+def test__clear_results(connector_results):
+    """Forager._clear_results()."""
+    nbf, path_params = connector_results
+
+    nbf.ipam.vrfs._clear_results(path_params=path_params)
 
     assert nbf.api.circuits.circuit_terminations._results == []
     assert nbf.api.ipam.vrfs._results == []
 
 
-def test__pop_connector_results(prepare_connector_results):
+def test__pop_connector_results(connector_results):
     """Forager._pop_connector_results()."""
-    nbf, path_params = prepare_connector_results
+    nbf, path_params = connector_results
     actual = nbf.ipam.vrfs._pop_connector_results(path_params=path_params)
     assert actual == [{"url": "circuit/circuit-terminations/1"}, {"url": "ipam/vrfs/1"}]
     assert nbf.api.circuits.circuit_terminations._results == []

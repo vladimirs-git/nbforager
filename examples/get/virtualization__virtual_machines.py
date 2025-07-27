@@ -44,7 +44,7 @@ objects = nb.virtualization.virtual_machines.get(has_primary_ip=True)
 objects = nb.virtualization.virtual_machines.get(local_context_data=True)
 
 # Tenant
-objects = nb.virtualization.virtual_machines.get(tenant_group=["TENANT GROUP1", "TENANT GROUP2"])
+objects = nb.virtualization.virtual_machines.get(tenant_group=["TG1", "TG2"])
 objects = nb.virtualization.virtual_machines.get(tenant_group_id=[1, 2])
 objects = nb.virtualization.virtual_machines.get(tenant=["TENANT1", "TENANT2"])
 objects = nb.virtualization.virtual_machines.get(tenant_id=[1, 2])

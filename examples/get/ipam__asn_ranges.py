@@ -26,7 +26,7 @@ objects = nb.ipam.asn_ranges.get(start=[65001])
 objects = nb.ipam.asn_ranges.get(end=[65003])
 
 # Tenant
-objects = nb.ipam.asn_ranges.get(tenant_group=["TENANT GROUP1", "TENANT GROUP2"])
+objects = nb.ipam.asn_ranges.get(tenant_group=["TG1", "TG2"])
 objects = nb.ipam.asn_ranges.get(tenant_group_id=[1, 2])
 objects = nb.ipam.asn_ranges.get(tenant=["TENANT1", "TENANT2"])
 objects = nb.ipam.asn_ranges.get(tenant_id=[1, 2])

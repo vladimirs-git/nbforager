@@ -18,7 +18,7 @@ objects = nb.tenancy.tenants.get()
 objects = nb.tenancy.tenants.get(q=["TENANT1", "TENANT2"])
 objects = nb.tenancy.tenants.get(tag="tag1")
 objects = nb.tenancy.tenants.get(or_tag=["tag1", "tag2"])
-objects = nb.tenancy.tenants.get(group=["TENANT GROUP1", "TENANT GROUP2"])
+objects = nb.tenancy.tenants.get(group=["TG1", "TG2"])
 objects = nb.tenancy.tenants.get(group_id=[1, 2])
 
 # Data Filter parameters

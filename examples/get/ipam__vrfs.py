@@ -26,7 +26,7 @@ objects = nb.ipam.vrfs.get(export_target=["65101:1", "65102:1"])
 objects = nb.ipam.vrfs.get(export_target_id=[1, 2])
 
 # Tenant
-objects = nb.ipam.vrfs.get(tenant_group=["TENANT GROUP1", "TENANT GROUP2"])
+objects = nb.ipam.vrfs.get(tenant_group=["TG1", "TG2"])
 objects = nb.ipam.vrfs.get(tenant_group_id=[1, 2])
 objects = nb.ipam.vrfs.get(tenant=["TENANT1", "TENANT2"])
 objects = nb.ipam.vrfs.get(tenant_id=[1, 2])

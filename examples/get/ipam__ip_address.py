@@ -37,7 +37,7 @@ objects = nb.ipam.ip_addresses.get(present_in_vrf=["alpha", "bravo"])
 objects = nb.ipam.ip_addresses.get(present_in_vrf_id=[1, 2])
 
 # Tenant
-objects = nb.ipam.ip_addresses.get(tenant_group=["TENANT GROUP1"])
+objects = nb.ipam.ip_addresses.get(tenant_group=["TG1"])
 objects = nb.ipam.ip_addresses.get(tenant_group_id=[1])
 objects = nb.ipam.ip_addresses.get(tenant=["TENANT1", "TENANT2"])
 objects = nb.ipam.ip_addresses.get(tenant_id=[1, 2])

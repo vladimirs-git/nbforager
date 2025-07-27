@@ -97,7 +97,7 @@ class Forager:
         results: LDAny = []
         if self.threads > 1:
             path_params: LT2StrDAny = self._get_path_params(urls)
-            self._clear_connector_results(path_params)
+            self._clear_results(path_params)
             self._query_threads(path_params)
             results_: LDAny = self._pop_connector_results(path_params)
             results.extend(results_)
@@ -225,7 +225,7 @@ class Forager:
         return nb_objects
 
     def _collect_nested_urls(self, nb_objects: LDAny) -> LStr:
-        """Collect nested URLs from the given Netbox objects and filter missed in the tree.
+        """Collect nested URLs from the given Netbox objects and filter missed in the root.
 
         :param nb_objects: Netbox objects.
 
@@ -240,9 +240,8 @@ class Forager:
 
         for url in urls:
             app, model, _ = ami.url_to_ami_items(url)
-            path = f"{app}/{model}/"
-            connector = self.get_connector(path)
-            urls_sliced = nb_helpers.slice_url(url, max_len=connector.url_length)
+            connector: Connector = self.get_connector(path=f"{app}/{model}/")
+            urls_sliced: LStr = nb_helpers.slice_url(url, max_len=connector.url_length)
             urls_.extend(urls_sliced)
 
         return urls_
@@ -272,8 +271,8 @@ class Forager:
         return path_params
 
     # noinspection PyProtectedMember
-    def _clear_connector_results(self, path_params: LT2StrDAny) -> None:
-        """Clear results in connectors by path app/model."""
+    def _clear_results(self, path_params: LT2StrDAny) -> None:
+        """Clear Connector.results by path app/model."""
         for path, _ in path_params:
             connector = self.get_connector(path)
             connector._results.clear()  # pylint: disable=W0212
