@@ -12,6 +12,7 @@ from urllib.parse import urlparse, parse_qs
 from vhelpers import vstr
 
 from nbforager import ami, nb_helpers, nb_tree
+from nbforager.api.connector import Connector
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
 from nbforager.parser import nb_parser
@@ -19,7 +20,7 @@ from nbforager.types_ import LDAny, DiDAny, LStr, LT2StrDAny, DList, LDList, SIn
 
 
 class Forager:
-    """Forager methods for different models."""
+    """Base for Foragers."""
 
     def __init__(self, forager_a):
         """Init Forager.
@@ -32,7 +33,7 @@ class Forager:
         self.app = app
         self.model = model
         self.api: NbApi = forager_a.api
-        self.connector = getattr(getattr(self.api, app), model)
+        self.connector: Connector = getattr(getattr(self.api, app), model)
         # data
         self.root: NbTree = forager_a.root
         self.root_d: DiDAny = getattr(getattr(self.root, app), model)
@@ -48,7 +49,7 @@ class Forager:
     # ============================= property =============================
 
     @property
-    def interval(self) -> int:
+    def interval(self) -> float:
         """Wait this time between requests (seconds)."""
         return self.connector.interval
 
@@ -106,7 +107,7 @@ class Forager:
             for url in urls:
                 app, model, _ = ami.url_to_ami_items(url)
                 path = f"{app}/{model}/"
-                connector = self._get_connector(path)
+                connector = self.get_connector(path)
                 params_d: DList = parse_qs(urlparse(url).query)
                 params_ld: LDList = connector._validate_params(**params_d)  # pylint: disable=W0212
 
@@ -123,6 +124,18 @@ class Forager:
                     results.extend(results_)
 
         self._save_results(results)
+
+    def get_connector(self, path: str) -> Connector:
+        """Get Connector instance by app/model path.
+
+        :param path: app/model path.
+
+        :return: Connector to the Netbox API endpoint
+
+        :example:
+            Forager().get_connector("ipam/vrf") -> VrfsC()
+        """
+        return self.api.get_connector(path)
 
     def find_root(self, **kwargs) -> LDAny:
         """Find Netbox objects in NbForager.root by extended finding parameters.
@@ -212,24 +225,24 @@ class Forager:
         return nb_objects
 
     def _collect_nested_urls(self, nb_objects: LDAny) -> LStr:
-        """Collect nested urls.
+        """Collect nested URLs from the given Netbox objects and filter missed in the tree.
 
-        :param nb_objects: List of Netbox objects.
+        :param nb_objects: Netbox objects.
 
         :return: Nested URLs.
         """
+        urls_: LStr = []
+
         urls: LStr = ami.nested_urls(nb_objects)
         urls = nb_tree.missed_urls(urls=urls, tree=self.root)
         urls = nb_helpers.join_urls(urls)
         urls = [s for s in urls if ami.url_to_ami_items(s)[0]]
 
-        urls_: LStr = []
-
         for url in urls:
             app, model, _ = ami.url_to_ami_items(url)
             path = f"{app}/{model}/"
-            connector = self._get_connector(path)
-            urls_sliced = h.slice_url(url, max_len=connector.url_length)
+            connector = self.get_connector(path)
+            urls_sliced = nb_helpers.slice_url(url, max_len=connector.url_length)
             urls_.extend(urls_sliced)
 
         return urls_
@@ -246,7 +259,7 @@ class Forager:
         for url in urls:
             app, model, _ = ami.url_to_ami_items(url)
             path = f"{app}/{model}/"
-            connector = self._get_connector(path)
+            connector = self.get_connector(path)
             params_d = parse_qs(urlparse(url).query)
             params_ld: LDAny = nb_helpers.slice_params_ld(
                 url=connector.url,
@@ -262,7 +275,7 @@ class Forager:
     def _clear_connector_results(self, path_params: LT2StrDAny) -> None:
         """Clear results in connectors by path app/model."""
         for path, _ in path_params:
-            connector = self._get_connector(path)
+            connector = self.get_connector(path)
             connector._results.clear()  # pylint: disable=W0212
 
     def _query_threads(self, path_params: LT2StrDAny) -> None:
@@ -295,7 +308,7 @@ class Forager:
         """
         while not queue.empty():
             path, params_d = queue.get()
-            connector = self._get_connector(path)
+            connector = self.get_connector(path)
             connector._query_data_thread(path=path, params_d=params_d)  # pylint: disable=W0212
             queue.task_done()
 
@@ -304,23 +317,10 @@ class Forager:
         """Get results from connectors by path app/model and delete cached results."""
         results: LDAny = []
         for path, _ in path_params:
-            connector = self._get_connector(path)
+            connector = self.get_connector(path)
             results.extend(connector._results)  # pylint: disable=W0212
             connector._results.clear()  # pylint: disable=W0212
         return results
-
-    def _get_connector(self, path: str):
-        """Get connector by app/model path.
-
-        :param path: The app/model path.
-
-        :return: The connector object.
-
-        :rtype:  DeviceRolesC or DeviceTypesC or LocationsC or RacksC or etc.
-        """
-        app, model = ami.path_to_attrs(path)
-        connector = getattr(getattr(self.api, app), model)
-        return connector
 
     def _save_results(self, results: LDAny) -> None:
         """Save Netbox objects to root NbTree object.

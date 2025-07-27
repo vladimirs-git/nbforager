@@ -108,14 +108,15 @@ def test__url(params, expected):
     assert actual == expected
 
 
-def test__threads():
-    """NbApi.threads."""
-    api = NbApi(host="netbox")
+@pytest.mark.parametrize("params, threads, expected", [
+    ({"host": "netbox"}, 2, 2),
+])
+def test__threads(api, params, threads, expected):
+    """NbApi.threads() setter."""
     assert api.threads == 1
 
-    api.threads = 2
+    api.threads = threads
 
-    expected = 2
     assert api.threads == expected
     assert api.dcim.devices.threads == expected
 
@@ -154,6 +155,28 @@ def test__app_paths(api: NbApi, expected):
     actual = api.app_paths()
 
     assert actual == expected
+
+
+@pytest.mark.parametrize("path, expected", [
+    ("circuits/circuit-terminations", "CircuitTerminationsC"),
+    ("circuits/circuit_terminations", "CircuitTerminationsC"),
+    ("circuits/circuits", "CircuitsC"),
+    ("ipam/ip-addresses", "IpAddressesC"),
+    ("ipam/ip_addresses", "IpAddressesC"),
+    ("ipam/vrfs", "VrfsC"),
+    ("typo/circuits", AttributeError),
+    ("circuits/typo", AttributeError),
+    ("circuits", ValueError),
+])
+def test__get_connector(api: NbApi, path, expected: Any):
+    """Forager.get_connector()."""
+    if isinstance(expected, str):
+        connector = api.get_connector(path)
+        actual = connector.__class__.__name__
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            api.get_connector(path)
 
 
 @pytest.mark.parametrize("expected", [

@@ -1,4 +1,4 @@
-"""Tests nbforager.nb_forager.py."""
+"""Tests forager.py."""
 from typing import Any, Tuple
 
 import dictdiffer  # type: ignore
@@ -99,19 +99,22 @@ def test__count(nbf: NbForager):
     ("circuits/circuit-terminations", "CircuitTerminationsC"),
     ("circuits/circuit_terminations", "CircuitTerminationsC"),
     ("circuits/circuits", "CircuitsC"),
+    ("ipam/ip-addresses", "IpAddressesC"),
+    ("ipam/ip_addresses", "IpAddressesC"),
+    ("ipam/vrfs", "VrfsC"),
     ("typo/circuits", AttributeError),
     ("circuits/typo", AttributeError),
     ("circuits", ValueError),
 ])
 def test__get_connector(nbf: NbForager, path, expected: Any):
-    """Forager._get_connector()."""
+    """Forager.get_connector()."""
     if isinstance(expected, str):
-        connector = nbf.ipam.vrfs._get_connector(path)
+        connector = nbf.ipam.vrfs.get_connector(path)
         actual = connector.__class__.__name__
         assert actual == expected
     else:
         with pytest.raises(expected):
-            nbf.ipam.vrfs._get_connector(path)
+            nbf.ipam.vrfs.get_connector(path)
 
 
 def test__clear_connector_results(prepare_connector_results):
@@ -151,7 +154,7 @@ def test__get_root_data(nbf: NbForager, path, expected: Any):
         assert actual == expected
     else:
         with pytest.raises(expected):
-            nbf.ipam.vrfs._get_connector(path)
+            nbf.ipam.vrfs.get_connector(path)
 
 
 @pytest.fixture

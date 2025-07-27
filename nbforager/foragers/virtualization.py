@@ -1,6 +1,6 @@
 """Tenancy Virtualization."""
 
-from nbforager.foragers.base_fa import BaseAF
+from nbforager.foragers.base_af import BaseAF
 from nbforager.foragers.forager import Forager
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree

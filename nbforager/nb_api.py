@@ -224,7 +224,7 @@ class NbApi:
         for app in self.apps():
             models: LStr = [s for s in dir(getattr(self, app)) if s[0].islower()]
             for model in models:
-                connector = getattr(getattr(self, app), model)
+                connector = self.get_connector(f"{app}/{model}")
                 setattr(connector, "threads", threads)
 
     # ============================= methods ==============================
@@ -266,6 +266,19 @@ class NbApi:
                 path = path.rstrip("/")
                 app_paths.append(path)
         return app_paths
+
+    def get_connector(self, path: str) -> Connector:
+        """Get Connector instance by app/model path.
+
+        :param path: app/model path.
+
+        :return: Connector to the Netbox API endpoint.
+
+        :example:
+            NbApi().get_connector("ipam/vrf") -> VrfsC()
+        """
+        app, model = ami.path_to_attrs(path)
+        return getattr(getattr(self, app), model)
 
     def connectors(self) -> GConnector:
         """Return generator of Connector instances ordered based on dependencies.

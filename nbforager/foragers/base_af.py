@@ -39,7 +39,7 @@ class BaseAF:
 
         :param root: Dictionary where data from Netbox needs to be saved.
         """
-        self.api = api
+        self.api: NbApi = api
         self.root: NbTree = root
         self.tree: NbTree = tree
         self.app: str = ami.attr_name(self)
