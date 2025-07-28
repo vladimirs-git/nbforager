@@ -7,7 +7,7 @@ from typing import Any, Type, Dict, List, Tuple
 from netports import SwVersion
 from vhelpers import vstr, vlist
 
-from nbforager.exceptions import NbParserError
+from nbforager.exceptions import NbParserError, NbVersionError
 from nbforager.types_ import DAny, Int, Str, LDAny, TLists, SeqUIntStr, ODAny, LT3Str, LStr
 
 DEPRECATED_MODELS: LT3Str = [
@@ -157,7 +157,7 @@ class NbParser:
         :rtype: bool
         """
         first_key = keys[0]
-        self._log_deprecated_key(first_key)
+        self._raise_deprecated_key(first_key)
         return self._get_keys(type_=bool, keys=keys)
 
     def dict(self, *keys) -> Dict:
@@ -171,7 +171,7 @@ class NbParser:
         :raise NbParserError: If strict=True and the value is not a dictionary or key is absent.
         """
         first_key = keys[0]
-        self._log_deprecated_key(first_key)
+        self._raise_deprecated_key(first_key)
         return self._get_keys(type_=dict, keys=keys)
 
     def int(self, *keys) -> int:
@@ -185,8 +185,8 @@ class NbParser:
         :raise NbParserError: If strict=True and the value is not a digit or key is absent.
         """
         first_key = keys[0]
-        self._log_deprecated_key(first_key)
-        self._log_deprecated_type(first_key)
+        self._raise_deprecated_key(first_key)
+        self._raise_deprecated_type(first_key)
 
         data = self.data
         try:
@@ -219,7 +219,7 @@ class NbParser:
         :raise NbParserError: If strict=True and the value is not a list or key is absent.
         """
         first_key = keys[0]
-        self._log_deprecated_key(first_key)
+        self._raise_deprecated_key(first_key)
         return self._get_keys(type_=list, keys=keys)
 
     def str(self, *keys) -> str:
@@ -233,14 +233,15 @@ class NbParser:
         :raise NbParserError: If strict=True and the value is not a string or key is absent.
         """
         first_key = keys[0]
-        self._log_deprecated_key(first_key)
+        self._raise_deprecated_key(first_key)
         return self._get_keys(type_=str, keys=keys)
 
-    def _log_deprecated_key(self, key: str) -> None:
-        """Log error if the key is deprecated for specific app/model.
+    def _raise_deprecated_key(self, key: str) -> None:
+        """Log and rasie error if the key is deprecated for specific app/model.
 
         :param key: First key in the chain of keys.
-        :return: None. Log error message.
+        :return: None. Log error and raise NbVersionError.
+        :raise NbVersionError: If the key is deprecated for specific app/model.
         """
         # skip old version
         if self.version and SwVersion(self.version) < SwVersion("4.2"):
@@ -256,7 +257,7 @@ class NbParser:
             if not key_old:
                 msg = f"Deprecated model {model!r} in {url}, please use {key_new!r}."
                 logging.error(msg)
-                return
+                raise NbVersionError(msg)
 
             # model changed
             if key == key_old:
@@ -266,17 +267,19 @@ class NbParser:
                     model_new = f"{model}.{key_new}"
                     msg = f"Deprecated model {model_old!r} in {url}, please use {model_new!r}."
                     logging.error(msg)
+                    raise NbVersionError(msg)
                 # removed key
                 elif key_old in self.data:
                     msg = f"Deprecated model {model_old!r} in {url}, please remove it."
                     logging.error(msg)
-                return
+                    raise NbVersionError(msg)
 
-    def _log_deprecated_type(self, keys: LStr) -> None:
-        """Log error if the type is deprecated for specific app/model.
+    def _raise_deprecated_type(self, keys: LStr) -> None:
+        """Log and rasie error if the type is deprecated for specific app/model.
 
         :param keys: Keys chain to get interested value.
-        :return: None. Log error message.
+        :return: None. Log error and raise NbVersionError.
+        :raise NbVersionError: If the type is deprecated for specific app/model.
         """
         # skip old version
         if self.version and SwVersion(self.version) < SwVersion("4.2"):
@@ -287,12 +290,18 @@ class NbParser:
         for model, keys_old, type_new in DEPRECATED_TYPES:
             keys_new = keys[: len(keys_old)]
             value = self.any(*keys_new)
-            if f"/api/{model}/" in url and keys_new == keys_old and not isinstance(value, type_new):
-                type_old = type(value)
-                model_old = ".".join([model, *keys_old])
-                msg = f"Deprecated type {model_old} {type_old!r} in {url}, please use {type_new!r}."
-                logging.error(msg)
-                return
+            if f"/api/{model}/" not in url:
+                continue
+            if keys_new != keys_old:
+                continue
+            if isinstance(value, type_new):
+                continue
+
+            type_old = type(value)
+            model_old = ".".join([model, *keys_old])
+            msg = f"Deprecated type {model_old} {type_old!r} in {url}, please use {type_new!r}."
+            logging.error(msg)
+            raise NbVersionError(msg)
 
     # ======================== strict get methods ========================
 

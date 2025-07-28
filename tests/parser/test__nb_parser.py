@@ -1,9 +1,8 @@
 """Tests nbforager.parser.nb_parser"""
-from logging import ERROR
 
 import pytest
 
-from nbforager.exceptions import NbParserError
+from nbforager.exceptions import NbParserError, NbVersionError
 from nbforager.parser import nb_parser
 from nbforager.parser.nb_parser import NbParser
 from nbforager.types_ import LStr, DAny
@@ -94,25 +93,27 @@ def test__bool(nbp, keys: LStr, params, expected):
             nbp.bool(*keys)
 
 
-@pytest.mark.parametrize("keys, params, expected, exp_log", [
+@pytest.mark.parametrize("keys, params, expected", [
     # version
-    (["site", "tenant", "bool"], {"version": "4.1", "data": p.V3_PREFIX_D}, True, []),
-    (["site", "tenant", "bool"], {"version": "4.2", "data": p.V3_PREFIX_D}, True, [ERROR]),
-    (["scope", "tenant", "bool"], {"version": "4.1", "data": p.V4_PREFIX_D}, True, []),
-    (["scope", "tenant", "bool"], {"version": "4.2", "data": p.V4_PREFIX_D}, True, []),
+    (["site", "tenant", "bool"], {"version": "4.1", "data": p.V3_PREFIX_D}, True),
+    (["site", "tenant", "bool"], {"version": "4.2", "data": p.V3_PREFIX_D}, NbVersionError),
+    (["scope", "tenant", "bool"], {"version": "4.1", "data": p.V4_PREFIX_D}, True),
+    (["scope", "tenant", "bool"], {"version": "4.2", "data": p.V4_PREFIX_D}, True),
     # ipam/prefixes.site bool
-    (["site", "tenant", "bool"], {"data": p.V3_PREFIX_D}, True, [ERROR]),
-    (["site", "tenant", "bool"], {"data": p.V4_PREFIX_D}, False, [ERROR]),
-    (["scope", "bool"], {"data": p.V3_PREFIX_D}, False, []),
-    (["scope", "bool"], {"data": p.V4_PREFIX_D}, True, []),
+    (["site", "tenant", "bool"], {"data": p.V3_PREFIX_D}, NbVersionError),
+    (["site", "tenant", "bool"], {"data": p.V4_PREFIX_D}, NbVersionError),
+    (["scope", "bool"], {"data": p.V3_PREFIX_D}, False),
+    (["scope", "bool"], {"data": p.V4_PREFIX_D}, True),
 ])
-def test__bool__site(caplog, nbp, keys: LStr, params, expected, exp_log):
+def test__bool__deprecated(nbp, keys, params, expected):
     """NbParser.bool() site v4.2."""
-    actual = nbp.bool(*keys)
+    if isinstance(expected, bool):
+        actual = nbp.bool(*keys) 
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbp.bool(*keys)
 
-    assert actual == expected
-    act_logs = [r.levelno for r in caplog.records]
-    assert act_logs == exp_log
 
 
 @pytest.mark.parametrize("keys, params, expected", [
@@ -146,25 +147,26 @@ def test__dict(nbp, keys: LStr, params, expected):
             nbp.dict(*keys)
 
 
-@pytest.mark.parametrize("keys, params, expected, exp_log", [
+@pytest.mark.parametrize("keys, params, expected", [
     # version
-    (["site", "tenant"], {"version": "4.1", "data": p.V3_PREFIX_D}, p.TENANT_D, []),
-    (["site", "tenant"], {"version": "4.2", "data": p.V3_PREFIX_D}, p.TENANT_D, [ERROR]),
-    (["scope", "tenant"], {"version": "4.1", "data": p.V3_PREFIX_D}, {}, []),
-    (["scope", "tenant"], {"version": "4.2", "data": p.V3_PREFIX_D}, {}, []),
+    (["site", "tenant"], {"version": "4.1", "data": p.V3_PREFIX_D}, p.TENANT_D),
+    (["site", "tenant"], {"version": "4.2", "data": p.V3_PREFIX_D}, NbVersionError),
+    (["scope", "tenant"], {"version": "4.1", "data": p.V3_PREFIX_D}, {}),
+    (["scope", "tenant"], {"version": "4.2", "data": p.V3_PREFIX_D}, {}),
     # ipam/prefixes.site dict
-    (["site", "tenant"], {"data": p.V3_PREFIX_D}, p.TENANT_D, [ERROR]),
-    (["site", "tenant"], {"data": p.V4_PREFIX_D}, {}, [ERROR]),
-    (["scope", "tenant"], {"data": p.V3_PREFIX_D}, {}, []),
-    (["scope", "tenant"], {"data": p.V4_PREFIX_D}, p.TENANT_D, []),
+    (["site", "tenant"], {"data": p.V3_PREFIX_D}, NbVersionError),
+    (["site", "tenant"], {"data": p.V4_PREFIX_D}, NbVersionError),
+    (["scope", "tenant"], {"data": p.V3_PREFIX_D}, {}),
+    (["scope", "tenant"], {"data": p.V4_PREFIX_D}, p.TENANT_D),
 ])
-def test__dict__site(caplog, nbp, keys: LStr, params, expected, exp_log):
+def test__dict__deprecated(caplog, nbp, keys: LStr, params, expected):
     """NbParser.dict() site v4.2."""
-    actual = nbp.dict(*keys)
-
-    assert actual == expected
-    act_logs = [r.levelno for r in caplog.records]
-    assert act_logs == exp_log
+    if isinstance(expected, dict):
+        actual = nbp.dict(*keys)
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbp.dict(*keys)
 
 
 @pytest.mark.parametrize("keys, params, expected", [
@@ -204,25 +206,26 @@ def test__int(nbp, keys: LStr, params, expected):
             nbp.int(*keys)
 
 
-@pytest.mark.parametrize("keys, params, expected, exp_log", [
+@pytest.mark.parametrize("keys, params, expected", [
     # version
-    (["site", "id"], {"version": "4.1", "data": p.V3_PREFIX_D}, p.S1, []),
-    (["site", "id"], {"version": "4.1", "data": p.V4_PREFIX_D}, 0, []),
-    (["scope", "id"], {"version": "4.2", "data": p.V3_PREFIX_D}, 0, []),
-    (["scope", "id"], {"version": "4.2", "data": p.V4_PREFIX_D}, p.S1, []),
+    (["site", "id"], {"version": "4.1", "data": p.V3_PREFIX_D}, p.S1),
+    (["site", "id"], {"version": "4.2", "data": p.V4_PREFIX_D}, NbVersionError),
+    (["scope", "id"], {"version": "4.1", "data": p.V3_PREFIX_D}, 0),
+    (["scope", "id"], {"version": "4.2", "data": p.V4_PREFIX_D}, p.S1),
     # ipam/prefixes.site.id
-    (["site", "id"], {"data": p.V3_PREFIX_D}, p.S1, [ERROR]),
-    (["site", "tenant", "id"], {"data": p.V3_PREFIX_D}, p.T1, [ERROR]),
-    (["scope", "id"], {"data": p.V4_PREFIX_D}, p.S1, []),
-    (["scope", "tenant", "id"], {"data": p.V4_PREFIX_D}, p.T1, []),
+    (["site", "id"], {"data": p.V3_PREFIX_D}, NbVersionError),
+    (["site", "tenant", "id"], {"data": p.V3_PREFIX_D}, NbVersionError),
+    (["scope", "id"], {"data": p.V4_PREFIX_D}, p.S1),
+    (["scope", "tenant", "id"], {"data": p.V4_PREFIX_D}, p.T1),
 ])
-def test__int__site(caplog, nbp, keys: LStr, params, expected, exp_log):
+def test__int__deprecated(caplog, nbp, keys: LStr, params, expected):
     """NbParser.int() site v4.2."""
-    actual = nbp.int(*keys)
-
-    assert actual == expected
-    act_logs = [r.levelno for r in caplog.records]
-    assert act_logs == exp_log
+    if isinstance(expected, int):
+        actual = nbp.int(*keys)
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbp.int(*keys)
 
 
 @pytest.mark.parametrize("keys, params, expected", [
@@ -260,26 +263,27 @@ def test__list(nbp, keys: LStr, params, expected):
             nbp.list(*keys)
 
 
-@pytest.mark.parametrize("keys, params, expected, exp_log", [
+@pytest.mark.parametrize("keys, params, expected", [
     # version
-    (["site", "tags"], {"version": "4.1", "data": p.V3_PREFIX_D}, [p.TAG_D], []),
-    (["site", "tags"], {"version": "4.2", "data": p.V3_PREFIX_D}, [p.TAG_D], [ERROR]),
-    (["scope", "tags"], {"version": "4.1", "data": p.V4_PREFIX_D}, [p.TAG_D], []),
-    (["scope", "tags"], {"version": "4.2", "data": p.V4_PREFIX_D}, [p.TAG_D], []),
+    (["site", "tags"], {"version": "4.1", "data": p.V3_PREFIX_D}, [p.TAG_D]),
+    (["site", "tags"], {"version": "4.2", "data": p.V3_PREFIX_D}, NbVersionError),
+    (["scope", "tags"], {"version": "4.1", "data": p.V4_PREFIX_D}, [p.TAG_D]),
+    (["scope", "tags"], {"version": "4.2", "data": p.V4_PREFIX_D}, [p.TAG_D]),
     # ipam/prefixes.site list
-    (["site", "tags"], {"data": p.V3_PREFIX_D}, [p.TAG_D], [ERROR]),
-    (["site", "tenant", "tags"], {"data": p.V3_PREFIX_D}, [p.TAG_D], [ERROR]),
-    (["scope", "tags"], {"data": p.V4_PREFIX_D}, [p.TAG_D], []),
-    (["scope", "tenant", "tags"], {"data": p.V4_PREFIX_D}, [p.TAG_D], []),
+    (["site", "tags"], {"data": p.V3_PREFIX_D}, NbVersionError),
+    (["site", "tenant", "tags"], {"data": p.V3_PREFIX_D}, NbVersionError),
+    (["scope", "tags"], {"data": p.V4_PREFIX_D}, [p.TAG_D]),
+    (["scope", "tenant", "tags"], {"data": p.V4_PREFIX_D}, [p.TAG_D]),
 
 ])
-def test__list__site(caplog, nbp, keys: LStr, params, expected, exp_log):
+def test__list__deprecated(caplog, nbp, keys: LStr, params, expected):
     """NbParser.list() site v4.2."""
-    actual = nbp.list(*keys)
-
-    assert actual == expected
-    act_logs = [r.levelno for r in caplog.records]
-    assert act_logs == exp_log
+    if isinstance(expected, list):
+        actual = nbp.list(*keys)
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbp.list(*keys)
 
 
 @pytest.mark.parametrize("keys, params, expected", [
@@ -317,76 +321,83 @@ def test__str(nbp, keys: LStr, params, expected):
             nbp.str(*keys)
 
 
-@pytest.mark.parametrize("keys, params, expected, exp_log", [
+@pytest.mark.parametrize("keys, params, expected", [
     # version
-    (["site", "name"], {"version": "4.1", "data": p.V3_PREFIX_D}, "TST1", []),
-    (["site", "name"], {"version": "4.2", "data": p.V3_PREFIX_D}, "TST1", [ERROR]),
-    (["scope", "name"], {"version": "4.1", "data": p.V4_PREFIX_D}, "TST1", []),
-    (["scope", "name"], {"version": "4.2", "data": p.V4_PREFIX_D}, "TST1", []),
+    (["site", "name"], {"version": "4.1", "data": p.V3_PREFIX_D}, "TST1"),
+    (["site", "name"], {"version": "4.2", "data": p.V3_PREFIX_D}, NbVersionError),
+    (["scope", "name"], {"version": "4.1", "data": p.V4_PREFIX_D}, "TST1"),
+    (["scope", "name"], {"version": "4.2", "data": p.V4_PREFIX_D}, "TST1"),
     # site name
-    (["site", "name"], {"data": p.V3_PREFIX_D}, "TST1", [ERROR]),
-    (["site", "tenant", "name"], {"data": p.V3_PREFIX_D}, "NOC", [ERROR]),
-    (["scope", "name"], {"data": p.V4_PREFIX_D}, "TST1", []),
-    (["scope", "tenant", "name"], {"data": p.V4_PREFIX_D}, "NOC", []),
+    (["site", "name"], {"data": p.V3_PREFIX_D}, NbVersionError),
+    (["site", "tenant", "name"], {"data": p.V3_PREFIX_D}, NbVersionError),
+    (["scope", "name"], {"data": p.V4_PREFIX_D}, "TST1"),
+    (["scope", "tenant", "name"], {"data": p.V4_PREFIX_D}, "NOC"),
 ])
-def test__str__site(caplog, nbp, keys: LStr, params, expected, exp_log):
+def test__str__deprecated(caplog, nbp, keys: LStr, params, expected):
     """NbParser.str() site v4.2."""
-    actual = nbp.str(*keys)
+    if isinstance(expected, str):
+        actual = nbp.str(*keys)
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbp.str(*keys)
 
-    assert actual == expected
-    act_logs = [r.levelno for r in caplog.records]
-    assert act_logs == exp_log
 
-
-@pytest.mark.parametrize("key, params, exp_log", [
+@pytest.mark.parametrize("key, params, expected", [
     # version
     ("site", {"version": "4.1", "data": p.V3_CIRCUIT_TERMINATION_D}, []),
-    ("site", {"version": "4.2", "data": p.V3_CIRCUIT_TERMINATION_D}, [ERROR]),
+    ("site", {"version": "4.2", "data": p.V3_CIRCUIT_TERMINATION_D}, NbVersionError),
     ("termination", {"version": "4.1", "data": p.V4_CIRCUIT_TERMINATION_D}, []),
     ("termination", {"version": "4.2", "data": p.V4_CIRCUIT_TERMINATION_D}, []),
     # circuits/circuit-terminations.site.name
-    ("site", {"data": p.V3_CIRCUIT_TERMINATION_D}, [ERROR]),
+    ("site", {"data": p.V3_CIRCUIT_TERMINATION_D}, NbVersionError),
     ("termination", {"data": p.V4_CIRCUIT_TERMINATION_D}, []),
     # ipam/prefix.site.name
-    ("site", {"data": p.V3_PREFIX_D}, [ERROR]),
+    ("site", {"data": p.V3_PREFIX_D}, NbVersionError),
     ("scope", {"data": p.V4_PREFIX_D}, []),
     # dcim/platforms.napalm_driver
-    ("napalm_driver", {"data": p.V3_PLATFORM_D}, [ERROR]),
+    ("napalm_driver", {"data": p.V3_PLATFORM_D}, NbVersionError),
     ("napalm_driver", {"data": p.V4_PLATFORM_D}, []),
     # extras/object-changes moved to core/object-changes
-    ("prechange_data", {"data": p.V3_OBJECT_CHANGE_D}, [ERROR]),
+    ("prechange_data", {"data": p.V3_OBJECT_CHANGE_D}, NbVersionError),
     ("prechange_data", {"data": p.V4_OBJECT_CHANGE_D}, []),
 ])
-def test__log_deprecated_key(caplog, nbp, key, params, exp_log):
-    """NbParser._log_deprecated_key()"""
-    nbp._log_deprecated_key(key)
+def test__raise_deprecated_key(caplog, nbp, key, params, expected):
+    """NbParser._raise_deprecated_key()"""
+    if isinstance(expected, list):
+        nbp._raise_deprecated_key(key)
+        act_logs = [r.levelno for r in caplog.records]
+        assert act_logs == expected
+    else:
+        with pytest.raises(expected):
+            nbp._raise_deprecated_key(key)
 
-    act_logs = [r.levelno for r in caplog.records]
-    assert act_logs == exp_log
 
-
-@pytest.mark.parametrize("keys, params, exp_log", [
+@pytest.mark.parametrize("keys, params, expected", [
     # version
     (["component", "cable"], {"version": "4.1", "data": p.V3_INVENTORY_ITEM_D}, []),
-    (["component", "cable"], {"version": "4.2", "data": p.V3_INVENTORY_ITEM_D}, [ERROR]),
+    (["component", "cable"], {"version": "4.2", "data": p.V3_INVENTORY_ITEM_D}, NbVersionError),
     (["component", "cable"], {"version": "4.1", "data": p.V4_INVENTORY_ITEM_D}, []),
     (["component", "cable"], {"version": "4.2", "data": p.V4_INVENTORY_ITEM_D}, []),
     # dcim/inventory-items.component.cable int/dict
-    (["component", "cable"], {"data": p.V3_INVENTORY_ITEM_D}, [ERROR]),
+    (["component", "cable"], {"data": p.V3_INVENTORY_ITEM_D}, NbVersionError),
     (["component", "cable"], {"data": p.V4_INVENTORY_ITEM_D}, []),
     # dcim/power-outlets.power_port.cable int/dict
-    (["power_port", "cable"], {"data": p.V3_POWER_OUTLET_D}, [ERROR]),
+    (["power_port", "cable"], {"data": p.V3_POWER_OUTLET_D}, NbVersionError),
     (["component", "cable"], {"data": p.V4_POWER_OUTLET_D}, []),
     # dcim/devices.primary_ip.family int/dict
-    (["primary_ip", "family"], {"data": p.V3_DEVICE_D}, [ERROR]),
+    (["primary_ip", "family"], {"data": p.V3_DEVICE_D}, NbVersionError),
     (["primary_ip", "family"], {"data": p.V4_DEVICE_D}, []),
 ])
-def test__log_deprecated_type(caplog, nbp, keys, params, exp_log):
-    """NbParser._log_deprecated_type()"""
-    nbp._log_deprecated_type(keys)
-
-    act_logs = [r.levelno for r in caplog.records]
-    assert act_logs == exp_log
+def test__raise_deprecated_type(caplog, nbp, keys, params, expected):
+    """NbParser._raise_deprecated_type()"""
+    if isinstance(expected, list):
+        nbp._raise_deprecated_type(keys)
+        act_logs = [r.levelno for r in caplog.records]
+        assert act_logs == expected
+    else:
+        with pytest.raises(expected):
+            nbp._raise_deprecated_type(keys)
 
 
 @pytest.mark.parametrize("keys, params, expected", p.STRICT_DICT)
