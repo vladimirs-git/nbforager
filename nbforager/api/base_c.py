@@ -19,7 +19,7 @@ from requests import Session, Response
 from requests.exceptions import ReadTimeout, ConnectionError as RequestsConnectionError
 from vhelpers import vlist, vparam
 
-from nbforager import nb_helpers
+from nbforager import helpers
 from nbforager.api import extended_get
 from nbforager.api.extended_get import ParamPath, DParamPath
 from nbforager.exceptions import NbApiError
@@ -250,7 +250,7 @@ class BaseC:
         self._results = []
 
         # slice params
-        params_ld = nb_helpers.slice_params_ld(
+        params_ld = helpers.slice_params_ld(
             url=self.url,
             max_len=self.url_length,
             keys=self._slices,
@@ -539,8 +539,8 @@ class BaseC:
         params_d: DList = _lists_wo_dupl(kwargs)
         params_d = self._change_params_name_to_id(params_d)
         params_d = self._change_params_exceptions(params_d)
-        params_ld: LDList = nb_helpers.make_combinations(self._loners, params_d)
-        params_ld = nb_helpers.change_params_or(params_ld)
+        params_ld: LDList = helpers.make_combinations(self._loners, params_d)
+        params_ld = helpers.change_params_or(params_ld)
         return params_ld
 
     def _headers(self) -> DStr:
@@ -581,7 +581,7 @@ class BaseC:
             params_d = result["params_d"]
             if not result["count"]:
                 continue
-            params_: LDAny = nb_helpers.generate_offsets(count, self.limit, params_d)
+            params_: LDAny = helpers.generate_offsets(count, self.limit, params_d)
             params.extend(params_)
         return params
 

@@ -1,6 +1,6 @@
 """nbforager."""
 
-from nbforager import nb_helpers
+from nbforager import ami
 from nbforager.foragers.joiner import Joiner
 from nbforager.nb_api import NbApi
 from nbforager.nb_forager import NbForager
@@ -17,5 +17,5 @@ __all__ = [
     "NbParser",
     "NbTree",
     "NbValue",
-    "nb_helpers",
+    "ami",
 ]

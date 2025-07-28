@@ -8,7 +8,7 @@ from typing import Callable
 
 from requests import Response
 
-from nbforager import ami, nb_helpers
+from nbforager import ami, helpers
 from nbforager.api.circuits import CircuitsAC
 from nbforager.api.connector import Connector, GConnector
 from nbforager.api.core import CoreAC
@@ -286,7 +286,7 @@ class NbApi:
 
         :return: Generator of Connector instances.
         """
-        paths: LStr = nb_helpers.dependency_ordered_paths()
+        paths: LStr = helpers.dependency_ordered_paths()
         for path in paths:
             connector: Connector = self.get_connector(path)
             yield connector

@@ -1,25 +1,25 @@
-"""Tests nb_helpers.py."""
+"""Tests helpers.py."""
 from typing import Any
 from urllib.parse import urlencode
 
 import pytest
 
-from nbforager import nb_helpers
+from nbforager import helpers
 from tests import params__helpers as p
 
 
 @pytest.mark.parametrize("dependency, expected", [
-    (nb_helpers.DEPENDENT_MODELS, p.ORDERED_MODELS),
+    (helpers.DEPENDENT_MODELS, p.ORDERED_MODELS),
     ({"a": ["b"], "b": ["a"]}, ValueError),  # circular dependency
 ])
 def test__dependency_ordered_paths(dependency, expected):
-    """nb_helpers.dependency_ordered_paths()."""
+    """helpers.dependency_ordered_paths()."""
     if isinstance(expected, list):
-        actual = nb_helpers.dependency_ordered_paths(dependency)
+        actual = helpers.dependency_ordered_paths(dependency)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            nb_helpers.dependency_ordered_paths(dependency)
+            helpers.dependency_ordered_paths(dependency)
 
 
 @pytest.mark.parametrize("need_split, params_d, expected", [
@@ -44,8 +44,8 @@ def test__dependency_ordered_paths(dependency, expected):
       {"a": [2], "b": [2], "c": [1, 2], "d": [1]}]),
 ])
 def test__make_combinations(need_split, params_d, expected):
-    """nb_helpers.make_combinations()."""
-    actual = nb_helpers.make_combinations(need_split=need_split, params_d=params_d)
+    """helpers.make_combinations()."""
+    actual = helpers.make_combinations(need_split=need_split, params_d=params_d)
     assert actual == expected
 
 
@@ -55,8 +55,8 @@ def test__make_combinations(need_split, params_d, expected):
     (["a"], {"a": [1, 2], "b": [1, 2]}, {"a"}),
 ])
 def test__get_keys_need_split(need_split, params_d, expected):
-    """nb_helpers._get_keys_need_split()."""
-    actual = nb_helpers._get_keys_need_split(need_split=need_split, params_d=params_d)
+    """helpers._get_keys_need_split()."""
+    actual = helpers._get_keys_need_split(need_split=need_split, params_d=params_d)
     assert actual == expected
 
 
@@ -67,8 +67,8 @@ def test__get_keys_need_split(need_split, params_d, expected):
     ([{"or_a": [1]}, {"or_a": [2]}, {"a_or": [3]}], [{"a": [1]}, {"a": [2]}, {"a_or": [3]}]),
 ])
 def test__change_params_or(params_ld, expected):
-    """nb_helpers.change_params_or()."""
-    actual = nb_helpers.change_params_or(params_ld=params_ld)
+    """helpers.change_params_or()."""
+    actual = helpers.change_params_or(params_ld=params_ld)
     assert actual == expected
 
 
@@ -83,9 +83,9 @@ def test__change_params_or(params_ld, expected):
     (145, [p.IP1, p.IP2, p.IP3, p.IP4], [(0, 3), (3, 4)]),
 ])
 def test__generate_slices(max_len, values, expected):
-    """nb_helpers.generate_slices()."""
+    """helpers.generate_slices()."""
     query: str = urlencode([("family", 4), ("status", "active"), ("offset", 1000), ("limit", 1000)])
-    actual = nb_helpers.generate_slices(
+    actual = helpers.generate_slices(
         url=f"https://domain.com?{query}",
         max_len=max_len,
         key="address",
@@ -103,8 +103,8 @@ def test__generate_slices(max_len, values, expected):
      [{"prefix": p.IP1, "family": 4}, {"prefix": p.IP2, "family": 4}]),
 ])
 def test__slice_params_d(url, max_len, key, params_d, expected):
-    """nb_helpers.slice_params_d()."""
-    actual = nb_helpers.slice_params_d(url=url, max_len=max_len, key=key, params_d=params_d)
+    """helpers.slice_params_d()."""
+    actual = helpers.slice_params_d(url=url, max_len=max_len, key=key, params_d=params_d)
     assert actual == expected
 
 
@@ -120,8 +120,8 @@ def test__slice_params_d(url, max_len, key, params_d, expected):
      [{"address": p.IP1, "family": [4]}, {"address": p.IP2, "family": [4]}]),  # need slice
 ])
 def test__slice_params_ld(url, max_len, keys, params, expected):
-    """nb_helpers.slice_params_ld()."""
-    actual = nb_helpers.slice_params_ld(url=url, max_len=max_len, keys=keys, params_ld=params)
+    """helpers.slice_params_ld()."""
+    actual = helpers.slice_params_ld(url=url, max_len=max_len, keys=keys, params_ld=params)
     assert actual == expected
 
 
@@ -134,7 +134,7 @@ def test__slice_params_ld(url, max_len, keys, params, expected):
 ])
 def test__join_urls(urls, expected):
     """ami.join_urls()"""
-    actual = nb_helpers.join_urls(urls=urls)
+    actual = helpers.join_urls(urls=urls)
     assert actual == expected
 
 
@@ -145,8 +145,8 @@ def test__join_urls(urls, expected):
      [f"https://domain.com?address={p.IP1_}", f"https://domain.com?address={p.IP2_}"]),
 ])
 def test__slice_url(url, max_len, expected):
-    """nb_helpers.slice_url()."""
-    actual = nb_helpers.slice_url(url=url, max_len=max_len)
+    """helpers.slice_url()."""
+    actual = helpers.slice_url(url=url, max_len=max_len)
     assert actual == expected
 
 
@@ -159,8 +159,8 @@ def test__slice_url(url, max_len, expected):
     ([1, 2, 1], [1, 2]),
 ])
 def test__validate_values(values, expected):
-    """nb_helpers._validate_values()."""
-    actual = nb_helpers._validate_values(values=values)
+    """helpers._validate_values()."""
+    actual = helpers._validate_values(values=values)
     assert actual == expected
 
 
@@ -171,8 +171,8 @@ def test__validate_values(values, expected):
     ({"a": [100, 200], "b": ["0001", "0002"]}, "b"),
 ])
 def test__get_key_of_longest_value(params_d, expected):
-    """nb_helpers.get_key_of_longest_value()."""
-    actual = nb_helpers.get_key_of_longest_value(params_d=params_d)
+    """helpers.get_key_of_longest_value()."""
+    actual = helpers.get_key_of_longest_value(params_d=params_d)
     assert actual == expected
 
 
@@ -184,10 +184,10 @@ def test__get_key_of_longest_value(params_d, expected):
     (10, 0, {}, ValueError),
 ])
 def test__generate_offsets(count: int, limit: int, params_d, expected: Any):
-    """nb_helpers.generate_offsets()."""
+    """helpers.generate_offsets()."""
     if isinstance(expected, list):
-        actual = nb_helpers.generate_offsets(count, limit, params_d)
+        actual = helpers.generate_offsets(count, limit, params_d)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            nb_helpers.generate_offsets(count, limit, params_d)
+            helpers.generate_offsets(count, limit, params_d)

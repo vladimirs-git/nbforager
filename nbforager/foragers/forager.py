@@ -11,7 +11,7 @@ from urllib.parse import urlparse, parse_qs
 
 from vhelpers import vstr
 
-from nbforager import ami, nb_helpers, nb_tree
+from nbforager import ami, helpers, nb_tree
 from nbforager.api.connector import Connector
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
@@ -112,7 +112,7 @@ class Forager:
                 params_ld: LDList = connector._validate_params(**params_d)  # pylint: disable=W0212
 
                 # slice params
-                params_ld = nb_helpers.slice_params_ld(
+                params_ld = helpers.slice_params_ld(
                     url=url,
                     max_len=connector.url_length,
                     keys=connector._slices,  # pylint: disable=W0212
@@ -235,13 +235,13 @@ class Forager:
 
         urls: LStr = ami.nested_urls(nb_objects)
         urls = nb_tree.missed_urls(urls=urls, tree=self.root)
-        urls = nb_helpers.join_urls(urls)
+        urls = helpers.join_urls(urls)
         urls = [s for s in urls if ami.url_to_ami_items(s)[0]]
 
         for url in urls:
             app, model, _ = ami.url_to_ami_items(url)
             connector: Connector = self.get_connector(path=f"{app}/{model}/")
-            urls_sliced: LStr = nb_helpers.slice_url(url, max_len=connector.url_length)
+            urls_sliced: LStr = helpers.slice_url(url, max_len=connector.url_length)
             urls_.extend(urls_sliced)
 
         return urls_
@@ -260,7 +260,7 @@ class Forager:
             path = f"{app}/{model}/"
             connector = self.get_connector(path)
             params_d = parse_qs(urlparse(url).query)
-            params_ld: LDAny = nb_helpers.slice_params_ld(
+            params_ld: LDAny = helpers.slice_params_ld(
                 url=connector.url,
                 max_len=connector.url_length,
                 keys=connector._slices,  # pylint: disable=W0212

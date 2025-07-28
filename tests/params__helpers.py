@@ -1,4 +1,4 @@
-"""Params nb_helpers.py."""
+"""Params helpers.py."""
 
 IP1 = "10.0.0.1/24"
 IP2 = "10.0.0.2/24"
