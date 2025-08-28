@@ -4,18 +4,24 @@
 CHANGELOG
 =========
 
-1.0.0 (2025-07-28)
+1.0.0 (2025-08-28)
 ------------------
 
 **Added:** all models in v4.3.4
-
-**Changed:** Breaking changes. If offset is in filtering parameters, send only one request.
 
 **Added:** loners "family" to ipam/aggregates, ipam/prefixes, ipam/ip-addresses
 
 **Added:** Connector.get_count()
 
+**Changed:** Breaking changes. If offset is in filtering parameters, send only one request.
+
 **Deleted:** default_get parameter
+
+
+1.0.0 (2025-07-28)
+------------------
+
+**Added:** nbforager >= v1 designed for NetBox >= v4
 
 
 0.8.13 (2025-07-04)
