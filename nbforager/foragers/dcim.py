@@ -63,7 +63,6 @@ class DcimAF(BaseAF):
         self.virtual_chassis = self.VirtualChassisF(self)
         self.virtual_device_contexts = self.VirtualDeviceContextsF(self)
 
-
     class CableTerminationsF(Forager):
         """CableTerminationsF."""
 

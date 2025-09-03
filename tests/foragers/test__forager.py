@@ -116,6 +116,7 @@ def test__get_connector(nbf: NbForager, path, expected: Any):
         with pytest.raises(expected):
             nbf.ipam.vrfs.get_connector(path)
 
+
 @pytest.mark.parametrize("nb_objects, nbf_data, expected", [
     # without root data
     ([p.VRF1_D], {}, p.NESTED_URLS_VRF1),

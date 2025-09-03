@@ -602,17 +602,29 @@ class NbValue(NbParser):
     def site_name(self) -> str:
         """ipam/prefixes/site/name, dcim/devices/sites/name.
 
+        Provide compatability for ipam/prefixes in Netbox >= v4.2 and Netbox < v4.2
+
         Convert site name to the same manner.
-        Different objects have different upper or lower case:
-        sites/name="SITE1",
-        devices/site/name="SITE1",
-        vlans/site/name="site1".
+        Note: Different models may have different upper or lower case:
+            - sites/name="SITE1",
+            - devices/site/name="SITE1",
+            - vlans/site/name="site1".
 
         :return: Site name.
 
         :raise NbParserError: if strict=True and object has no site name.
         """
-        return self.str("site", "name").lower()
+        # ipam/prefix
+        if self.is_ipam("prefixes"):
+            # Netbox >= v4.2
+            if "scope" in self.data:
+                if self.data["scope_type"] != "dcim.site":
+                    raise NbParserError("ipam/prefixes.scope_type!=dcim.site")
+                return self.str("scope", "name")
+            # Netbox < v4.2
+            return str(dict(self.data.get("site") or {}).get("name") or "")
+
+        return self.str("site", "name")
 
     @check_strict
     def site_slug(self) -> str:
@@ -833,10 +845,7 @@ class NbValue(NbParser):
             and self.strict=True
         """
         try:
-            url = self.data["url"]
-            if re.search(f"/api/ipam/{ipam}/", url):
-                return True
-            return False
+            return bool(re.search(f"/api/ipam/{ipam}/", self.data["url"]))
         except (KeyError, TypeError) as ex:
             if self.strict:
                 raise NbParserError(f"ipam url expected in {self.data}.") from ex

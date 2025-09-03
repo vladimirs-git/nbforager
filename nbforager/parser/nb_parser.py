@@ -10,6 +10,9 @@ from vhelpers import vstr, vlist
 from nbforager.exceptions import NbParserError, NbVersionError
 from nbforager.types_ import DAny, Int, Str, LDAny, TLists, SeqUIntStr, ODAny, LT3Str, LStr
 
+VERSION_NB = "4.2"
+"""Minimum supported Netbox version."""
+
 DEPRECATED_MODELS: LT3Str = [
     ("circuits/circuit-terminations", "site", "scope"),
     ("dcim/devices", "device_role", "role"),
@@ -236,7 +239,7 @@ class NbParser:
         self._raise_deprecated_key(first_key)
         return self._get_keys(type_=str, keys=keys)
 
-    def _raise_deprecated_key(self, key: str) -> None:
+    def _raise_deprecated_key(self, key: Str) -> None:
         """Log and rasie error if the key is deprecated for specific app/model.
 
         :param key: First key in the chain of keys.
@@ -244,8 +247,10 @@ class NbParser:
         :raise NbVersionError: If the key is deprecated for specific app/model.
         """
         # skip old version
-        if self.version and SwVersion(self.version) < SwVersion("4.2"):
-            return
+        sw_version_act = SwVersion(self.version)
+        sw_version_req = SwVersion(VERSION_NB)
+        if self.version and sw_version_act < sw_version_req:
+            return None
 
         # log deprecated key if version
         url = self.data.get("url", "")
@@ -261,16 +266,24 @@ class NbParser:
 
             # model changed
             if key == key_old:
+                class_ = self.__class__.__name__
                 model_old = f"{model}.{key_old}"
                 # changed key
                 if key_new:
                     model_new = f"{model}.{key_new}"
-                    msg = f"Deprecated model {model_old!r} in {url}, please use {model_new!r}."
+                    msg = (
+                        f"Deprecated model {model_old!r} in {url}, "
+                        f"please use {model_new!r} for Netbox>={VERSION_NB} or "
+                        f"specify low Netbox version in {class_}(version=3)."
+                    )
                     logging.error(msg)
                     raise NbVersionError(msg)
                 # removed key
-                elif key_old in self.data:
-                    msg = f"Deprecated model {model_old!r} in {url}, please remove it."
+                if key_old in self.data:
+                    msg = (
+                        f"Deprecated model {model_old!r} in {url}, please remove it or "
+                        f"specify low Netbox version in {class_}(version=3)."
+                    )
                     logging.error(msg)
                     raise NbVersionError(msg)
 
