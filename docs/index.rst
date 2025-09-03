@@ -11,9 +11,11 @@ Python package designed to help work with the `Netbox`_ REST API.
 - **NbForager** The REST API returns objects that contain a brief representation of related objects. NbForager replaces brief data with full and objects look like a recursive multidimensional dictionary.
 - **NbParser** Extract typed values from a Netbox object dictionary by using a chain of keys.
 
-nbforager ``>=0,<1`` is designed for Netbox ``v3`` (checked with Python >= v3.8, Netbox v3.5.4)
-nbforager ``>=1,<2`` is designed for Netbox ``>=v4.2`` (checked with Python >= v3.8, Netbox v4.3.3)
-Netbox ``>=v4.0,<=4.1`` is not tested.
+Versions
+
+- nbforager ``<1`` is designed for Netbox ``v3`` (checked with Python >= v3.8, Netbox v3.5.4)
+- nbforager ``>=1,<2`` is designed for Netbox ``>=v4.2`` (checked with Python >= v3.8, Netbox v4.3.3)
+- Netbox ``>=v4.0,<=4.1`` is not tested.
 
 This project on `GitHub`_.
 
