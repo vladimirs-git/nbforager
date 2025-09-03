@@ -382,7 +382,6 @@ TENANT1_D: DAny = {
 }
 TENANTS = {d["id"]: d for d in [TENANT1_D]}
 
-
 L1 = 1
 LOCATION1_D: DAny = {
     "id": L1,

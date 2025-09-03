@@ -8,5 +8,6 @@ class NbApiError(Exception):
 class NbParserError(Exception):
     """Parsing error in Netbox data."""
 
+
 class NbVersionError(Exception):
     """Parsing error in Netbox data based on Netbox version."""

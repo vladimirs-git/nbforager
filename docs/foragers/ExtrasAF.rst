@@ -43,6 +43,12 @@ Extras forager
 .. py:function:: NbForager.extras.custom_links.count()
 
 
+**extras/event-rules/**
+
+.. py:function:: NbForager.extras.event_rules.get(**params)
+.. py:function:: NbForager.extras.event_rules.count()
+
+
 **extras/export-templates/**
 
 .. py:function:: NbForager.extras.export_templates.get(**params)
@@ -61,10 +67,28 @@ Extras forager
 .. py:function:: NbForager.extras.journal_entries.count()
 
 
+**extras/notification-groups/**
+
+.. py:function:: NbForager.extras.notification_groups.get(**params)
+.. py:function:: NbForager.extras.notification_groups.count()
+
+
+**extras/notifications/**
+
+.. py:function:: NbForager.extras.notifications.get(**params)
+.. py:function:: NbForager.extras.notifications.count()
+
+
 **extras/object-changes/**
 
 .. py:function:: NbForager.extras.object_changes.get(**params)
 .. py:function:: NbForager.extras.object_changes.count()
+
+
+**extras/object-types/**
+
+.. py:function:: NbForager.extras.object_types.get(**params)
+.. py:function:: NbForager.extras.object_types.count()
 
 
 **extras/reports/**
@@ -83,6 +107,24 @@ Extras forager
 
 .. py:function:: NbForager.extras.scripts.get(**params)
 .. py:function:: NbForager.extras.scripts.count()
+
+
+**extras/subscriptions/**
+
+.. py:function:: NbForager.extras.subscriptions.get(**params)
+.. py:function:: NbForager.extras.subscriptions.count()
+
+
+**extras/table-configs/**
+
+.. py:function:: NbForager.extras.table_configs.get(**params)
+.. py:function:: NbForager.extras.table_configs.count()
+
+
+**extras/tagged-objects/**
+
+.. py:function:: NbForager.extras.tagged_objects.get(**params)
+.. py:function:: NbForager.extras.tagged_objects.count()
 
 
 **extras/tags/**

@@ -25,6 +25,12 @@ Virtualization forager
 .. py:function:: NbForager.virtualization.interfaces.count()
 
 
+**virtualization/virtual-disks/**
+
+.. py:function:: NbForager.virtualization.virtual_disks.get(**params)
+.. py:function:: NbForager.virtualization.virtual_disks.count()
+
+
 **virtualization/virtual-machines/**
 
 .. py:function:: NbForager.virtualization.virtual_machines.get(**params)

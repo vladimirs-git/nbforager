@@ -119,6 +119,12 @@ Dcim forager
 .. py:function:: NbForager.dcim.locations.count()
 
 
+**dcim/mac-addresses/**
+
+.. py:function:: NbForager.dcim.mac_addresses.get(**params)
+.. py:function:: NbForager.dcim.mac_addresses.count()
+
+
 **dcim/manufacturers/**
 
 .. py:function:: NbForager.dcim.manufacturers.get(**params)
@@ -135,6 +141,12 @@ Dcim forager
 
 .. py:function:: NbForager.dcim.module_bays.get(**params)
 .. py:function:: NbForager.dcim.module_bays.count()
+
+
+**dcim/module-type-profiles/**
+
+.. py:function:: NbForager.dcim.module_type_profiles.get(**params)
+.. py:function:: NbForager.dcim.module_type_profiles.count()
 
 
 **dcim/module-types/**
@@ -201,6 +213,12 @@ Dcim forager
 
 .. py:function:: NbForager.dcim.rack_roles.get(**params)
 .. py:function:: NbForager.dcim.rack_roles.count()
+
+
+**dcim/rack-types/**
+
+.. py:function:: NbForager.dcim.rack_types.get(**params)
+.. py:function:: NbForager.dcim.rack_types.count()
 
 
 **dcim/racks/**

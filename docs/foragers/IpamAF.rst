@@ -97,6 +97,18 @@ Ipam forager
 .. py:function:: NbForager.ipam.vlan_groups.count()
 
 
+**ipam/vlan-translation-policies/**
+
+.. py:function:: NbForager.ipam.vlan_translation_policies.get(**params)
+.. py:function:: NbForager.ipam.vlan_translation_policies.count()
+
+
+**ipam/vlan-translation-rules/**
+
+.. py:function:: NbForager.ipam.vlan_translation_rules.get(**params)
+.. py:function:: NbForager.ipam.vlan_translation_rules.count()
+
+
 **ipam/vlans/**
 
 .. py:function:: NbForager.ipam.vlans.get(**params)

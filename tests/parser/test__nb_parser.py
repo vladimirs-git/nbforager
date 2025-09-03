@@ -108,12 +108,11 @@ def test__bool(nbp, keys: LStr, params, expected):
 def test__bool__deprecated(nbp, keys, params, expected):
     """NbParser.bool() site v4.2."""
     if isinstance(expected, bool):
-        actual = nbp.bool(*keys) 
+        actual = nbp.bool(*keys)
         assert actual == expected
     else:
         with pytest.raises(expected):
             nbp.bool(*keys)
-
 
 
 @pytest.mark.parametrize("keys, params, expected", [

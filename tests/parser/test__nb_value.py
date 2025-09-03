@@ -6,6 +6,26 @@ from nbforager.exceptions import NbParserError
 from nbforager.parser.nb_value import NbValue
 from nbforager.types_ import DAny
 
+NB_PREFIX = {
+    "site": {"name": "Name"},
+    "url": "/api/ipam/prefixes/1",
+}
+NB_PREFIX_WO_URL = {"site": {"name": "Name"}}
+NB_SCOPE_SITE = {
+    "scope_type": "dcim.site",
+    "scope": {"name": "Name"},
+    "url": "/api/ipam/prefixes/1",
+}
+NB_SCOPE_SITE_WO_URL = {
+    "scope_type": "dcim.site",
+    "scope": {"name": "Name"},
+}
+NB_SCOPE_REGION = {
+    "scope_type": "dcim.region",
+    "scope": {"name": "Name"},
+    "url": "/api/ipam/prefixes/1",
+}
+
 
 @pytest.fixture
 def nbv(params: DAny) -> NbValue:
@@ -165,14 +185,14 @@ def test__prefix(nbv, params, expected):
 @pytest.mark.parametrize("params, expected", [
     ({"data": {"primary_ip4": {"address": "10.0.0.1/32"}}, "strict": False}, "10.0.0.1/32"),
     ({"data": {"primary_ip4": {"address": "10.0.0.1"}}, "strict": False}, "10.0.0.1"),
-    ({"data": {"primary_ip4": {"address": f"10.0.0.1_32"}}, "strict": False}, f"10.0.0.1_32"),
+    ({"data": {"primary_ip4": {"address": "10.0.0.1_32"}}, "strict": False}, "10.0.0.1_32"),
     ({"data": {"primary_ip4": {"address": ""}}, "strict": False}, ""),
     ({"data": {"primary_ip4": {"address": None}}, "strict": False}, ""),
     ({"data": {"primary_ip4": None}, "strict": False}, ""),
     # strict
     ({"data": {"primary_ip4": {"address": "10.0.0.1/32"}}, "strict": True}, "10.0.0.1/32"),
     ({"data": {"primary_ip4": {"address": "10.0.0.1"}}, "strict": True}, "10.0.0.1"),
-    ({"data": {"primary_ip4": {"address": f"10.0.0.1_32"}}, "strict": True}, NbParserError),
+    ({"data": {"primary_ip4": {"address": "10.0.0.1_32"}}, "strict": True}, NbParserError),
     ({"data": {"primary_ip4": {"address": ""}}, "strict": True}, NbParserError),
     ({"data": {"primary_ip4": {"address": None}}, "strict": True}, NbParserError),
     ({"data": {"primary_ip4": None}, "strict": True}, NbParserError),
@@ -190,14 +210,14 @@ def test__primary_ip4(nbv, params, expected):
 @pytest.mark.parametrize("params, expected", [
     ({"data": {"primary_ip4": {"address": "10.0.0.1/32"}}, "strict": False}, "10.0.0.1"),
     ({"data": {"primary_ip4": {"address": "10.0.0.1"}}, "strict": False}, "10.0.0.1"),
-    ({"data": {"primary_ip4": {"address": f"10.0.0.1_32"}}, "strict": False}, f"10.0.0.1_32"),
+    ({"data": {"primary_ip4": {"address": "10.0.0.1_32"}}, "strict": False}, "10.0.0.1_32"),
     ({"data": {"primary_ip4": {"address": ""}}, "strict": False}, ""),
     ({"data": {"primary_ip4": {"address": None}}, "strict": False}, ""),
     ({"data": {"primary_ip4": None}, "strict": False}, ""),
     # strict
     ({"data": {"primary_ip4": {"address": "10.0.0.1/32"}}, "strict": True}, "10.0.0.1"),
     ({"data": {"primary_ip4": {"address": "10.0.0.1"}}, "strict": True}, "10.0.0.1"),
-    ({"data": {"primary_ip4": {"address": f"10.0.0.1_32"}}, "strict": True}, NbParserError),
+    ({"data": {"primary_ip4": {"address": "10.0.0.1_32"}}, "strict": True}, NbParserError),
     ({"data": {"primary_ip4": {"address": ""}}, "strict": True}, NbParserError),
     ({"data": {"primary_ip4": {"address": None}}, "strict": True}, NbParserError),
     ({"data": {"primary_ip4": None}, "strict": True}, NbParserError),
@@ -213,23 +233,63 @@ def test__primary_ip(nbv, params, expected):
 
 
 @pytest.mark.parametrize("params, expected", [
-    ({"data": {"site": {"name": "name"}}, "strict": False}, "name"),
+    ({"data": {"site": {"name": "Name"}}, "strict": False}, "Name"),
     ({"data": {"site": {"name": ""}}, "strict": False}, ""),
     ({"data": {"site": None}, "strict": False}, ""),
     ({"data": None, "strict": False}, ""),
     # strict
-    ({"data": {"site": {"name": "name"}}, "strict": True}, "name"),
-    ({"data": {"site": {"name": ""}}, "strict": True}, NbParserError),
-    ({"data": {"site": None}, "strict": True}, NbParserError),
-    ({"data": None, "strict": True}, NbParserError),
+    ({"data": {"site": {"name": "Name"}, "url": "/api/ipam/prefixes/1"}, "strict": True}, "Name"),
+    ({"data": {"site": {"name": "Name"}}, "strict": True}, NbParserError),  # no url
+    ({"data": {"site": {"name": ""}}, "strict": True}, NbParserError),  # no url
+    ({"data": {"site": None}, "strict": True}, NbParserError),  # no url
+    ({"data": None, "strict": True}, NbParserError),  # no url
 ])
 def test__site_name(nbv, params, expected):
+    """NbValue.site_name()."""
     if isinstance(expected, str):
         actual = nbv.site_name()
         assert actual == expected
     else:
         with pytest.raises(expected):
             nbv.site_name()
+
+
+@pytest.mark.parametrize("params, data, expected", [
+    # ipam/prefixes.site
+    ({"version": "4.1"}, NB_PREFIX, "Name"),
+    ({"version": "4.1"}, NB_PREFIX_WO_URL, "Name"),
+    ({"version": "4.2"}, NB_PREFIX, "Name"),
+    ({"version": "4.2"}, NB_PREFIX_WO_URL, "Name"),
+    # ipam/prefixes.site strict
+    ({"version": "4.1", "strict": True}, NB_PREFIX, "Name"),
+    ({"version": "4.1", "strict": True}, NB_PREFIX_WO_URL, NbParserError),
+    ({"version": "4.2", "strict": True}, NB_PREFIX, "Name"),
+    ({"version": "4.2", "strict": True}, NB_PREFIX_WO_URL, NbParserError),
+    # ipam/prefixes.scope
+    ({"version": "4.1"}, NB_SCOPE_SITE, "Name"),
+    ({"version": "4.1"}, NB_SCOPE_SITE_WO_URL, ""),
+    ({"version": "4.1"}, NB_SCOPE_REGION, NbParserError),
+    ({"version": "4.2"}, NB_SCOPE_SITE, "Name"),
+    ({"version": "4.2"}, NB_SCOPE_SITE_WO_URL, ""),
+    ({"version": "4.2"}, NB_SCOPE_REGION, NbParserError),
+    # ipam/prefixes.scope strict
+    ({"version": "4.1", "strict": True}, NB_SCOPE_SITE, "Name"),
+    ({"version": "4.1", "strict": True}, NB_SCOPE_SITE_WO_URL, NbParserError),
+    ({"version": "4.1", "strict": True}, NB_SCOPE_REGION, NbParserError),
+    ({"version": "4.2", "strict": True}, NB_SCOPE_SITE, "Name"),
+    ({"version": "4.2", "strict": True}, NB_SCOPE_SITE_WO_URL, NbParserError),
+    ({"version": "4.2", "strict": True}, NB_SCOPE_REGION, NbParserError),
+])
+def test__site_name__version(params: DAny, data, expected):
+    """NbValue.site_name() with specified version."""
+    params["data"] = data
+    nbv_ = NbValue(**params)
+    if isinstance(expected, str):
+        actual = nbv_.site_name()
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbv_.site_name()
 
 
 @pytest.mark.parametrize("params, expected", [

@@ -4,7 +4,7 @@
 CHANGELOG
 =========
 
-1.0.0 (2025-08-28)
+1.0.0 (2025-09-03)
 ------------------
 
 **Added:** all models in v4.3.4
@@ -14,6 +14,10 @@ CHANGELOG
 **Added:** Connector.get_count()
 
 **Changed:** Breaking changes. If offset is in filtering parameters, send only one request.
+
+**Changed:** Breaking changes. app/model/id functions moved from helpers.py to ami.py.
+
+**Changed:** Breaking changes. NbParser.site_name() upper or lower case
 
 **Deleted:** default_get parameter
 

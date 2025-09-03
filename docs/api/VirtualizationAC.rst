@@ -7,6 +7,7 @@ Virtualization connectors
 .. py:function:: NbApi.virtualization.cluster_groups.create_d(**data)
 .. py:function:: NbApi.virtualization.cluster_groups.delete(id)
 .. py:function:: NbApi.virtualization.cluster_groups.get(**params)
+.. py:function:: NbApi.virtualization.cluster_groups.get_count(**data)
 .. py:function:: NbApi.virtualization.cluster_groups.update(**data)
 .. py:function:: NbApi.virtualization.cluster_groups.update_d(**data)
 
@@ -17,6 +18,7 @@ Virtualization connectors
 .. py:function:: NbApi.virtualization.cluster_types.create_d(**data)
 .. py:function:: NbApi.virtualization.cluster_types.delete(id)
 .. py:function:: NbApi.virtualization.cluster_types.get(**params)
+.. py:function:: NbApi.virtualization.cluster_types.get_count(**data)
 .. py:function:: NbApi.virtualization.cluster_types.update(**data)
 .. py:function:: NbApi.virtualization.cluster_types.update_d(**data)
 
@@ -27,6 +29,7 @@ Virtualization connectors
 .. py:function:: NbApi.virtualization.clusters.create_d(**data)
 .. py:function:: NbApi.virtualization.clusters.delete(id)
 .. py:function:: NbApi.virtualization.clusters.get(**params)
+.. py:function:: NbApi.virtualization.clusters.get_count(**data)
 .. py:function:: NbApi.virtualization.clusters.update(**data)
 .. py:function:: NbApi.virtualization.clusters.update_d(**data)
 
@@ -37,8 +40,20 @@ Virtualization connectors
 .. py:function:: NbApi.virtualization.interfaces.create_d(**data)
 .. py:function:: NbApi.virtualization.interfaces.delete(id)
 .. py:function:: NbApi.virtualization.interfaces.get(**params)
+.. py:function:: NbApi.virtualization.interfaces.get_count(**data)
 .. py:function:: NbApi.virtualization.interfaces.update(**data)
 .. py:function:: NbApi.virtualization.interfaces.update_d(**data)
+
+
+**virtualization/virtual-disks/**
+
+.. py:function:: NbApi.virtualization.virtual_disks.create(**data)
+.. py:function:: NbApi.virtualization.virtual_disks.create_d(**data)
+.. py:function:: NbApi.virtualization.virtual_disks.delete(id)
+.. py:function:: NbApi.virtualization.virtual_disks.get(**params)
+.. py:function:: NbApi.virtualization.virtual_disks.get_count(**data)
+.. py:function:: NbApi.virtualization.virtual_disks.update(**data)
+.. py:function:: NbApi.virtualization.virtual_disks.update_d(**data)
 
 
 **virtualization/virtual-machines/**
@@ -47,6 +62,7 @@ Virtualization connectors
 .. py:function:: NbApi.virtualization.virtual_machines.create_d(**data)
 .. py:function:: NbApi.virtualization.virtual_machines.delete(id)
 .. py:function:: NbApi.virtualization.virtual_machines.get(**params)
+.. py:function:: NbApi.virtualization.virtual_machines.get_count(**data)
 .. py:function:: NbApi.virtualization.virtual_machines.update(**data)
 .. py:function:: NbApi.virtualization.virtual_machines.update_d(**data)
 
