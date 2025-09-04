@@ -4,7 +4,7 @@
 CHANGELOG
 =========
 
-1.0.0 (2025-09-03)
+1.0.1 (2025-09-04)
 ------------------
 
 **Added:** all models in v4.3.4
@@ -17,7 +17,7 @@ CHANGELOG
 
 **Changed:** Breaking changes. app/model/id functions moved from helpers.py to ami.py.
 
-**Changed:** Breaking changes. NbParser.site_name() upper or lower case
+**Changed:** Breaking changes. NbParser.site_name() device_role_id() device_role_name() device_role_slug()
 
 **Deleted:** default_get parameter
 

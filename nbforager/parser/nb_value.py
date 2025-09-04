@@ -274,16 +274,54 @@ class NbValue(NbParser):
     @check_strict
     def device_role_id(self) -> int:
         """dcim/devices/device_role/id."""
+        # dcim/devices
+        if self.is_dcim("devices"):
+            # Netbox >= v4.2
+            if "role" in self.data:
+                return self.int("role", "id")
+            # Netbox < v4.2
+            return int(dict(self.data.get("device_role") or {}).get("id") or 0)
+
         return self.int("device_role", "id")
 
     @check_strict
     def device_role_name(self) -> str:
-        """dcim/devices/device_role/name."""
+        """dcim/devices/device_role/name.
+
+        Provide compatability for dcim/devices in Netbox >= v4.2 and Netbox < v4.2
+
+        :return: Role name.
+
+        :raise NbParserError: if strict=True and object has no role name.
+        """
+        # dcim/devices
+        if self.is_dcim("devices"):
+            # Netbox >= v4.2
+            if "role" in self.data:
+                return self.str("role", "name")
+            # Netbox < v4.2
+            return str(dict(self.data.get("device_role") or {}).get("name") or "")
+
         return self.str("device_role", "name")
 
     @check_strict
     def device_role_slug(self) -> str:
-        """dcim/devices/device_role/slug."""
+        """dcim/devices/device_role/slug.
+
+        Provide compatability for dcim/devices in Netbox >= v4.2 and Netbox < v4.2
+
+        :return: Role slug.
+
+        :raise NbParserError: if strict=True and object has no role slug.
+        """
+        # dcim/devices
+        if self.is_dcim("devices"):
+            # Netbox >= v4.2
+            if "role" in self.data:
+                return self.str("role", "slug")
+            # Netbox < v4.2
+            return str(dict(self.data.get("device_role") or {}).get("slug") or "")
+
         return self.str("device_role", "slug")
 
     @check_strict

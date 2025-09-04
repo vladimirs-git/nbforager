@@ -90,8 +90,26 @@ def test__url_ui(params, expected):
     actual = api.circuits.circuit_terminations.url_ui
     assert actual == expected
 
-    nbf = NbForager(**params)
-    actual = nbf.api.circuits.circuit_terminations.url_ui
+
+# noinspection PyTestUnpassedFixture
+@pytest.mark.parametrize("params, expected", [
+    ({"host": "netbox"}, "https://netbox/extras/changelog/"),
+])
+def test__url_ui__changelog(params, expected):
+    """BaseC.url_ui."""
+    api = NbApi(**params)
+    actual = api.extras.object_changes.url_ui
+    assert actual == expected
+
+
+# noinspection PyTestUnpassedFixture
+@pytest.mark.parametrize("params, expected", [
+    ({"host": "netbox"}, "https://netbox/core/changelog/"),
+])
+def test__url_ui__changelog(params, expected):
+    """BaseC.url_ui."""
+    api = NbApi(**params)
+    actual = api.core.object_changes.url_ui
     assert actual == expected
 
 

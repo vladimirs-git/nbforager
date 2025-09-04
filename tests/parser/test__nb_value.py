@@ -5,26 +5,7 @@ import pytest
 from nbforager.exceptions import NbParserError
 from nbforager.parser.nb_value import NbValue
 from nbforager.types_ import DAny
-
-NB_PREFIX = {
-    "site": {"name": "Name"},
-    "url": "/api/ipam/prefixes/1",
-}
-NB_PREFIX_WO_URL = {"site": {"name": "Name"}}
-NB_SCOPE_SITE = {
-    "scope_type": "dcim.site",
-    "scope": {"name": "Name"},
-    "url": "/api/ipam/prefixes/1",
-}
-NB_SCOPE_SITE_WO_URL = {
-    "scope_type": "dcim.site",
-    "scope": {"name": "Name"},
-}
-NB_SCOPE_REGION = {
-    "scope_type": "dcim.region",
-    "scope": {"name": "Name"},
-    "url": "/api/ipam/prefixes/1",
-}
+from tests.parser import params__nb_value as p
 
 
 @pytest.fixture
@@ -76,6 +57,174 @@ def test__assigned_device_name(nbv, params, expected):
     else:
         with pytest.raises(expected):
             nbv.assigned_device_name()
+
+
+@pytest.mark.parametrize("params, expected", [
+    ({"data": p.NB_DEVICE_DEVICE_ROLE_WO_URL, "strict": False}, 0),
+    ({"data": {"device_role": {"id": 0}}, "strict": False}, 0),
+    ({"data": {"device_role": None}, "strict": False}, 0),
+    ({"data": None, "strict": False}, 0),
+    # strict
+    ({"data": p.NB_DEVICE_DEVICE_ROLE, "strict": True}, 2),
+    ({"data": p.NB_DEVICE_DEVICE_ROLE_WO_URL, "strict": True}, NbParserError),  # no url
+    ({"data": {"device_role": {"id": ""}}, "strict": True}, NbParserError),  # no url
+    ({"data": {"device_role": None}, "strict": True}, NbParserError),  # no url
+    ({"data": None, "strict": True}, NbParserError),  # no url
+])
+def test__device_role_id(nbv, params, expected):
+    """NbValue.device_role_id()."""
+    if isinstance(expected, int):
+        actual = nbv.device_role_id()
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbv.device_role_id()
+
+
+@pytest.mark.parametrize("params, data, expected", [
+    # dcim/devices.device_role
+    ({"version": "4.1"}, p.NB_DEVICE_DEVICE_ROLE, 2),
+    ({"version": "4.1"}, p.NB_DEVICE_DEVICE_ROLE_WO_URL, 0),
+    ({"version": "4.2"}, p.NB_DEVICE_DEVICE_ROLE, 2),
+    ({"version": "4.2"}, p.NB_DEVICE_DEVICE_ROLE_WO_URL, 0),
+    # dcim/devices.device_role strict
+    ({"version": "4.1", "strict": True}, p.NB_DEVICE_DEVICE_ROLE, 2),
+    ({"version": "4.1", "strict": True}, p.NB_DEVICE_DEVICE_ROLE_WO_URL, NbParserError),
+    ({"version": "4.2", "strict": True}, p.NB_DEVICE_DEVICE_ROLE, 2),
+    ({"version": "4.2", "strict": True}, p.NB_DEVICE_DEVICE_ROLE_WO_URL, NbParserError),
+    # dcim/devices.role
+    ({"version": "4.1"}, p.NB_DEVICE_ROLE, 2),
+    ({"version": "4.1"}, p.NB_DEVICE_ROLE_WO_URL, 0),
+    ({"version": "4.2"}, p.NB_DEVICE_ROLE, 2),
+    ({"version": "4.2"}, p.NB_DEVICE_ROLE_WO_URL, 0),
+    # dcim/devices.role strict
+    ({"version": "4.1", "strict": True}, p.NB_DEVICE_ROLE, 2),
+    ({"version": "4.1", "strict": True}, p.NB_DEVICE_ROLE_WO_URL, NbParserError),
+    ({"version": "4.2", "strict": True}, p.NB_DEVICE_ROLE, 2),
+    ({"version": "4.2", "strict": True}, p.NB_DEVICE_ROLE_WO_URL, NbParserError),
+])
+def test__device_role_id__version(params: DAny, data, expected):
+    """NbValue.device_role_id() with specified version."""
+    params["data"] = data
+    nbv_ = NbValue(**params)
+    if isinstance(expected, int):
+        actual = nbv_.device_role_id()
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbv_.device_role_id()
+
+
+@pytest.mark.parametrize("params, expected", [
+    ({"data": p.NB_DEVICE_DEVICE_ROLE_WO_URL, "strict": False}, "Name"),
+    ({"data": {"device_role": {"name": ""}}, "strict": False}, ""),
+    ({"data": {"device_role": None}, "strict": False}, ""),
+    ({"data": None, "strict": False}, ""),
+    # strict
+    ({"data": p.NB_DEVICE_DEVICE_ROLE, "strict": True}, "Name"),
+    ({"data": p.NB_DEVICE_DEVICE_ROLE_WO_URL, "strict": True}, NbParserError),  # no url
+    ({"data": {"device_role": {"name": ""}}, "strict": True}, NbParserError),  # no url
+    ({"data": {"device_role": None}, "strict": True}, NbParserError),  # no url
+    ({"data": None, "strict": True}, NbParserError),  # no url
+])
+def test__device_role_name(nbv, params, expected):
+    """NbValue.device_role_name()."""
+    if isinstance(expected, str):
+        actual = nbv.device_role_name()
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbv.device_role_name()
+
+
+@pytest.mark.parametrize("params, data, expected", [
+    # dcim/devices.device_role
+    ({"version": "4.1"}, p.NB_DEVICE_DEVICE_ROLE, "Name"),
+    ({"version": "4.1"}, p.NB_DEVICE_DEVICE_ROLE_WO_URL, "Name"),
+    ({"version": "4.2"}, p.NB_DEVICE_DEVICE_ROLE, "Name"),
+    ({"version": "4.2"}, p.NB_DEVICE_DEVICE_ROLE_WO_URL, "Name"),
+    # dcim/devices.device_role strict
+    ({"version": "4.1", "strict": True}, p.NB_DEVICE_DEVICE_ROLE, "Name"),
+    ({"version": "4.1", "strict": True}, p.NB_DEVICE_DEVICE_ROLE_WO_URL, NbParserError),
+    ({"version": "4.2", "strict": True}, p.NB_DEVICE_DEVICE_ROLE, "Name"),
+    ({"version": "4.2", "strict": True}, p.NB_DEVICE_DEVICE_ROLE_WO_URL, NbParserError),
+    # dcim/devices.role
+    ({"version": "4.1"}, p.NB_DEVICE_ROLE, "Name"),
+    ({"version": "4.1"}, p.NB_DEVICE_ROLE_WO_URL, ""),
+    ({"version": "4.2"}, p.NB_DEVICE_ROLE, "Name"),
+    ({"version": "4.2"}, p.NB_DEVICE_ROLE_WO_URL, ""),
+    # dcim/devices.role strict
+    ({"version": "4.1", "strict": True}, p.NB_DEVICE_ROLE, "Name"),
+    ({"version": "4.1", "strict": True}, p.NB_DEVICE_ROLE_WO_URL, NbParserError),
+    ({"version": "4.2", "strict": True}, p.NB_DEVICE_ROLE, "Name"),
+    ({"version": "4.2", "strict": True}, p.NB_DEVICE_ROLE_WO_URL, NbParserError),
+])
+def test__device_role_name__version(params: DAny, data, expected):
+    """NbValue.device_role_name() with specified version."""
+    params["data"] = data
+    nbv_ = NbValue(**params)
+    if isinstance(expected, str):
+        actual = nbv_.device_role_name()
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbv_.device_role_name()
+
+
+@pytest.mark.parametrize("params, expected", [
+    ({"data": p.NB_DEVICE_DEVICE_ROLE_WO_URL, "strict": False}, "name"),
+    ({"data": {"device_role": {"slug": ""}}, "strict": False}, ""),
+    ({"data": {"device_role": None}, "strict": False}, ""),
+    ({"data": None, "strict": False}, ""),
+    # strict
+    ({"data": p.NB_DEVICE_DEVICE_ROLE, "strict": True}, "name"),
+    ({"data": p.NB_DEVICE_DEVICE_ROLE_WO_URL, "strict": True}, NbParserError),  # no url
+    ({"data": {"device_role": {"slug": ""}}, "strict": True}, NbParserError),  # no url
+    ({"data": {"device_role": None}, "strict": True}, NbParserError),  # no url
+    ({"data": None, "strict": True}, NbParserError),  # no url
+])
+def test__device_role_slug(nbv, params, expected):
+    """NbValue.device_role_slug()."""
+    if isinstance(expected, str):
+        actual = nbv.device_role_slug()
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbv.device_role_slug()
+
+
+@pytest.mark.parametrize("params, data, expected", [
+    # dcim/devices.device_role
+    ({"version": "4.1"}, p.NB_DEVICE_DEVICE_ROLE, "name"),
+    ({"version": "4.1"}, p.NB_DEVICE_DEVICE_ROLE_WO_URL, "name"),
+    ({"version": "4.2"}, p.NB_DEVICE_DEVICE_ROLE, "name"),
+    ({"version": "4.2"}, p.NB_DEVICE_DEVICE_ROLE_WO_URL, "name"),
+    # dcim/devices.device_role strict
+    ({"version": "4.1", "strict": True}, p.NB_DEVICE_DEVICE_ROLE, "name"),
+    ({"version": "4.1", "strict": True}, p.NB_DEVICE_DEVICE_ROLE_WO_URL, NbParserError),
+    ({"version": "4.2", "strict": True}, p.NB_DEVICE_DEVICE_ROLE, "name"),
+    ({"version": "4.2", "strict": True}, p.NB_DEVICE_DEVICE_ROLE_WO_URL, NbParserError),
+    # dcim/devices.role
+    ({"version": "4.1"}, p.NB_DEVICE_ROLE, "name"),
+    ({"version": "4.1"}, p.NB_DEVICE_ROLE_WO_URL, ""),
+    ({"version": "4.2"}, p.NB_DEVICE_ROLE, "name"),
+    ({"version": "4.2"}, p.NB_DEVICE_ROLE_WO_URL, ""),
+    # dcim/devices.role strict
+    ({"version": "4.1", "strict": True}, p.NB_DEVICE_ROLE, "name"),
+    ({"version": "4.1", "strict": True}, p.NB_DEVICE_ROLE_WO_URL, NbParserError),
+    ({"version": "4.2", "strict": True}, p.NB_DEVICE_ROLE, "name"),
+    ({"version": "4.2", "strict": True}, p.NB_DEVICE_ROLE_WO_URL, NbParserError),
+])
+def test__device_role_slug__version(params: DAny, data, expected):
+    """NbValue.device_role_slug() with specified version."""
+    params["data"] = data
+    nbv_ = NbValue(**params)
+    if isinstance(expected, str):
+        actual = nbv_.device_role_slug()
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbv_.device_role_slug()
 
 
 @pytest.mark.parametrize("params, expected", [
@@ -233,13 +382,13 @@ def test__primary_ip(nbv, params, expected):
 
 
 @pytest.mark.parametrize("params, expected", [
-    ({"data": {"site": {"name": "Name"}}, "strict": False}, "Name"),
+    ({"data": p.NB_PREFIX_WO_URL, "strict": False}, "Name"),
     ({"data": {"site": {"name": ""}}, "strict": False}, ""),
     ({"data": {"site": None}, "strict": False}, ""),
     ({"data": None, "strict": False}, ""),
     # strict
-    ({"data": {"site": {"name": "Name"}, "url": "/api/ipam/prefixes/1"}, "strict": True}, "Name"),
-    ({"data": {"site": {"name": "Name"}}, "strict": True}, NbParserError),  # no url
+    ({"data": p.NB_PREFIX, "strict": True}, "Name"),
+    ({"data": p.NB_PREFIX_WO_URL, "strict": True}, NbParserError),  # no url
     ({"data": {"site": {"name": ""}}, "strict": True}, NbParserError),  # no url
     ({"data": {"site": None}, "strict": True}, NbParserError),  # no url
     ({"data": None, "strict": True}, NbParserError),  # no url
@@ -256,29 +405,29 @@ def test__site_name(nbv, params, expected):
 
 @pytest.mark.parametrize("params, data, expected", [
     # ipam/prefixes.site
-    ({"version": "4.1"}, NB_PREFIX, "Name"),
-    ({"version": "4.1"}, NB_PREFIX_WO_URL, "Name"),
-    ({"version": "4.2"}, NB_PREFIX, "Name"),
-    ({"version": "4.2"}, NB_PREFIX_WO_URL, "Name"),
+    ({"version": "4.1"}, p.NB_PREFIX, "Name"),
+    ({"version": "4.1"}, p.NB_PREFIX_WO_URL, "Name"),
+    ({"version": "4.2"}, p.NB_PREFIX, "Name"),
+    ({"version": "4.2"}, p.NB_PREFIX_WO_URL, "Name"),
     # ipam/prefixes.site strict
-    ({"version": "4.1", "strict": True}, NB_PREFIX, "Name"),
-    ({"version": "4.1", "strict": True}, NB_PREFIX_WO_URL, NbParserError),
-    ({"version": "4.2", "strict": True}, NB_PREFIX, "Name"),
-    ({"version": "4.2", "strict": True}, NB_PREFIX_WO_URL, NbParserError),
+    ({"version": "4.1", "strict": True}, p.NB_PREFIX, "Name"),
+    ({"version": "4.1", "strict": True}, p.NB_PREFIX_WO_URL, NbParserError),
+    ({"version": "4.2", "strict": True}, p.NB_PREFIX, "Name"),
+    ({"version": "4.2", "strict": True}, p.NB_PREFIX_WO_URL, NbParserError),
     # ipam/prefixes.scope
-    ({"version": "4.1"}, NB_SCOPE_SITE, "Name"),
-    ({"version": "4.1"}, NB_SCOPE_SITE_WO_URL, ""),
-    ({"version": "4.1"}, NB_SCOPE_REGION, NbParserError),
-    ({"version": "4.2"}, NB_SCOPE_SITE, "Name"),
-    ({"version": "4.2"}, NB_SCOPE_SITE_WO_URL, ""),
-    ({"version": "4.2"}, NB_SCOPE_REGION, NbParserError),
+    ({"version": "4.1"}, p.NB_PREFIX_SCOPE_SITE, "Name"),
+    ({"version": "4.1"}, p.NB_PREFIX_SCOPE_SITE_WO_URL, ""),
+    ({"version": "4.1"}, p.NB_PREFIX_SCOPE_REGION, NbParserError),
+    ({"version": "4.2"}, p.NB_PREFIX_SCOPE_SITE, "Name"),
+    ({"version": "4.2"}, p.NB_PREFIX_SCOPE_SITE_WO_URL, ""),
+    ({"version": "4.2"}, p.NB_PREFIX_SCOPE_REGION, NbParserError),
     # ipam/prefixes.scope strict
-    ({"version": "4.1", "strict": True}, NB_SCOPE_SITE, "Name"),
-    ({"version": "4.1", "strict": True}, NB_SCOPE_SITE_WO_URL, NbParserError),
-    ({"version": "4.1", "strict": True}, NB_SCOPE_REGION, NbParserError),
-    ({"version": "4.2", "strict": True}, NB_SCOPE_SITE, "Name"),
-    ({"version": "4.2", "strict": True}, NB_SCOPE_SITE_WO_URL, NbParserError),
-    ({"version": "4.2", "strict": True}, NB_SCOPE_REGION, NbParserError),
+    ({"version": "4.1", "strict": True}, p.NB_PREFIX_SCOPE_SITE, "Name"),
+    ({"version": "4.1", "strict": True}, p.NB_PREFIX_SCOPE_SITE_WO_URL, NbParserError),
+    ({"version": "4.1", "strict": True}, p.NB_PREFIX_SCOPE_REGION, NbParserError),
+    ({"version": "4.2", "strict": True}, p.NB_PREFIX_SCOPE_SITE, "Name"),
+    ({"version": "4.2", "strict": True}, p.NB_PREFIX_SCOPE_SITE_WO_URL, NbParserError),
+    ({"version": "4.2", "strict": True}, p.NB_PREFIX_SCOPE_REGION, NbParserError),
 ])
 def test__site_name__version(params: DAny, data, expected):
     """NbValue.site_name() with specified version."""

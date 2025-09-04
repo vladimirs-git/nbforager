@@ -203,7 +203,10 @@ class BaseC:
     @property
     def url_ui(self) -> str:
         """URL to the UI endpoint to the Netbox object."""
-        return self.url.replace("/api/", "/", 1)
+        url = self.url
+        url = url.replace("/api/extras/object-changes/", "/api/extras/changelog/", 1)
+        url = url.replace("/api/core/object-changes/", "/api/core/changelog/", 1)
+        return url.replace("/api/", "/", 1)
 
     @property
     def url_base(self) -> str:
