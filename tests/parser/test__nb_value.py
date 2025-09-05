@@ -382,6 +382,66 @@ def test__primary_ip(nbv, params, expected):
 
 
 @pytest.mark.parametrize("params, expected", [
+    ({"data": p.NB_PREFIX_WO_URL, "strict": False}, 2),
+    ({"data": {"site": {"name": ""}}, "strict": False}, 0),
+    ({"data": {"site": None}, "strict": False}, 0),
+    ({"data": None, "strict": False}, 0),
+    # strict
+    ({"data": p.NB_PREFIX, "strict": True}, 2),
+    ({"data": p.NB_PREFIX_WO_URL, "strict": True}, NbParserError),  # no url
+    ({"data": {"site": {"name": ""}}, "strict": True}, NbParserError),  # no url
+    ({"data": {"site": None}, "strict": True}, NbParserError),  # no url
+    ({"data": None, "strict": True}, NbParserError),  # no url
+])
+def test__site_id(nbv, params, expected):
+    """NbValue.site_id()."""
+    if isinstance(expected, int):
+        actual = nbv.site_id()
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbv.site_id()
+
+
+@pytest.mark.parametrize("params, data, expected", [
+    # ipam/prefixes.site
+    ({"version": "4.1"}, p.NB_PREFIX, 2),
+    ({"version": "4.1"}, p.NB_PREFIX_WO_URL, 2),
+    ({"version": "4.2"}, p.NB_PREFIX, 2),
+    ({"version": "4.2"}, p.NB_PREFIX_WO_URL, 2),
+    # ipam/prefixes.site strict
+    ({"version": "4.1", "strict": True}, p.NB_PREFIX, 2),
+    ({"version": "4.1", "strict": True}, p.NB_PREFIX_WO_URL, NbParserError),
+    ({"version": "4.2", "strict": True}, p.NB_PREFIX, 2),
+    ({"version": "4.2", "strict": True}, p.NB_PREFIX_WO_URL, NbParserError),
+    # ipam/prefixes.scope
+    ({"version": "4.1"}, p.NB_PREFIX_SCOPE_SITE, 3),
+    ({"version": "4.1"}, p.NB_PREFIX_SCOPE_SITE_WO_URL, 0),
+    ({"version": "4.1"}, p.NB_PREFIX_SCOPE_REGION, NbParserError),
+    ({"version": "4.2"}, p.NB_PREFIX_SCOPE_SITE, 3),
+    ({"version": "4.2"}, p.NB_PREFIX_SCOPE_SITE_WO_URL, 0),
+    ({"version": "4.2"}, p.NB_PREFIX_SCOPE_REGION, NbParserError),
+    # ipam/prefixes.scope strict
+    ({"version": "4.1", "strict": True}, p.NB_PREFIX_SCOPE_SITE, 3),
+    ({"version": "4.1", "strict": True}, p.NB_PREFIX_SCOPE_SITE_WO_URL, NbParserError),
+    ({"version": "4.1", "strict": True}, p.NB_PREFIX_SCOPE_REGION, NbParserError),
+    ({"version": "4.2", "strict": True}, p.NB_PREFIX_SCOPE_SITE, 3),
+    ({"version": "4.2", "strict": True}, p.NB_PREFIX_SCOPE_SITE_WO_URL, NbParserError),
+    ({"version": "4.2", "strict": True}, p.NB_PREFIX_SCOPE_REGION, NbParserError),
+])
+def test__site_id__version(params: DAny, data, expected):
+    """NbValue.site_id() with specified version."""
+    params["data"] = data
+    nbv_ = NbValue(**params)
+    if isinstance(expected, int):
+        actual = nbv_.site_id()
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbv_.site_id()
+
+
+@pytest.mark.parametrize("params, expected", [
     ({"data": p.NB_PREFIX_WO_URL, "strict": False}, "Name"),
     ({"data": {"site": {"name": ""}}, "strict": False}, ""),
     ({"data": {"site": None}, "strict": False}, ""),
@@ -439,6 +499,66 @@ def test__site_name__version(params: DAny, data, expected):
     else:
         with pytest.raises(expected):
             nbv_.site_name()
+
+
+@pytest.mark.parametrize("params, expected", [
+    ({"data": p.NB_PREFIX_WO_URL, "strict": False}, "name"),
+    ({"data": {"site": {"name": ""}}, "strict": False}, ""),
+    ({"data": {"site": None}, "strict": False}, ""),
+    ({"data": None, "strict": False}, ""),
+    # strict
+    ({"data": p.NB_PREFIX, "strict": True}, "name"),
+    ({"data": p.NB_PREFIX_WO_URL, "strict": True}, NbParserError),  # no url
+    ({"data": {"site": {"name": ""}}, "strict": True}, NbParserError),  # no url
+    ({"data": {"site": None}, "strict": True}, NbParserError),  # no url
+    ({"data": None, "strict": True}, NbParserError),  # no url
+])
+def test__site_slug(nbv, params, expected):
+    """NbValue.site_slug()."""
+    if isinstance(expected, str):
+        actual = nbv.site_slug()
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbv.site_slug()
+
+
+@pytest.mark.parametrize("params, data, expected", [
+    # ipam/prefixes.site
+    ({"version": "4.1"}, p.NB_PREFIX, "name"),
+    ({"version": "4.1"}, p.NB_PREFIX_WO_URL, "name"),
+    ({"version": "4.2"}, p.NB_PREFIX, "name"),
+    ({"version": "4.2"}, p.NB_PREFIX_WO_URL, "name"),
+    # ipam/prefixes.site strict
+    ({"version": "4.1", "strict": True}, p.NB_PREFIX, "name"),
+    ({"version": "4.1", "strict": True}, p.NB_PREFIX_WO_URL, NbParserError),
+    ({"version": "4.2", "strict": True}, p.NB_PREFIX, "name"),
+    ({"version": "4.2", "strict": True}, p.NB_PREFIX_WO_URL, NbParserError),
+    # ipam/prefixes.scope
+    ({"version": "4.1"}, p.NB_PREFIX_SCOPE_SITE, "name"),
+    ({"version": "4.1"}, p.NB_PREFIX_SCOPE_SITE_WO_URL, ""),
+    ({"version": "4.1"}, p.NB_PREFIX_SCOPE_REGION, NbParserError),
+    ({"version": "4.2"}, p.NB_PREFIX_SCOPE_SITE, "name"),
+    ({"version": "4.2"}, p.NB_PREFIX_SCOPE_SITE_WO_URL, ""),
+    ({"version": "4.2"}, p.NB_PREFIX_SCOPE_REGION, NbParserError),
+    # ipam/prefixes.scope strict
+    ({"version": "4.1", "strict": True}, p.NB_PREFIX_SCOPE_SITE, "name"),
+    ({"version": "4.1", "strict": True}, p.NB_PREFIX_SCOPE_SITE_WO_URL, NbParserError),
+    ({"version": "4.1", "strict": True}, p.NB_PREFIX_SCOPE_REGION, NbParserError),
+    ({"version": "4.2", "strict": True}, p.NB_PREFIX_SCOPE_SITE, "name"),
+    ({"version": "4.2", "strict": True}, p.NB_PREFIX_SCOPE_SITE_WO_URL, NbParserError),
+    ({"version": "4.2", "strict": True}, p.NB_PREFIX_SCOPE_REGION, NbParserError),
+])
+def test__site_slug__version(params: DAny, data, expected):
+    """NbValue.site_slug() with specified version."""
+    params["data"] = data
+    nbv_ = NbValue(**params)
+    if isinstance(expected, str):
+        actual = nbv_.site_slug()
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbv_.site_slug()
 
 
 @pytest.mark.parametrize("params, expected", [

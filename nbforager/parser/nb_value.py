@@ -634,6 +634,16 @@ class NbValue(NbParser):
     @check_strict
     def site_id(self) -> int:
         """ipam/prefixes/site/id, dcim/devices/sites/id."""
+        # ipam/prefix
+        if self.is_ipam("prefixes"):
+            # Netbox >= v4.2
+            if "scope" in self.data:
+                if self.data["scope_type"] != "dcim.site":
+                    raise NbParserError("ipam/prefixes.scope_type!=dcim.site")
+                return self.int("scope", "id")
+            # Netbox < v4.2
+            return int(dict(self.data.get("site") or {}).get("id") or 0)
+
         return self.int("site", "id")
 
     @check_strict
@@ -665,8 +675,18 @@ class NbValue(NbParser):
         return self.str("site", "name")
 
     @check_strict
-    def site_slug(self) -> str:
+    def site_slug(self) -> str:  # TOD|vp
         """ipam/prefixes/site/slug, dcim/devices/sites/slug."""
+        # ipam/prefix
+        if self.is_ipam("prefixes"):
+            # Netbox >= v4.2
+            if "scope" in self.data:
+                if self.data["scope_type"] != "dcim.site":
+                    raise NbParserError("ipam/prefixes.scope_type!=dcim.site")
+                return self.str("scope", "slug")
+            # Netbox < v4.2
+            return str(dict(self.data.get("site") or {}).get("slug") or "")
+
         return self.str("site", "slug")
 
     @check_strict

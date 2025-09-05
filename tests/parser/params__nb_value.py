@@ -19,27 +19,30 @@ NB_DEVICE_ROLE_WO_URL = {
 }
 
 # ipam/prefixes.site.name
+PREFIX_ID = 1
+SITE_ID = 2
+SCOPE_ID = 3
 NB_PREFIX = {
-    "id": 1,
+    "id": PREFIX_ID,
     "url": "/api/ipam/prefixes/1",
-    "site": {"name": "Name"},
+    "site": {"id": SITE_ID, "name": "Name", "slug": "name"},
 }
 NB_PREFIX_WO_URL = {
-    "site": {"name": "Name"},
+    "site": {"id": SITE_ID, "name": "Name", "slug": "name"},
 }
 NB_PREFIX_SCOPE_SITE = {
-    "id": 1,
+    "id": PREFIX_ID,
     "url": "/api/ipam/prefixes/1",
     "scope_type": "dcim.site",
-    "scope": {"name": "Name"},
+    "scope": {"id": SCOPE_ID, "name": "Name", "slug": "name"},
 }
 NB_PREFIX_SCOPE_SITE_WO_URL = {
     "scope_type": "dcim.site",
-    "scope": {"name": "Name"},
+    "scope": {"id": SCOPE_ID, "name": "Name", "slug": "name"},
 }
 NB_PREFIX_SCOPE_REGION = {
-    "id": 1,
+    "id": PREFIX_ID,
     "url": "/api/ipam/prefixes/1",
     "scope_type": "dcim.region",
-    "scope": {"name": "Name"},
+    "scope": {"id": SCOPE_ID, "name": "Name", "slug": "name"},
 }
