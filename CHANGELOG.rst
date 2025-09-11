@@ -4,6 +4,16 @@
 CHANGELOG
 =========
 
+1.0.3 (2025-09-11)
+------------------
+
+**Added:** NbValue.primary_ip_family(), NbValue.primary_ip4_family()
+
+**Changed:** Breaking changes. NbValue.primary_ip() > NbValue.primary_ip_address() with mask
+
+**Changed:** Breaking changes. NbValue.primary_ip4() > NbValue.primary_ip4_address()
+
+
 1.0.2 (2025-09-05)
 ------------------
 

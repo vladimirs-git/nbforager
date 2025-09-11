@@ -269,11 +269,13 @@ V3_DEVICE_D: DAny = {
     "id": D1,
     "url": f"/api/dcim/devices/{D1}/",
     "primary_ip": {"family": 4},
+    "primary_ip4": {"family": 4},
 }
 V4_DEVICE_D: DAny = {
     "id": D1,
     "url": f"/api/dcim/devices/{D1}/",
     "primary_ip": {"family": {"value": 4}},
+    "primary_ip4": {"family": {"value": 4}},
 }
 PL1 = 953
 V3_PLATFORM_D: DAny = {

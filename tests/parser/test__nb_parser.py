@@ -206,16 +206,33 @@ def test__int(nbp, keys: LStr, params, expected):
 
 
 @pytest.mark.parametrize("keys, params, expected", [
-    # version
+    # ipam/prefixes.site.id
+    (["site", "id"], {"data": p.V3_PREFIX_D}, NbVersionError),
     (["site", "id"], {"version": "4.1", "data": p.V3_PREFIX_D}, p.S1),
     (["site", "id"], {"version": "4.2", "data": p.V4_PREFIX_D}, NbVersionError),
+    # ipam/prefixes.scope.id
+    (["scope", "id"], {"data": p.V3_PREFIX_D}, 0),
     (["scope", "id"], {"version": "4.1", "data": p.V3_PREFIX_D}, 0),
     (["scope", "id"], {"version": "4.2", "data": p.V4_PREFIX_D}, p.S1),
-    # ipam/prefixes.site.id
+    # ipam/prefixes id
     (["site", "id"], {"data": p.V3_PREFIX_D}, NbVersionError),
     (["site", "tenant", "id"], {"data": p.V3_PREFIX_D}, NbVersionError),
     (["scope", "id"], {"data": p.V4_PREFIX_D}, p.S1),
     (["scope", "tenant", "id"], {"data": p.V4_PREFIX_D}, p.T1),
+    # dcim/devices.primary_ip4.family
+    (["primary_ip4", "family"], {"data": p.V3_DEVICE_D}, NbVersionError),
+    (["primary_ip4", "family"], {"data": p.V4_DEVICE_D}, 0),
+    (["primary_ip4", "family"], {"version": "4.1", "data": p.V3_DEVICE_D}, 4),
+    (["primary_ip4", "family"], {"version": "4.1", "data": p.V4_DEVICE_D}, 0),
+    (["primary_ip4", "family"], {"version": "4.2", "data": p.V3_DEVICE_D}, NbVersionError),
+    (["primary_ip4", "family"], {"version": "4.2", "data": p.V4_DEVICE_D}, 0),
+    # dcim/devices.primary_ip4.family.value
+    (["primary_ip4", "family", "value"], {"data": p.V3_DEVICE_D}, NbVersionError),
+    (["primary_ip4", "family", "value"], {"data": p.V4_DEVICE_D}, 4),
+    (["primary_ip4", "family", "value"], {"version": "4.1", "data": p.V3_DEVICE_D}, 0),
+    (["primary_ip4", "family", "value"], {"version": "4.1", "data": p.V4_DEVICE_D}, 4),
+    (["primary_ip4", "family", "value"], {"version": "4.2", "data": p.V3_DEVICE_D}, NbVersionError),
+    (["primary_ip4", "family", "value"], {"version": "4.2", "data": p.V4_DEVICE_D}, 4),
 ])
 def test__int__deprecated(caplog, nbp, keys: LStr, params, expected):
     """NbParser.int() site v4.2."""

@@ -189,7 +189,7 @@ class NbParser:
         """
         first_key = keys[0]
         self._raise_deprecated_key(first_key)
-        self._raise_deprecated_type(first_key)
+        self._raise_deprecated_type(keys=list(keys))
 
         data = self.data
         try:
@@ -260,7 +260,7 @@ class NbParser:
 
             # model moved
             if not key_old:
-                msg = f"Deprecated model {model!r} in {url}, please use {key_new!r}."
+                msg = f"Deprecated model {model!r} in {url}, expected {key_new!r}."
                 logging.error(msg)
                 raise NbVersionError(msg)
 
@@ -273,7 +273,7 @@ class NbParser:
                     model_new = f"{model}.{key_new}"
                     msg = (
                         f"Deprecated model {model_old!r} in {url}, "
-                        f"please use {model_new!r} for Netbox>={VERSION_NB} or "
+                        f"expected {model_new!r} for Netbox>={VERSION_NB} or "
                         f"specify low Netbox version in {class_}(version=3)."
                     )
                     logging.error(msg)
@@ -295,7 +295,9 @@ class NbParser:
         :raise NbVersionError: If the type is deprecated for specific app/model.
         """
         # skip old version
-        if self.version and SwVersion(self.version) < SwVersion("4.2"):
+        sw_version_act = SwVersion(self.version)
+        sw_version_req = SwVersion(VERSION_NB)
+        if self.version and sw_version_act < sw_version_req:
             return
 
         # log deprecated key if version
@@ -312,7 +314,7 @@ class NbParser:
 
             type_old = type(value)
             model_old = ".".join([model, *keys_old])
-            msg = f"Deprecated type {model_old} {type_old!r} in {url}, please use {type_new!r}."
+            msg = f"Deprecated type {model_old} {type_old!r} in {url}, expected {type_new!r}."
             logging.error(msg)
             raise NbVersionError(msg)
 

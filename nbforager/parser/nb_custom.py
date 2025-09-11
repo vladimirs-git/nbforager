@@ -93,7 +93,7 @@ class NbCustom(NbValue):
         strict_actual = self.strict
         self.strict = True
         _ = self.is_dcim("devices")
-        _ = self.primary_ip4()
+        _ = self.primary_ip4_address()
         device_type = self.platform_name()
         required: str = string.ascii_lowercase + "_-"
         chars_invalid: LStr = [s for s in device_type if s not in required]

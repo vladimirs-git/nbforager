@@ -368,7 +368,7 @@ class NbForager:
         """
         ip4s: LStr = []
         for device in self.root.dcim.devices.values():  # pylint: disable=E1101
-            if ip4 := NbValue(device).primary_ip4():
+            if ip4 := NbValue(device).primary_ip4_address():
                 ip4s.append(ip4)
         return ip4s
 

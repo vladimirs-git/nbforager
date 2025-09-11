@@ -330,55 +330,116 @@ def test__prefix(nbv, params, expected):
         with pytest.raises(expected):
             nbv.prefix()
 
+@pytest.mark.parametrize("params, expected", [
+    ({"data": p.NB_DEVICE_PRIMARY_IP4, "strict": False}, "10.0.0.1/32"),
+    ({"data": p.NB_DEVICE_PRIMARY_IP6, "strict": False}, "::ffff:10.0.0.1/128"),
+    ({"data": {"primary_ip": {"address": ""}}, "strict": False}, ""),
+    ({"data": {"primary_ip": {"address": None}}, "strict": False}, ""),
+    ({"data": {"primary_ip": None}, "strict": False}, ""),
+    # strict
+    ({"data": p.NB_DEVICE_PRIMARY_IP4, "strict": True}, "10.0.0.1/32"),
+    ({"data": p.NB_DEVICE_PRIMARY_IP6, "strict": True}, "::ffff:10.0.0.1/128"),
+    ({"data": {"primary_ip": {"address": "10.0.0.1"}}, "strict": True}, NbParserError),
+    ({"data": {"primary_ip": {"address": "10.0.0.1_32"}}, "strict": True}, NbParserError),
+    ({"data": {"primary_ip": {"address": ""}}, "strict": True}, NbParserError),
+    ({"data": {"primary_ip": {"address": None}}, "strict": True}, NbParserError),
+    ({"data": {"primary_ip": None}, "strict": True}, NbParserError),
+])
+def test__primary_ip_address(nbv, params, expected):
+    """NbValue.primary_ip_address()."""
+    if isinstance(expected, str):
+        actual = nbv.primary_ip_address()
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbv.primary_ip_address()
 
 @pytest.mark.parametrize("params, expected", [
-    ({"data": {"primary_ip4": {"address": "10.0.0.1/32"}}, "strict": False}, "10.0.0.1/32"),
-    ({"data": {"primary_ip4": {"address": "10.0.0.1"}}, "strict": False}, "10.0.0.1"),
-    ({"data": {"primary_ip4": {"address": "10.0.0.1_32"}}, "strict": False}, "10.0.0.1_32"),
+    # dcim/devices.primary_ip.family
+    ({"data": p.NB_DEVICE_PRIMARY_IP4, "strict": False}, 4),
+    ({"data": {"primary_ip": {"family": 0}}, "strict": False}, 0),
+    ({"data": {"primary_ip": {"family": None}}, "strict": False}, 0),
+    ({"data": {"primary_ip": None}, "strict": False}, 0),
+    # dcim/devices.primary_ip.family strict
+    ({"data": p.NB_DEVICE_PRIMARY_IP4, "strict": True}, 4),
+    ({"data": {"primary_ip": {"family": ""}}, "strict": True}, NbParserError),
+    ({"data": {"primary_ip": {"family": None}}, "strict": True}, NbParserError),
+    ({"data": {"primary_ip": None}, "strict": True}, NbParserError),
+    # dcim/devices.primary_ip.family.value
+    ({"data": p.NB_DEVICE_PRIMARY_IP4_FAMILY, "strict": False}, 4),
+    ({"data": {"primary_ip": {"family": {"value": 0}}}, "strict": False}, 0),
+    ({"data": {"primary_ip": {"family": {"value": None}}}, "strict": False}, 0),
+    ({"data": {"primary_ip": {"family": None}}, "strict": False}, 0),
+    ({"data": {"primary_ip": None}, "strict": False}, 0),
+    # dcim/devices.primary_ip.family.value strict
+    ({"data": p.NB_DEVICE_PRIMARY_IP4_FAMILY, "strict": True}, 4),
+    ({"data": {"primary_ip": {"family": ""}}, "strict": True}, NbParserError),
+    ({"data": {"primary_ip": {"family": None}}, "strict": True}, NbParserError),
+    ({"data": {"primary_ip": None}, "strict": True}, NbParserError),
+])
+def test__primary_ip4_family(nbv, params, expected):
+    """NbValue.primary_ip4_family()."""
+    if isinstance(expected, int):
+        actual = nbv.primary_ip4_family()
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbv.primary_ip4_family()
+
+
+@pytest.mark.parametrize("params, expected", [
+    ({"data": p.NB_DEVICE_PRIMARY_IP4, "strict": False}, "10.0.0.1/32"),
     ({"data": {"primary_ip4": {"address": ""}}, "strict": False}, ""),
     ({"data": {"primary_ip4": {"address": None}}, "strict": False}, ""),
     ({"data": {"primary_ip4": None}, "strict": False}, ""),
     # strict
-    ({"data": {"primary_ip4": {"address": "10.0.0.1/32"}}, "strict": True}, "10.0.0.1/32"),
-    ({"data": {"primary_ip4": {"address": "10.0.0.1"}}, "strict": True}, "10.0.0.1"),
+    ({"data": p.NB_DEVICE_PRIMARY_IP4, "strict": True}, "10.0.0.1/32"),
+    ({"data": {"primary_ip4": {"address": "10.0.0.1"}}, "strict": True}, NbParserError),
     ({"data": {"primary_ip4": {"address": "10.0.0.1_32"}}, "strict": True}, NbParserError),
     ({"data": {"primary_ip4": {"address": ""}}, "strict": True}, NbParserError),
     ({"data": {"primary_ip4": {"address": None}}, "strict": True}, NbParserError),
     ({"data": {"primary_ip4": None}, "strict": True}, NbParserError),
 ])
-def test__primary_ip4(nbv, params, expected):
-    """NbValue.primary_ip4()."""
+def test__primary_ip4_address(nbv, params, expected):
+    """NbValue.primary_ip4_address()."""
     if isinstance(expected, str):
-        actual = nbv.primary_ip4()
+        actual = nbv.primary_ip4_address()
         assert actual == expected
     else:
         with pytest.raises(expected):
-            nbv.primary_ip4()
-
+            nbv.primary_ip4_address()
 
 @pytest.mark.parametrize("params, expected", [
-    ({"data": {"primary_ip4": {"address": "10.0.0.1/32"}}, "strict": False}, "10.0.0.1"),
-    ({"data": {"primary_ip4": {"address": "10.0.0.1"}}, "strict": False}, "10.0.0.1"),
-    ({"data": {"primary_ip4": {"address": "10.0.0.1_32"}}, "strict": False}, "10.0.0.1_32"),
-    ({"data": {"primary_ip4": {"address": ""}}, "strict": False}, ""),
-    ({"data": {"primary_ip4": {"address": None}}, "strict": False}, ""),
-    ({"data": {"primary_ip4": None}, "strict": False}, ""),
-    # strict
-    ({"data": {"primary_ip4": {"address": "10.0.0.1/32"}}, "strict": True}, "10.0.0.1"),
-    ({"data": {"primary_ip4": {"address": "10.0.0.1"}}, "strict": True}, "10.0.0.1"),
-    ({"data": {"primary_ip4": {"address": "10.0.0.1_32"}}, "strict": True}, NbParserError),
-    ({"data": {"primary_ip4": {"address": ""}}, "strict": True}, NbParserError),
-    ({"data": {"primary_ip4": {"address": None}}, "strict": True}, NbParserError),
+    # dcim/devices.primary_ip4.family
+    ({"data": p.NB_DEVICE_PRIMARY_IP4, "strict": False}, 4),
+    ({"data": {"primary_ip4": {"family": 0}}, "strict": False}, 0),
+    ({"data": {"primary_ip4": {"family": None}}, "strict": False}, 0),
+    ({"data": {"primary_ip4": None}, "strict": False}, 0),
+    # dcim/devices.primary_ip4.family strict
+    ({"data": p.NB_DEVICE_PRIMARY_IP4, "strict": True}, 4),
+    ({"data": {"primary_ip4": {"family": ""}}, "strict": True}, NbParserError),
+    ({"data": {"primary_ip4": {"family": None}}, "strict": True}, NbParserError),
+    ({"data": {"primary_ip4": None}, "strict": True}, NbParserError),
+    # dcim/devices.primary_ip4.family.value
+    ({"data": p.NB_DEVICE_PRIMARY_IP4_FAMILY, "strict": False}, 4),
+    ({"data": {"primary_ip4": {"family": {"value": 0}}}, "strict": False}, 0),
+    ({"data": {"primary_ip4": {"family": {"value": None}}}, "strict": False}, 0),
+    ({"data": {"primary_ip4": {"family": None}}, "strict": False}, 0),
+    ({"data": {"primary_ip4": None}, "strict": False}, 0),
+    # dcim/devices.primary_ip4.family.value strict
+    ({"data": p.NB_DEVICE_PRIMARY_IP4_FAMILY, "strict": True}, 4),
+    ({"data": {"primary_ip4": {"family": ""}}, "strict": True}, NbParserError),
+    ({"data": {"primary_ip4": {"family": None}}, "strict": True}, NbParserError),
     ({"data": {"primary_ip4": None}, "strict": True}, NbParserError),
 ])
-def test__primary_ip(nbv, params, expected):
-    """NbValue.primary_ip()."""
-    if isinstance(expected, str):
-        actual = nbv.primary_ip()
+def test__primary_ip4_family(nbv, params, expected):
+    """NbValue.primary_ip4_family()."""
+    if isinstance(expected, int):
+        actual = nbv.primary_ip4_family()
         assert actual == expected
     else:
         with pytest.raises(expected):
-            nbv.primary_ip()
+            nbv.primary_ip4_family()
 
 
 @pytest.mark.parametrize("params, expected", [
@@ -708,19 +769,4 @@ def test__is_dcim(nbv, params, dcim, expected):
 def test__is_vrf(nbv, params, expected):
     """NbValue.is_vrf()."""
     actual = nbv.is_vrf()
-    assert actual == expected
-
-
-# ============================= helpers ==============================
-
-
-@pytest.mark.parametrize("params, subnet, expected", [
-    ({"data": {}}, "10.0.0.0/24", True),
-    ({"data": {}}, "10.0.0.1/32", True),
-    ({"data": {}}, "10.0.0.1", False),
-    ({"data": {}}, "", False),
-])
-def test__is_prefix(nbv, params, subnet, expected):
-    """NbValue._is_prefix()."""
-    actual = nbv._is_prefix(subnet)
     assert actual == expected

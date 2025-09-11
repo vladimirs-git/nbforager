@@ -4,7 +4,7 @@
 
 import re
 
-from netports.ipv4 import RE_PREFIX
+from netports.ipv4 import RE_PREFIX, RE_IP
 
 from nbforager.exceptions import NbParserError
 from nbforager.parser.nb_parser import NbParser, check_strict
@@ -71,7 +71,7 @@ class NbValue(NbParser):
     def address(self) -> str:
         """ipam/ip-addresses/address."""
         address = self.str("address")
-        if self.strict and not self._is_prefix(subnet=address):
+        if self.strict and not re.fullmatch(RE_PREFIX, address):
             raise NbParserError(f"address A.B.C.D/LEN expected in {self.data}.")
         return address
 
@@ -510,41 +510,87 @@ class NbValue(NbParser):
             convention A.B.C.D/LEN.
         """
         prefix = self.str("prefix")
-        if self.strict and not self._is_prefix(subnet=prefix):
+        if self.strict and not re.fullmatch(RE_PREFIX, prefix):
             raise NbParserError(f"prefix expected in {self.data}.")
         return prefix
 
-    def primary_ip4(self) -> str:
+    def primary_ip_address(self) -> str:
+        """dcim/devices/primary_ip/address.
+
+        :return: primary_ip address.
+
+        :raise NbParserError: if strict=True and device has no primary_ip address.
+        """
+        address: str = self.str("primary_ip", "address")
+        if self.strict:
+            if not address:
+                raise NbParserError(f"primary_ip/address is required.")
+            if re.match(RE_IP, address) and not re.fullmatch(RE_PREFIX, address):
+                    raise NbParserError(f"primary_ip/address expected format A.B.C.D/LEN.")
+        return address
+
+    def primary_ip_family(self) -> int:
+        """dcim/devices/primary_ip/family.
+
+        :return: primary_ip family.
+
+        :raise NbParserError: if strict=True and device has no primary_ip family.
+        """
+        family = dict(self.data.get("primary_ip") or {}).get("family")
+        # Netbox < v4.2
+        if isinstance(family, int):
+            if self.strict and not family:
+                raise NbParserError(f"primary_ip/family is required.")
+            return family
+        # Netbox >= v4.2
+        if isinstance(family, dict):
+            family_ = int(family.get("value") or 0)
+            if self.strict and not family_:
+                raise NbParserError(f"primary_ip/family/value is required.")
+            return family_
+        # undefined
+        if self.strict:
+            raise NbParserError(f"primary_ip/family is required.")
+        return 0
+
+    def primary_ip4_address(self) -> str:
         """dcim/devices/primary_ip4/address.
 
         :return: primary_ip4 address.
 
         :raise NbParserError: if strict=True and device has no primary_ip4 address.
         """
-        try:
-            primary_ip4 = self.data["primary_ip4"]["address"]
-        except (KeyError, TypeError):
-            primary_ip4 = ""
-        if not isinstance(primary_ip4, str):
-            primary_ip4 = ""
-
+        address: str = self.str("primary_ip4", "address")
         if self.strict:
-            if not primary_ip4:
-                raise NbParserError(f"primary_ip4/address expected in {self.data}.")
-            if not re.match(r"^\d+\.\d+\.\d+\.\d+(/\d+)?$", primary_ip4):
-                raise NbParserError(f"primary_ip4/address A.B.C.D expected in {self.data}.")
-        return primary_ip4
+            if not address:
+                raise NbParserError(f"primary_ip4/address is required.")
+            if not re.fullmatch(RE_PREFIX, address):
+                raise NbParserError(f"primary_ip4/address expected format A.B.C.D/LEN.")
+        return address
 
-    def primary_ip(self) -> str:
-        """dcim/devices/primary_ip4/address.
+    def primary_ip4_family(self) -> int:
+        """dcim/devices/primary_ip4/family.
 
-        :return: primary ip address without mask.
+        :return: primary_ip4 family.
 
-        :raise NbParserError: if strict=True and device has no primary_ip4 address.
+        :raise NbParserError: if strict=True and device has no primary_ip4 family.
         """
-        ip4 = self.primary_ip4()
-        ip = ip4.split("/", maxsplit=1)[0]
-        return ip
+        family = dict(self.data.get("primary_ip4") or {}).get("family")
+        # Netbox < v4.2
+        if isinstance(family, int):
+            if self.strict and not family:
+                raise NbParserError(f"primary_ip4/family is required.")
+            return family
+        # Netbox >= v4.2
+        if isinstance(family, dict):
+            family_ = int(family.get("value") or 0)
+            if self.strict and not family_:
+                raise NbParserError(f"primary_ip4/family/value is required.")
+            return family_
+        # undefined
+        if self.strict:
+            raise NbParserError(f"primary_ip4/family is required.")
+        return 0
 
     @check_strict
     def provider_id(self) -> int:
@@ -875,51 +921,54 @@ class NbValue(NbParser):
 
     # ================================ is ================================
 
-    def is_dcim(self, dcim: str) -> bool:
-        """Check if object is dcim/devices.
+    def is_dcim(self, key: str) -> bool:
+        """Check if model is dcim.
 
-        :return: True - if object is dcim/devices, False - otherwise.
+        :return: True - if model is dcim, False - otherwise.
         :rtype: bool
 
         :raise NbParserError: - if url is not /api/dcim/ and self.strict=True
         """
         try:
-            url = self.data["url"]
-            if re.search(f"/api/dcim/{dcim}/", url):
-                return True
-            return False
+            return bool(re.search(f"/api/dcim/{key}/", self.data["url"]))
         except (KeyError, TypeError) as ex:
             if self.strict:
-                raise NbParserError(f"invalid url in {self.data}.") from ex
+                raise NbParserError(f"Invalid url, expected /api/dcim/.") from ex
             return False
 
-    def is_ipam(self, ipam: str) -> bool:
-        """Check If ipam url ipam is aggregate, prefix or address.
+    def is_ipam(self, kay: str) -> bool:
+        """Check If model is ipam.
 
-        :return: True - if aggregate, prefix, address, False - otherwise.
+        :return: True - if model is ipam, False - otherwise.
         :rtype: bool
 
         :raise NbParserError: If url is not aggregate or prefix or address
             and self.strict=True
         """
         try:
-            return bool(re.search(f"/api/ipam/{ipam}/", self.data["url"]))
+            return bool(re.search(f"/api/ipam/{kay}/", self.data["url"]))
         except (KeyError, TypeError) as ex:
             if self.strict:
-                raise NbParserError(f"ipam url expected in {self.data}.") from ex
+                raise NbParserError(f"Invalid url, expected /api/ipam/.") from ex
+            return False
+
+    def is_virtualization(self, key: str) -> bool:
+        """Check if model is virtualization.
+
+        :return: True - if model is virtualization, False - otherwise.
+        :rtype: bool
+
+        :raise NbParserError: - if url is not /api/dcim/ and self.strict=True
+        """
+        try:
+            return bool(re.search(f"/api/virtualization/{key}/", self.data["url"]))
+        except (KeyError, TypeError) as ex:
+            if self.strict:
+                raise NbParserError(f"Invalid url, expected /api/virtualization/.") from ex
             return False
 
     def is_vrf(self) -> bool:
         """Return True if data has vrf."""
         if self.data.get("vrf"):
-            return True
-        return False
-
-    # ============================= helpers ==============================
-
-    @staticmethod
-    def _is_prefix(subnet: str) -> bool:
-        """Return True if subnet has A.B.C.D/LEN format."""
-        if re.match(rf"^{RE_PREFIX}$", subnet):
             return True
         return False
