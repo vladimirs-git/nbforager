@@ -4,7 +4,13 @@
 CHANGELOG
 =========
 
-1.0.3 (2025-09-11)
+1.0.4 (2025-09-12)
+------------------
+
+**Tested:**  circuits/circuit-terminations, dcim/inventory-items.component, ipam/vlan-groups, etc.
+
+
+1.0.3 (2025-09-12)
 ------------------
 
 **Added:** NbValue.primary_ip_family(), NbValue.primary_ip4_family()

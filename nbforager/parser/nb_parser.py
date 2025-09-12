@@ -14,7 +14,9 @@ VERSION_NB = "4.2"
 """Minimum supported Netbox version."""
 
 DEPRECATED_MODELS: LT3Str = [
-    ("circuits/circuit-terminations", "site", "scope"),
+    # (<app/model>, <old-key>, <new-key>)
+    ("circuits/circuit-terminations", "site", "termination"),
+    ("circuits/circuit-terminations", "provider_network", ""),  # key deleted
     ("dcim/devices", "device_role", "role"),
     ("dcim/platforms", "napalm_args", ""),  # key deleted
     ("dcim/platforms", "napalm_driver", ""),  # key deleted
@@ -40,6 +42,7 @@ DEPRECATED_MODELS: LT3Str = [
 """Models deprecated in Netbox v4.2."""
 
 DEPRECATED_TYPES: List[Tuple[str, LStr, Type]] = [
+    # (<app/model>, <keys>, <new-type>)
     ("dcim/inventory-items", ["component", "cable"], dict),
     ("dcim/power-outlets", ["power_port", "cable"], dict),
     ("dcim/cable-terminations", ["termination", "cable"], dict),
@@ -161,6 +164,7 @@ class NbParser:
         """
         first_key = keys[0]
         self._raise_deprecated_key(first_key)
+        self._raise_deprecated_type(keys=list(keys), type_req=bool)
         return self._get_keys(type_=bool, keys=keys)
 
     def dict(self, *keys) -> Dict:
@@ -175,6 +179,7 @@ class NbParser:
         """
         first_key = keys[0]
         self._raise_deprecated_key(first_key)
+        self._raise_deprecated_type(keys=list(keys), type_req=dict)
         return self._get_keys(type_=dict, keys=keys)
 
     def int(self, *keys) -> int:
@@ -189,7 +194,7 @@ class NbParser:
         """
         first_key = keys[0]
         self._raise_deprecated_key(first_key)
-        self._raise_deprecated_type(keys=list(keys))
+        self._raise_deprecated_type(keys=list(keys), type_req=int)
 
         data = self.data
         try:
@@ -223,6 +228,7 @@ class NbParser:
         """
         first_key = keys[0]
         self._raise_deprecated_key(first_key)
+        self._raise_deprecated_type(keys=list(keys), type_req=list)
         return self._get_keys(type_=list, keys=keys)
 
     def str(self, *keys) -> str:
@@ -237,6 +243,7 @@ class NbParser:
         """
         first_key = keys[0]
         self._raise_deprecated_key(first_key)
+        self._raise_deprecated_type(keys=list(keys), type_req=str)
         return self._get_keys(type_=str, keys=keys)
 
     def _raise_deprecated_key(self, key: Str) -> None:
@@ -264,30 +271,42 @@ class NbParser:
                 logging.error(msg)
                 raise NbVersionError(msg)
 
-            # model changed
-            if key == key_old:
-                class_ = self.__class__.__name__
-                model_old = f"{model}.{key_old}"
-                # changed key
-                if key_new:
-                    model_new = f"{model}.{key_new}"
-                    msg = (
-                        f"Deprecated model {model_old!r} in {url}, "
-                        f"expected {model_new!r} for Netbox>={VERSION_NB} or "
-                        f"specify low Netbox version in {class_}(version=3)."
-                    )
-                    logging.error(msg)
-                    raise NbVersionError(msg)
-                # removed key
-                if key_old in self.data:
-                    msg = (
-                        f"Deprecated model {model_old!r} in {url}, please remove it or "
-                        f"specify low Netbox version in {class_}(version=3)."
-                    )
-                    logging.error(msg)
-                    raise NbVersionError(msg)
+            # skip if the model not been changed
+            if key != key_old:
+                continue
 
-    def _raise_deprecated_type(self, keys: LStr) -> None:
+            # model changed
+            class_ = self.__class__.__name__
+            model_old = f"{model}.{key_old}"
+
+            # changed key
+            if key_new:
+                model_new = f"{model}.{key_new}"
+                msg = (
+                    f"Deprecated model {model_old!r} in {url}, "
+                    f"expected {model_new!r} for Netbox>={VERSION_NB} or "
+                    f"use low version {class_}(version=3)."
+                )
+                logging.error(msg)
+                raise NbVersionError(msg)
+
+            # removed key, data v3.5
+            if key_old in self.data:
+                msg = (
+                    f"Deprecated model {model_old!r} in {url}, please update code or "
+                    f"use low version {class_}(version=3)."
+                )
+                logging.error(msg)
+                raise NbVersionError(msg)
+
+            # removed key, data v4.2
+            if not key_new:
+                model_old = f"{model}.{key_old}"
+                msg = f"Deprecated model {model_old!r} in {url}, please update code."
+                logging.error(msg)
+                raise NbVersionError(msg)
+
+    def _raise_deprecated_type(self, keys: LStr, type_req: Type) -> None:
         """Log and rasie error if the type is deprecated for specific app/model.
 
         :param keys: Keys chain to get interested value.
@@ -305,16 +324,31 @@ class NbParser:
         for model, keys_old, type_new in DEPRECATED_TYPES:
             keys_new = keys[: len(keys_old)]
             value = self.any(*keys_new)
+            type_old = type(value)
+
+            # skip if the model not been changed
             if f"/api/{model}/" not in url:
                 continue
+
+            # skip if keys not match
             if keys_new != keys_old:
                 continue
-            if isinstance(value, type_new):
+
+            # skip if type is valid
+            if isinstance(value, type_new) and isinstance(value, type_req):
                 continue
 
-            type_old = type(value)
+            # skip if requested keys longer than expected
+            if len(keys) > len(keys_old):
+                continue
+
+            # log deprecated type
             model_old = ".".join([model, *keys_old])
-            msg = f"Deprecated type {model_old} {type_old!r} in {url}, expected {type_new!r}."
+            if isinstance(value, type_new):
+                type_msg = type_req
+            else:
+                type_msg = type_old
+            msg = f"Deprecated type {model_old} {type_msg!r} in {url}, expected {type_new!r}."
             logging.error(msg)
             raise NbVersionError(msg)
 

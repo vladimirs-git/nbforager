@@ -60,16 +60,16 @@ def test__name(nbc, params, expected: Any):
 
 
 @pytest.mark.parametrize("params, expected", [
-    ({"data": p.PLATFORM_D}, "cisco_ios"),
-    ({"data": p.PLATFORM_D_W_VALID_NAME}, "cisco_ios"),
-    ({"data": p.PLATFORM_D_W_VALID_SLUG}, "cisco_ios"),
+    ({"data": p.PLATFORM}, "cisco_ios"),
+    ({"data": p.PLATFORM_W_VALID_NAME}, "cisco_ios"),
+    ({"data": p.PLATFORM_W_VALID_SLUG}, "cisco_ios"),
     ({"data": {}}, NbParserError),
-    ({"data": p.PLATFORM_D_WO_URL}, NbParserError),
-    ({"data": p.PLATFORM_D_W_INVALID_ADDRESS}, NbParserError),
-    ({"data": p.PLATFORM_D_WO_ADDRESS}, NbParserError),
-    ({"data": p.PLATFORM_D_WO_PRIMARY_IP4}, NbParserError),
-    ({"data": p.PLATFORM_D_WO_SLUG}, NbParserError),
-    ({"data": p.PLATFORM_D_WO_PLATFORM}, NbParserError),
+    ({"data": p.PLATFORM_WO_URL}, NbParserError),
+    ({"data": p.PLATFORM_W_INVALID_ADDRESS}, NbParserError),
+    ({"data": p.PLATFORM_WO_ADDRESS}, NbParserError),
+    ({"data": p.PLATFORM_WO_PRIMARY_IP4}, NbParserError),
+    ({"data": p.PLATFORM_WO_SLUG}, NbParserError),
+    ({"data": p.PLATFORM_WO_PLATFORM}, NbParserError),
 ])
 def test__platform_slug(nbc, params, expected: Any):
     """NbCustom.platform_slug()."""
