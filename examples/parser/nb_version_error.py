@@ -80,12 +80,12 @@ print()
 
 # parse site name
 try:
-    site4_1 = NbValue(V3_PREFIX).str("site", "name")
+    site4_1: str = NbValue(V3_PREFIX).str("site", "name")
     print(f"{site4_1=}")
 except Exception as ex:
     print(f"site4_1: {ex}")
-site4_2 = NbValue(V3_PREFIX).site_name()
-site4_3 = NbValue(V4_PREFIX).site_name()
+site4_2: str = NbValue(V3_PREFIX).site_name()
+site4_3: str = NbValue(V4_PREFIX).site_name()
 print(f"{site4_2=}")
 print(f"{site4_3=}")
 # site4_1: Deprecated model 'ipam/prefixes.site' in /api/ipam/prefixes/8452/, expected 'ipam/prefixes.scope'.
