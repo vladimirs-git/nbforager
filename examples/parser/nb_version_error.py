@@ -66,8 +66,8 @@ print()
 # get site name
 site3_1 = V3_PREFIX["site"]["name"]
 site3_2 = V3_PREFIX.get("site", {}).get("name", "")
-site3_3 = str(dict(V3_PREFIX_.get("site") or {}).get("name") or "")
-site3_4 = str(dict(V4_PREFIX.get("site") or {}).get("name") or "")
+site3_3: str = str(dict(V3_PREFIX_.get("site") or {}).get("name") or "")
+site3_4: str = str(dict(V4_PREFIX.get("site") or {}).get("name") or "")
 print(f"{site3_1=}")
 print(f"{site3_2=}")
 print(f"{site3_3=}")
