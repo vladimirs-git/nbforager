@@ -684,6 +684,8 @@ class NbValue(NbParser):
         if self.is_ipam("prefixes"):
             # Netbox >= v4.2
             if "scope" in self.data:
+                if not self.data["scope_type"]:
+                    return 0
                 if self.data["scope_type"] != "dcim.site":
                     raise NbParserError("ipam/prefixes.scope_type!=dcim.site")
                 return self.int("scope", "id")
@@ -712,6 +714,8 @@ class NbValue(NbParser):
         if self.is_ipam("prefixes"):
             # Netbox >= v4.2
             if "scope" in self.data:
+                if not self.data["scope_type"]:
+                    return ""
                 if self.data["scope_type"] != "dcim.site":
                     raise NbParserError("ipam/prefixes.scope_type!=dcim.site")
                 return self.str("scope", "name")
@@ -727,6 +731,8 @@ class NbValue(NbParser):
         if self.is_ipam("prefixes"):
             # Netbox >= v4.2
             if "scope" in self.data:
+                if not self.data["scope_type"]:
+                    return ""
                 if self.data["scope_type"] != "dcim.site":
                     raise NbParserError("ipam/prefixes.scope_type!=dcim.site")
                 return self.str("scope", "slug")
