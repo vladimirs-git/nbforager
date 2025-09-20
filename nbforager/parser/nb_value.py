@@ -942,7 +942,7 @@ class NbValue(NbParser):
                 raise NbParserError(f"Invalid url, expected /api/dcim/.") from ex
             return False
 
-    def is_ipam(self, kay: str) -> bool:
+    def is_ipam(self, key: str) -> bool:
         """Check If model is ipam.
 
         :return: True - if model is ipam, False - otherwise.
@@ -952,7 +952,7 @@ class NbValue(NbParser):
             and self.strict=True
         """
         try:
-            return bool(re.search(f"/api/ipam/{kay}/", self.data["url"]))
+            return bool(re.search(f"/api/ipam/{key}/", self.data["url"]))
         except (KeyError, TypeError) as ex:
             if self.strict:
                 raise NbParserError(f"Invalid url, expected /api/ipam/.") from ex
