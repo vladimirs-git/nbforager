@@ -104,17 +104,6 @@ def test__url_ui__changelog(params, expected):
 
 # noinspection PyTestUnpassedFixture
 @pytest.mark.parametrize("params, expected", [
-    ({"host": "netbox"}, "https://netbox/core/changelog/"),
-])
-def test__url_ui__changelog(params, expected):
-    """BaseC.url_ui."""
-    api = NbApi(**params)
-    actual = api.core.object_changes.url_ui
-    assert actual == expected
-
-
-# noinspection PyTestUnpassedFixture
-@pytest.mark.parametrize("params, expected", [
     ({"host": "netbox"}, "https://netbox/api/"),
     ({"host": "netbox", "scheme": "http"}, "http://netbox/api/"),
     ({"host": "netbox", "scheme": "http", "port": 80}, "http://netbox/api/"),

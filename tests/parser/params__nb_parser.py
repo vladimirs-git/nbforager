@@ -498,7 +498,7 @@ V4_CUSTOM_FIELD = {
     "ui_editable": {"value": "yes", "label": "Yes"},
     "choice_set": {
         "id": 16,
-        "url": "https://netbox.tools-test.aws.evo-infra.com/api/extras/custom-field-choice-sets/16/",
+        "url": "/api/extras/custom-field-choice-sets/16/",
         "display": "team Choices",
         "name": "team Choices",
         "description": "",
@@ -509,14 +509,14 @@ V4_CUSTOM_FIELD = {
 # extras/object-changes
 OC1 = 6271
 UPDATED = "2000-12-31T00:00:00.000Z"
-V3_OBJECT_CHANGE: DAny = {
+V3_O_CHANGE: DAny = {
     "id": OC1,
     "url": f"/api/extras/object-changes/{OC1}/",
     "action": {"value": "update", "label": "Updated"},
     "prechange_data": {"last_updated": UPDATED},
     "postchange_data": {"last_updated": UPDATED},
 }
-V4_OBJECT_CHANGE: DAny = {
+V4_O_CHANGE: DAny = {
     "id": OC1,
     "url": f"/api/core/object-changes/{OC1}/",
     "action": {"value": "update", "label": "Updated"},

@@ -330,6 +330,7 @@ def test__prefix(nbv, params, expected):
         with pytest.raises(expected):
             nbv.prefix()
 
+
 @pytest.mark.parametrize("params, expected", [
     ({"data": p.NB_DEVICE_PRIMARY_IP4, "strict": False}, "10.0.0.1/32"),
     ({"data": p.NB_DEVICE_PRIMARY_IP6, "strict": False}, "::ffff:10.0.0.1/128"),
@@ -354,6 +355,7 @@ def test__primary_ip_address(nbv, params, expected):
         with pytest.raises(expected):
             nbv.primary_ip_address()
 
+
 @pytest.mark.parametrize("params, expected", [
     # dcim/devices.primary_ip.family
     ({"data": p.NB_DEVICE_PRIMARY_IP4, "strict": False}, 4),
@@ -377,14 +379,14 @@ def test__primary_ip_address(nbv, params, expected):
     ({"data": {"primary_ip": {"family": None}}, "strict": True}, NbParserError),
     ({"data": {"primary_ip": None}, "strict": True}, NbParserError),
 ])
-def test__primary_ip4_family(nbv, params, expected):
-    """NbValue.primary_ip4_family()."""
+def test__primary_ip_family(nbv, params, expected):
+    """NbValue.primary_ip_family()."""
     if isinstance(expected, int):
-        actual = nbv.primary_ip4_family()
+        actual = nbv.primary_ip_family()
         assert actual == expected
     else:
         with pytest.raises(expected):
-            nbv.primary_ip4_family()
+            nbv.primary_ip_family()
 
 
 @pytest.mark.parametrize("params, expected", [
@@ -408,6 +410,7 @@ def test__primary_ip4_address(nbv, params, expected):
     else:
         with pytest.raises(expected):
             nbv.primary_ip4_address()
+
 
 @pytest.mark.parametrize("params, expected", [
     # dcim/devices.primary_ip4.family

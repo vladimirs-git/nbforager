@@ -306,6 +306,8 @@ class NbParser:
                 logging.error(msg)
                 raise NbVersionError(msg)
 
+        return None
+
     def _raise_deprecated_type(self, keys: LStr, type_req: Type) -> None:
         """Log and rasie error if the type is deprecated for specific app/model.
 

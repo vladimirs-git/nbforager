@@ -270,7 +270,7 @@ def test__int(nbp, keys: LStr, params, expected):
     (["component", "cable"], {"version": "4.1", "data": p.V4_INV_ITEM}, 0),
     (["component", "cable"], {"version": "4.2", "data": p.V3_INV_ITEM}, NbVersionError),
     (["component", "cable"], {"version": "4.2", "data": p.V4_INV_ITEM}, NbVersionError),
-     # dcim/inventory-items.component.cable.id v4.2
+    # dcim/inventory-items.component.cable.id v4.2
     (["component", "cable", "id"], {"data": p.V3_INV_ITEM}, 0),  # return <int>
     (["component", "cable", "id"], {"data": p.V4_INV_ITEM}, p.CB1),  # return <dict>
     (["component", "cable", "id"], {"version": "4.1", "data": p.V3_INV_ITEM}, 0),
@@ -353,19 +353,19 @@ def test__int(nbp, keys: LStr, params, expected):
     (["vid_ranges"], {"version": "4.2", "data": p.V4_VLAN_GROUP}, 0),
 
     # extras/object-changes.action.id v3.5
-    (["id"], {"data": p.V3_OBJECT_CHANGE}, NbVersionError),
-    (["id"], {"data": p.V4_OBJECT_CHANGE}, p.OC1),
-    (["id"], {"version": "4.1", "data": p.V3_OBJECT_CHANGE}, p.OC1),
-    (["id"], {"version": "4.1", "data": p.V4_OBJECT_CHANGE}, p.OC1),
-    (["id"], {"version": "4.2", "data": p.V3_OBJECT_CHANGE}, NbVersionError),
-    (["id"], {"version": "4.2", "data": p.V4_OBJECT_CHANGE}, p.OC1),
+    (["id"], {"data": p.V3_O_CHANGE}, NbVersionError),
+    (["id"], {"data": p.V4_O_CHANGE}, p.OC1),
+    (["id"], {"version": "4.1", "data": p.V3_O_CHANGE}, p.OC1),
+    (["id"], {"version": "4.1", "data": p.V4_O_CHANGE}, p.OC1),
+    (["id"], {"version": "4.2", "data": p.V3_O_CHANGE}, NbVersionError),
+    (["id"], {"version": "4.2", "data": p.V4_O_CHANGE}, p.OC1),
     # core/object-changes.action.id v4.2
-    (["id"], {"data": p.V3_OBJECT_CHANGE}, NbVersionError),
-    (["id"], {"data": p.V4_OBJECT_CHANGE}, p.OC1),
-    (["id"], {"version": "4.1", "data": p.V3_OBJECT_CHANGE}, p.OC1),
-    (["id"], {"version": "4.1", "data": p.V4_OBJECT_CHANGE}, p.OC1),
-    (["id"], {"version": "4.2", "data": p.V3_OBJECT_CHANGE}, NbVersionError),
-    (["id"], {"version": "4.2", "data": p.V4_OBJECT_CHANGE}, p.OC1),
+    (["id"], {"data": p.V3_O_CHANGE}, NbVersionError),
+    (["id"], {"data": p.V4_O_CHANGE}, p.OC1),
+    (["id"], {"version": "4.1", "data": p.V3_O_CHANGE}, p.OC1),
+    (["id"], {"version": "4.1", "data": p.V4_O_CHANGE}, p.OC1),
+    (["id"], {"version": "4.2", "data": p.V3_O_CHANGE}, NbVersionError),
+    (["id"], {"version": "4.2", "data": p.V4_O_CHANGE}, p.OC1),
 ])
 def test__int__deprecated(caplog, nbp, keys: LStr, params, expected):
     """NbParser.int() site v4.2."""
@@ -660,34 +660,34 @@ def test__str(nbp, keys: LStr, params, expected):
     (["ui_visible", "value"], {"version": "4.2", "data": p.V4_CUSTOM_FIELD}, "always"),
 
     # extras/object-changes.action.value v3.5
-    (["action", "value"], {"data": p.V3_OBJECT_CHANGE}, NbVersionError),
-    (["action", "value"], {"data": p.V4_OBJECT_CHANGE}, "update"),
-    (["action", "value"], {"version": "4.1", "data": p.V3_OBJECT_CHANGE}, "update"),
-    (["action", "value"], {"version": "4.1", "data": p.V4_OBJECT_CHANGE}, "update"),
-    (["action", "value"], {"version": "4.2", "data": p.V3_OBJECT_CHANGE}, NbVersionError),
-    (["action", "value"], {"version": "4.2", "data": p.V4_OBJECT_CHANGE}, "update"),
+    (["action", "value"], {"data": p.V3_O_CHANGE}, NbVersionError),
+    (["action", "value"], {"data": p.V4_O_CHANGE}, "update"),
+    (["action", "value"], {"version": "4.1", "data": p.V3_O_CHANGE}, "update"),
+    (["action", "value"], {"version": "4.1", "data": p.V4_O_CHANGE}, "update"),
+    (["action", "value"], {"version": "4.2", "data": p.V3_O_CHANGE}, NbVersionError),
+    (["action", "value"], {"version": "4.2", "data": p.V4_O_CHANGE}, "update"),
     # core/object-changes.action.value v4.2
-    (["action", "value"], {"data": p.V3_OBJECT_CHANGE}, NbVersionError),
-    (["action", "value"], {"data": p.V4_OBJECT_CHANGE}, "update"),
-    (["action", "value"], {"version": "4.1", "data": p.V3_OBJECT_CHANGE}, "update"),
-    (["action", "value"], {"version": "4.1", "data": p.V4_OBJECT_CHANGE}, "update"),
-    (["action", "value"], {"version": "4.2", "data": p.V3_OBJECT_CHANGE}, NbVersionError),
-    (["action", "value"], {"version": "4.2", "data": p.V4_OBJECT_CHANGE}, "update"),
+    (["action", "value"], {"data": p.V3_O_CHANGE}, NbVersionError),
+    (["action", "value"], {"data": p.V4_O_CHANGE}, "update"),
+    (["action", "value"], {"version": "4.1", "data": p.V3_O_CHANGE}, "update"),
+    (["action", "value"], {"version": "4.1", "data": p.V4_O_CHANGE}, "update"),
+    (["action", "value"], {"version": "4.2", "data": p.V3_O_CHANGE}, NbVersionError),
+    (["action", "value"], {"version": "4.2", "data": p.V4_O_CHANGE}, "update"),
 
     # extras/object-changes.prechange_data.last_updated v3.5
-    (["prechange_data", "last_updated"], {"data": p.V3_OBJECT_CHANGE}, NbVersionError),
-    (["prechange_data", "last_updated"], {"data": p.V4_OBJECT_CHANGE}, ""),
-    (["prechange_data", "last_updated"], {"version": "4.1", "data": p.V3_OBJECT_CHANGE}, p.UPDATED),
-    (["prechange_data", "last_updated"], {"version": "4.1", "data": p.V4_OBJECT_CHANGE}, ""),
-    (["prechange_data", "last_updated"], {"version": "4.2", "data": p.V3_OBJECT_CHANGE}, NbVersionError),
-    (["prechange_data", "last_updated"], {"version": "4.2", "data": p.V4_OBJECT_CHANGE}, ""),
+    (["prechange_data", "last_updated"], {"data": p.V3_O_CHANGE}, NbVersionError),
+    (["prechange_data", "last_updated"], {"data": p.V4_O_CHANGE}, ""),
+    (["prechange_data", "last_updated"], {"version": "4.1", "data": p.V3_O_CHANGE}, p.UPDATED),
+    (["prechange_data", "last_updated"], {"version": "4.1", "data": p.V4_O_CHANGE}, ""),
+    (["prechange_data", "last_updated"], {"version": "4.2", "data": p.V3_O_CHANGE}, NbVersionError),
+    (["prechange_data", "last_updated"], {"version": "4.2", "data": p.V4_O_CHANGE}, ""),
     # core/object-changes.prechange_data.last_updated v4.2
-    (["prechange_data", "last_updated"], {"data": p.V3_OBJECT_CHANGE}, NbVersionError),
-    (["prechange_data", "last_updated"], {"data": p.V4_OBJECT_CHANGE}, ""),
-    (["prechange_data", "last_updated"], {"version": "4.1", "data": p.V3_OBJECT_CHANGE}, p.UPDATED),
-    (["prechange_data", "last_updated"], {"version": "4.1", "data": p.V4_OBJECT_CHANGE}, ""),
-    (["prechange_data", "last_updated"], {"version": "4.2", "data": p.V3_OBJECT_CHANGE}, NbVersionError),
-    (["prechange_data", "last_updated"], {"version": "4.2", "data": p.V4_OBJECT_CHANGE}, ""),
+    (["prechange_data", "last_updated"], {"data": p.V3_O_CHANGE}, NbVersionError),
+    (["prechange_data", "last_updated"], {"data": p.V4_O_CHANGE}, ""),
+    (["prechange_data", "last_updated"], {"version": "4.1", "data": p.V3_O_CHANGE}, p.UPDATED),
+    (["prechange_data", "last_updated"], {"version": "4.1", "data": p.V4_O_CHANGE}, ""),
+    (["prechange_data", "last_updated"], {"version": "4.2", "data": p.V3_O_CHANGE}, NbVersionError),
+    (["prechange_data", "last_updated"], {"version": "4.2", "data": p.V4_O_CHANGE}, ""),
 
     # tenancy/contacts.group.name v3.5
     (["group", "name"], {"data": p.V3_CONTACT}, NbVersionError),
@@ -730,8 +730,8 @@ def test__str__deprecated(caplog, nbp, keys: LStr, params, expected):
     ("napalm_driver", {"data": p.V3_PLATFORM}, NbVersionError),
     ("napalm_driver", {"data": p.V4_PLATFORM}, NbVersionError),
     # extras/object-changes moved to core/object-changes
-    ("prechange_data", {"data": p.V3_OBJECT_CHANGE}, NbVersionError),
-    ("prechange_data", {"data": p.V4_OBJECT_CHANGE}, []),
+    ("prechange_data", {"data": p.V3_O_CHANGE}, NbVersionError),
+    ("prechange_data", {"data": p.V4_O_CHANGE}, []),
 ])
 def test__raise_deprecated_key(caplog, nbp, key, params, expected):
     """NbParser._raise_deprecated_key()"""

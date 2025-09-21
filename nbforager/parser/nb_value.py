@@ -524,9 +524,9 @@ class NbValue(NbParser):
         address: str = self.str("primary_ip", "address")
         if self.strict:
             if not address:
-                raise NbParserError(f"primary_ip/address is required.")
+                raise NbParserError("primary_ip/address is required.")
             if re.match(RE_IP, address) and not re.fullmatch(RE_PREFIX, address):
-                    raise NbParserError(f"primary_ip/address expected format A.B.C.D/LEN.")
+                raise NbParserError("primary_ip/address expected format A.B.C.D/LEN.")
         return address
 
     def primary_ip_family(self) -> int:
@@ -540,17 +540,17 @@ class NbValue(NbParser):
         # Netbox < v4.2
         if isinstance(family, int):
             if self.strict and not family:
-                raise NbParserError(f"primary_ip/family is required.")
+                raise NbParserError("primary_ip/family is required.")
             return family
         # Netbox >= v4.2
         if isinstance(family, dict):
             family_ = int(family.get("value") or 0)
             if self.strict and not family_:
-                raise NbParserError(f"primary_ip/family/value is required.")
+                raise NbParserError("primary_ip/family/value is required.")
             return family_
         # undefined
         if self.strict:
-            raise NbParserError(f"primary_ip/family is required.")
+            raise NbParserError("primary_ip/family is required.")
         return 0
 
     def primary_ip4_address(self) -> str:
@@ -563,9 +563,9 @@ class NbValue(NbParser):
         address: str = self.str("primary_ip4", "address")
         if self.strict:
             if not address:
-                raise NbParserError(f"primary_ip4/address is required.")
+                raise NbParserError("primary_ip4/address is required.")
             if not re.fullmatch(RE_PREFIX, address):
-                raise NbParserError(f"primary_ip4/address expected format A.B.C.D/LEN.")
+                raise NbParserError("primary_ip4/address expected format A.B.C.D/LEN.")
         return address
 
     def primary_ip4_family(self) -> int:
@@ -579,17 +579,17 @@ class NbValue(NbParser):
         # Netbox < v4.2
         if isinstance(family, int):
             if self.strict and not family:
-                raise NbParserError(f"primary_ip4/family is required.")
+                raise NbParserError("primary_ip4/family is required.")
             return family
         # Netbox >= v4.2
         if isinstance(family, dict):
             family_ = int(family.get("value") or 0)
             if self.strict and not family_:
-                raise NbParserError(f"primary_ip4/family/value is required.")
+                raise NbParserError("primary_ip4/family/value is required.")
             return family_
         # undefined
         if self.strict:
-            raise NbParserError(f"primary_ip4/family is required.")
+            raise NbParserError("primary_ip4/family is required.")
         return 0
 
     @check_strict
@@ -939,7 +939,7 @@ class NbValue(NbParser):
             return bool(re.search(f"/api/dcim/{key}/", self.data["url"]))
         except (KeyError, TypeError) as ex:
             if self.strict:
-                raise NbParserError(f"Invalid url, expected /api/dcim/.") from ex
+                raise NbParserError("Invalid url, expected /api/dcim/.") from ex
             return False
 
     def is_ipam(self, key: str) -> bool:
@@ -955,7 +955,7 @@ class NbValue(NbParser):
             return bool(re.search(f"/api/ipam/{key}/", self.data["url"]))
         except (KeyError, TypeError) as ex:
             if self.strict:
-                raise NbParserError(f"Invalid url, expected /api/ipam/.") from ex
+                raise NbParserError("Invalid url, expected /api/ipam/.") from ex
             return False
 
     def is_virtualization(self, key: str) -> bool:
@@ -970,7 +970,7 @@ class NbValue(NbParser):
             return bool(re.search(f"/api/virtualization/{key}/", self.data["url"]))
         except (KeyError, TypeError) as ex:
             if self.strict:
-                raise NbParserError(f"Invalid url, expected /api/virtualization/.") from ex
+                raise NbParserError("Invalid url, expected /api/virtualization/.") from ex
             return False
 
     def is_vrf(self) -> bool:
