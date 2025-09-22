@@ -4,6 +4,12 @@
 CHANGELOG
 =========
 
+1.0.7 (2025-09-22)
+------------------
+
+**Changed:** NbCustom raise NotImplementedError("todo move to nbapi")
+
+
 1.0.6 (2025-09-21)
 ------------------
 

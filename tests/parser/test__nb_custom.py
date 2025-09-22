@@ -15,6 +15,7 @@ def nbc(params: DAny) -> NbCustom:
     return NbCustom(**params)
 
 
+@pytest.mark.skip(reason="todo move to nbapi")
 @pytest.mark.parametrize("params, expected", [
     ({"data": {}}, []),
     ({"data": {"custom_fields": {}}}, []),
@@ -30,6 +31,7 @@ def test__cf_recommended_vlans(nbc, params, expected):
     assert actual == expected
 
 
+@pytest.mark.skip(reason="todo move to nbapi")
 @pytest.mark.parametrize("params, expected", [
     ({"data": {}}, False),
     ({"data": {"custom_fields": {}}}, False),
@@ -44,6 +46,7 @@ def test__cf_required_env(nbc, params, expected: Any):
     assert actual == expected
 
 
+@pytest.mark.skip(reason="todo move to nbapi")
 @pytest.mark.parametrize("params, expected", [
     ({"data": {}}, NbParserError),
     ({"data": {"name": ""}}, NbParserError),
@@ -59,6 +62,7 @@ def test__name(nbc, params, expected: Any):
             nbc.name()
 
 
+@pytest.mark.skip(reason="todo move to nbapi")
 @pytest.mark.parametrize("params, expected", [
     ({"data": p.PLATFORM}, "cisco_ios"),
     ({"data": p.PLATFORM_W_VALID_NAME}, "cisco_ios"),
@@ -81,6 +85,7 @@ def test__platform_slug(nbc, params, expected: Any):
             nbc.platform_slug()
 
 
+@pytest.mark.skip(reason="todo move to nbapi")
 @pytest.mark.parametrize("params, expected", p.HOSTS_IN_CF_FIREWALLS)
 def test__hosts_in_cf_firewalls(nbc, params, expected):
     """NbCustom._hosts_in_cf_firewalls()."""
@@ -88,6 +93,7 @@ def test__hosts_in_cf_firewalls(nbc, params, expected):
     assert actual == expected
 
 
+@pytest.mark.skip(reason="todo move to nbapi")
 @pytest.mark.parametrize("params, expected", p.HOSTS_IN_AGGR_DESCR)
 def test__hosts_in_aggr_descr(nbc, params, expected):
     """NbCustom._hosts_in_aggr_descr()."""
@@ -99,6 +105,7 @@ def test__hosts_in_aggr_descr(nbc, params, expected):
             nbc._hosts_in_aggr_descr()
 
 
+@pytest.mark.skip(reason="todo move to nbapi")
 @pytest.mark.parametrize("params, expected", p.FIREWALLS__IN_AGGREGATE)
 def test__firewalls__in_aggregate(nbc, params, expected):
     """NbCustom.firewalls__in_aggregate()."""

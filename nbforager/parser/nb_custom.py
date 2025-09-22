@@ -26,19 +26,23 @@ class NbCustom(NbValue):
 
     def cf_cloud_account(self) -> str:
         """ipam/aggregates/custom_fields/cloud_account/label."""
+        raise NotImplementedError("todo move to nbapi")
         return self.str("custom_fields", "cloud_account")
 
     def cf_end_of_support(self) -> str:
         """dcim/devices/custom_fields/end_of_support/value."""
+        raise NotImplementedError("todo move to nbapi")
         cf_value = self.str("custom_fields", "end_of_support").strip()
         return cf_value
 
     def cf_env(self) -> str:
         """ipam/prefixes/custom_fields/env/label."""
+        raise NotImplementedError("todo move to nbapi")
         return self.str("custom_fields", "env")
 
     def cf_recommended_vlans(self) -> LInt:
         """ipam/roles/custom_fields/recommended_vlans."""
+        raise NotImplementedError("todo move to nbapi")
         value = self.str("custom_fields", "recommended_vlans")
         vids: LInt = [int(s) for s in value.split(",") if s]
         vids = [i for i in vids if i]
@@ -47,10 +51,12 @@ class NbCustom(NbValue):
 
     def cf_required_env(self) -> bool:
         """ipam/roles/custom_fields/required_env."""
+        raise NotImplementedError("todo move to nbapi")
         return self.bool("custom_fields", "required_env")
 
     def cf_super_aggr(self) -> T2Str:
         """ipam/aggregates/custom_fields/super_aggregate/value."""
+        raise NotImplementedError("todo move to nbapi")
         value = self.str("custom_fields", "super_aggregate")
         value = value.strip()
         prefix, descr = vre.find2(f"^({RE_PREFIX})(.*)", value)
@@ -58,10 +64,12 @@ class NbCustom(NbValue):
 
     def cf_sw_planned(self) -> str:
         """dcim/devices/device-types/custom_fields/sw_planned."""
+        raise NotImplementedError("todo move to nbapi")
         return self.str("custom_fields", "sw_planned")
 
     def cf_sw_version(self) -> str:
         """dcim/devices/custom_fields/sw_version."""
+        raise NotImplementedError("todo move to nbapi")
         return self.str("custom_fields", "sw_version")
 
     # ========================= specific values ==========================
@@ -73,6 +81,7 @@ class NbCustom(NbValue):
 
         :raise NbParserError: if object has no name.
         """
+        raise NotImplementedError("todo move to nbapi")
         strict_actual = self.strict
         self.strict = True
         name = super().name()
@@ -81,6 +90,7 @@ class NbCustom(NbValue):
 
     def overlapped(self) -> str:
         """ipam/prefixes/overlapped."""
+        raise NotImplementedError("todo move to nbapi")
         return self.str("overlapped")
 
     def platform_slug(self) -> str:
@@ -90,6 +100,7 @@ class NbCustom(NbValue):
 
         :raise NbParserError: if device has no: hostname, version platform.
         """
+        raise NotImplementedError("todo move to nbapi")
         strict_actual = self.strict
         self.strict = True
         _ = self.is_dcim("devices")
@@ -107,6 +118,7 @@ class NbCustom(NbValue):
 
     def firewalls__in_aggregate(self) -> SStr:
         """aggregates/custom_fields/ or description."""
+        raise NotImplementedError("todo move to nbapi")
         if hostnames := self._hosts_in_cf_firewalls():
             return hostnames
         if hostnames := self._hosts_in_aggr_descr():
