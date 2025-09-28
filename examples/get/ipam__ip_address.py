@@ -21,7 +21,7 @@ objects = nb.ipam.ip_addresses.get(tag="tag1")
 objects = nb.ipam.ip_addresses.get(or_tag=["tag1", "tag2"])
 
 # Attributes
-objects = nb.ipam.ip_addresses.get(parent=["10.112.0.0/16", "172.16.0.0/24"])
+objects = nb.ipam.ip_addresses.get(parent=["10.112.0.0/16", "172.16.0.0/24"])  # prefix, aggregate
 objects = nb.ipam.ip_addresses.get(family=[4, 6])
 objects = nb.ipam.ip_addresses.get(status=["active", "reserved"])
 objects = nb.ipam.ip_addresses.get(role=["secondary", "hsrp"])
