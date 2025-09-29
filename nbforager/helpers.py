@@ -1,10 +1,12 @@
 """Helper functions."""
 
 import itertools
+import re
 from copy import deepcopy
 from typing import Any
 from urllib.parse import ParseResult, urlencode, urlparse, parse_qs
 
+import unicodedata
 from vhelpers import vlist, vparam
 
 from nbforager.constants import DEPENDENT_MODELS
@@ -375,3 +377,20 @@ def generate_offsets(count: int, limit: int, params_d: DAny, /) -> LDAny:
         count -= limit_
 
     return params
+
+
+def to_slug(name: str) -> str:
+    """Convert a NetBox object name to a slug.
+
+    - Lowercase all characters
+    - Replace spaces/underscores with hyphens
+    - Remove non-ASCII characters entirely (e.g., Å, ö)
+    - Remove invalid characters (only [a-z0-9-] remain)
+    - Preserve multiple/leading/trailing hyphens
+    """
+    value = name.lower().strip()  # Lowercase
+    value = re.sub(r"[^\x00-\x7f]", "", value)  # Remove all non-ascii characters
+    value = re.sub(r"\s+", "-", value)  # Replace spaces with hyphens
+    value = re.sub(r"[^a-z0-9-_]", "", value)  # Remove everything except allowed
+    value = re.sub(r"-{2,}", "-", value)  # Collapse multiple hyphens
+    return value

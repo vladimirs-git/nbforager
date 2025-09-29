@@ -2,6 +2,7 @@
 import logging
 
 from nbforager import NbApi
+from nbforager import helpers as h
 
 # Enable logging DEBUG mode
 logging.getLogger().setLevel(logging.DEBUG)
@@ -53,11 +54,6 @@ PREFIX1 = "10.1.1.0/24"
 PREFIX2 = "10.2.2.0/28"
 
 
-def slug(name):
-    """Create the slug based on the name."""
-    return "-".join(name.lower().split())
-
-
 # noinspection DuplicatedCode
 def create__circuits__circuit_terminations():
     """Create /circuits/circuit-terminations objects."""
@@ -99,14 +95,14 @@ def create__circuits__circuit_types():
         if not nb.circuits.circuit_types.get(name=name):
             response = nb.circuits.circuit_types.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.circuits.circuit_types.update(
             id=nb.circuits.circuit_types.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             description=f"{DESCRIPTION}{idx}",
             tags=[nb.extras.tags.get(name=f"{TAG}{idx}")[0]["id"]],
         )
@@ -208,14 +204,14 @@ def create__circuits__providers():
         if not nb.circuits.providers.get(name=name):
             response = nb.circuits.providers.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.circuits.providers.update(
             id=nb.circuits.providers.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             asns=[nb.ipam.asns.get(asn=65100 + idx)[0]["id"]],
             description=f"{DESCRIPTION}{idx}",
             tags=[nb.extras.tags.get(name=f"{TAG}{idx}")[0]["id"]],
@@ -233,14 +229,14 @@ def create__dcim__device_roles():
         if not nb.dcim.device_roles.get(name=name):
             response = nb.dcim.device_roles.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.dcim.device_roles.update(
             id=nb.dcim.device_roles.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             color="aa1409",  # dark red
             vm_role=False,
             # Config template,
@@ -266,7 +262,7 @@ def create__dcim__device_types():
             response = nb.dcim.device_types.create(
                 manufacturer=nb.dcim.manufacturers.get(name=f"{MANUFACTURER}{idx}")[0]["id"],
                 model=model,
-                slug=slug(model),
+                slug=h.to_slug(model),
             )
             print(response)
 
@@ -275,7 +271,7 @@ def create__dcim__device_types():
             id=nb.dcim.device_types.get(model=model)[0]["id"],
             manufacturer=nb.dcim.manufacturers.get(name=f"{MANUFACTURER}{idx}")[0]["id"],
             model=model,
-            slug=slug(model),
+            slug=h.to_slug(model),
             # default_platform=id,
             description=f"{DESCRIPTION}{idx}",
             tags=[nb.extras.tags.get(name=f"{TAG}{idx}")[0]["id"]],
@@ -542,14 +538,14 @@ def create__dcim__platforms():
         if not nb.dcim.platforms.get(name=name):
             response = nb.dcim.platforms.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.dcim.platforms.update(
             id=nb.dcim.platforms.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             manufacturer=nb.dcim.manufacturers.get(name=f"{MANUFACTURER}{idx}")[0]["id"],
             # Config template,
             description=f"{DESCRIPTION}{idx}",
@@ -567,7 +563,7 @@ def create__dcim__locations():
             response = nb.dcim.locations.create(
                 site=nb.dcim.sites.get(name=f"{SITE}{idx}")[0]["id"],
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
@@ -575,7 +571,7 @@ def create__dcim__locations():
             id=nb.dcim.locations.get(name=name)[0]["id"],
             site=nb.dcim.sites.get(name=f"{SITE}{idx}")[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             status="active",
             description=f"{DESCRIPTION}{idx}",
             tags=[nb.extras.tags.get(name=f"{TAG}{idx}")[0]["id"]],
@@ -603,14 +599,14 @@ def create__dcim__manufacturers():
         if not nb.dcim.manufacturers.get(name=name):
             response = nb.dcim.manufacturers.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.dcim.manufacturers.update(
             id=nb.dcim.manufacturers.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             description=f"{DESCRIPTION}{idx}",
             tags=[nb.extras.tags.get(name=f"{TAG}{idx}")[0]["id"]],
         )
@@ -625,14 +621,14 @@ def create__dcim__rack_roles():
         if not nb.dcim.rack_roles.get(name=name):
             response = nb.dcim.rack_roles.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.dcim.rack_roles.update(
             id=nb.dcim.rack_roles.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             color="aa1409",  # dark red
             description=f"{DESCRIPTION}{idx}",
             tags=[nb.extras.tags.get(name=f"{TAG}{idx}")[0]["id"]],
@@ -692,14 +688,14 @@ def create__dcim__regions():
         if not nb.dcim.regions.get(name=name):
             response = nb.dcim.regions.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.dcim.regions.update(
             id=nb.dcim.regions.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             description=f"{DESCRIPTION}{idx}",
             tags=[nb.extras.tags.get(name=f"{TAG}{idx}")[0]["id"]],
         )
@@ -721,14 +717,14 @@ def create__dcim__site_groups():
         if not nb.dcim.site_groups.get(name=name):
             response = nb.dcim.site_groups.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.dcim.site_groups.update(
             id=nb.dcim.site_groups.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             description=f"{DESCRIPTION}{idx}",
             tags=[nb.extras.tags.get(name=f"{TAG}{idx}")[0]["id"]],
         )
@@ -750,14 +746,14 @@ def create__dcim__sites():
         if not nb.dcim.sites.get(name=name):
             response = nb.dcim.sites.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.dcim.sites.update(
             id=nb.dcim.sites.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             status="active",
             region=nb.dcim.regions.get(name=f"{REGION}{idx}")[0]["id"],
             group=nb.dcim.site_groups.get(name=f"{SITE_GROUP}{idx}")[0]["id"],
@@ -831,14 +827,14 @@ def create__extras__tags():
         if not nb.extras.tags.get(name=name):
             response = nb.extras.tags.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.extras.tags.update(
             id=nb.extras.tags.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             color="aa1409",  # dark red
             description=f"{DESCRIPTION}{idx}",
             # object_types=["circuits.circuit"],
@@ -883,7 +879,7 @@ def create__ipam__asn_ranges():
         if not nb.ipam.asn_ranges.get(name=name):
             response = nb.ipam.asn_ranges.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
                 rir=nb.ipam.rirs.get(name="RFC 6996")[0]["id"],
                 start=65000 + (100 * idx) + 1,
                 end=65000 + (100 * idx) + 3,
@@ -893,7 +889,7 @@ def create__ipam__asn_ranges():
         response = nb.ipam.asn_ranges.update(
             id=nb.ipam.asn_ranges.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             rir=nb.ipam.rirs.get(name="RFC 6996")[0]["id"],
             start=65000 + (100 * idx) + 1,
             end=65000 + (100 * idx) + 3,
@@ -1014,14 +1010,14 @@ def create__ipam__rirs():
         if not nb.ipam.rirs.get(name=name):
             response = nb.ipam.rirs.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.ipam.rirs.update(
             id=nb.ipam.rirs.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             # description=f"{DESCRIPTION}{idx}",
             tags=[nb.extras.tags.get(name=f"{TAG}{idx}")[0]["id"]],
         )
@@ -1062,14 +1058,14 @@ def create__ipam__roles():
         if not nb.ipam.roles.get(name=name):
             response = nb.ipam.roles.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.ipam.roles.update(
             id=nb.ipam.roles.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             weight=1000 + idx,
             description=f"{DESCRIPTION}{idx}",
             tags=[nb.extras.tags.get(name=f"{TAG}{idx}")[0]["id"]],
@@ -1085,14 +1081,14 @@ def create__ipam__vlan_groups():
         if not nb.ipam.vlan_groups.get(name=name):
             response = nb.ipam.vlan_groups.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.ipam.vlan_groups.update(
             id=nb.ipam.vlan_groups.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             description=f"{DESCRIPTION}{idx}",
             tags=[nb.extras.tags.get(name=f"{TAG}{idx}")[0]["id"]],
 
@@ -1178,14 +1174,14 @@ def create__tenancy__tenant_groups():
         if not nb.tenancy.tenant_groups.get(name=name):
             response = nb.tenancy.tenant_groups.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.tenancy.tenant_groups.update(
             id=nb.tenancy.tenant_groups.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             description=f"{DESCRIPTION}{idx}",
             tags=[nb.extras.tags.get(name=f"{TAG}{idx}")[0]["id"]],
         )
@@ -1207,14 +1203,14 @@ def create__tenancy__tenants():
         if not nb.tenancy.tenants.get(name=name):
             response = nb.tenancy.tenants.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.tenancy.tenants.update(
             id=nb.tenancy.tenants.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             group=nb.tenancy.tenant_groups.get(name=f"{TENANT_GROUP}{idx}")[0]["id"],
             description=f"{DESCRIPTION}{idx}",
             tags=[nb.extras.tags.get(name=f"{TAG}{idx}")[0]["id"]],
@@ -1232,14 +1228,14 @@ def create__virtualization__cluster_groups():
         if not nb.virtualization.cluster_groups.get(name=name):
             response = nb.virtualization.cluster_groups.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.virtualization.cluster_groups.update(
             id=nb.virtualization.cluster_groups.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             description=f"{DESCRIPTION}{idx}",
             tags=[nb.extras.tags.get(name=f"{TAG}{idx}")[0]["id"]],
         )
@@ -1254,14 +1250,14 @@ def create__virtualization__cluster_types():
         if not nb.virtualization.cluster_types.get(name=name):
             response = nb.virtualization.cluster_types.create(
                 name=name,
-                slug=slug(name),
+                slug=h.to_slug(name),
             )
             print(response)
 
         response = nb.virtualization.cluster_types.update(
             id=nb.virtualization.cluster_types.get(name=name)[0]["id"],
             name=name,
-            slug=slug(name),
+            slug=h.to_slug(name),
             description=f"{DESCRIPTION}{idx}",
             tags=[nb.extras.tags.get(name=f"{TAG}{idx}")[0]["id"]],
         )

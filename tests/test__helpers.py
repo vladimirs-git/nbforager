@@ -191,3 +191,19 @@ def test__generate_offsets(count: int, limit: int, params_d, expected: Any):
     else:
         with pytest.raises(expected):
             helpers.generate_offsets(count, limit, params_d)
+
+
+@pytest.mark.parametrize("name, expected", [
+    ("LowerCase", "lowercase"),  # lowercase
+    ("__under___score__", "__under___score__"),  # lowercase
+    ("  multiple   spaces  ", "multiple-spaces"),  # spaces
+    ("^special!!chars$", "specialchars"),  # special chars
+    ("Ångström", "ngstrm"),  # unicode
+    ("---name---with--hyphen--", "-name-with-hyphen-"),  # multiple hyphens
+    ("  -Trim- Hyphens-  ", "-trim-hyphens-"),  # hyphens and spaces
+    ("", ""),  # empty string
+])
+def test__to_slug(name, expected):
+    """helpers.to_slug()."""
+    actual = helpers.to_slug(name)
+    assert actual == expected
