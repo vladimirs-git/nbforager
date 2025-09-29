@@ -294,8 +294,7 @@ class BaseC:
 
         count = 0
         if response.ok:
-            html: str = response.content.decode("utf-8")
-            data: DAny = json.loads(html)
+            data: DAny = helpers.decode_response_d(response)
             count = int(data["count"])
 
         result = {"count": count, "params_d": params_d}
@@ -326,8 +325,7 @@ class BaseC:
             if not response.ok:
                 break
 
-            html: str = response.content.decode("utf-8")
-            data: DAny = json.loads(html)
+            data: DAny = helpers.decode_response_d(response)
             results_: LDAny = list(data["results"])
             results.extend(results_)
 
@@ -364,8 +362,7 @@ class BaseC:
         if not response.ok:
             return
 
-        html: str = response.content.decode("utf-8")
-        data: DAny = json.loads(html)
+        data: DAny = helpers.decode_response_d(response)
         results_: LDAny = list(data["results"])
         self._results.extend(results_)
 
@@ -451,8 +448,7 @@ class BaseC:
         """
         response: Response = self._retry_requests(url=self.url)
         if response.ok:
-            html: str = response.content.decode("utf-8")
-            return dict(json.loads(html))
+            return helpers.decode_response_d(response)
 
         # error
         msg = self._msg_status_code(response)
@@ -467,8 +463,7 @@ class BaseC:
         """
         response: Response = self._retry_requests(url=self.url)
         if response.ok:
-            html: str = response.content.decode("utf-8")
-            return list(json.loads(html))
+            return helpers.decode_response_l(response)
 
         # error
         msg = self._msg_status_code(response)

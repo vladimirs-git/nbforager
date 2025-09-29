@@ -4,10 +4,10 @@
 CHANGELOG
 =========
 
-1.0.9 (2025-09-29)
-------------------
+1.0.10 (2025-09-29)
+-------------------
 
-**Added:** make_slug() decode_object()
+**Added:** make_slug() decode_response_d() decode_response_l()
 
 
 1.0.7 (2025-09-22)

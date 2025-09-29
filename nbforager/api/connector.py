@@ -8,6 +8,7 @@ from typing import Generator
 from requests import Response
 from vhelpers import vdict
 
+from nbforager import helpers
 from nbforager.api.base_c import BaseC
 from nbforager.types_ import DAny, LDAny, LDList
 
@@ -52,9 +53,7 @@ class Connector(BaseC):
         response: Response = self.create(**kwargs)
         if not response.status_code == 201:
             return {}
-        html: str = response.content.decode("utf-8")
-        data: DAny = dict(json.loads(html))
-        return data
+        return helpers.decode_response_d(response)
 
     # noinspection PyShadowingBuiltins
     def delete(self, id: int) -> Response:  # pylint: disable=redefined-builtin
@@ -174,9 +173,7 @@ class Connector(BaseC):
         response: Response = self.update(**kwargs)
         if not response.status_code == 200:
             return {}
-        html: str = response.content.decode("utf-8")
-        data: DAny = dict(json.loads(html))
-        return data
+        return helpers.decode_response_d(response)
 
 
 GConnector = Generator[Connector, None, None]

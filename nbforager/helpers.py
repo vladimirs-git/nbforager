@@ -12,23 +12,28 @@ from vhelpers import vlist, vparam
 
 from nbforager.constants import DEPENDENT_MODELS
 from nbforager.types_ import LStr, LDAny, LValue, LParam, LDList, DList, DLStr, ODLStr, DDDLInt
-from nbforager.types_ import LTInt2, DAny, SeqStr, SStr, TValues, TLists, DiDAny
+from nbforager.types_ import LTInt2, DAny, SeqStr, SStr, TValues, TLists
 
 
-def decode_object(response: Response) -> DiDAny:
-    """Decode Netbox object from API response.
+def decode_response_d(response: Response) -> DAny:
+    """Decode Netbox object as a dictionary from API response.
 
     :param response: Response object received from the Netbox API.
-    :return: Dictionary with object ID as key and object data as value.
+    :return: Decoded object as a dictionary.
     """
     html: str = response.content.decode("utf-8")
     data: DAny = dict(json.loads(html))
-    id_ = data.get("id")
-    if id_ is None:
-        return {}
-    if not isinstance(id_, int):
-        raise TypeError(f"{id_=}, int expected")
-    return {id_: data}
+    return data
+
+def decode_response_l(response: Response) -> LDAny:
+    """Decode Netbox object as a list from API response.
+
+    :param response: Response object received from the Netbox API.
+    :return: Decoded objects as a list.
+    """
+    html: str = response.content.decode("utf-8")
+    items: LDAny = list(json.loads(html))
+    return items
 
 
 def dependency_ordered_paths(dependency: ODLStr = None) -> LStr:
