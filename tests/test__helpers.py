@@ -1,12 +1,39 @@
 """Tests helpers.py."""
+import json
 from typing import Any
 from urllib.parse import urlencode
 
+import dictdiffer
 import pytest
+from requests import Response
 
 from nbforager import helpers
+from nbforager.types_ import DAny
 from tests import params__helpers as p
 
+@pytest.fixture
+def response_201(params: DAny):
+    """Fixture that builds a fake requests.Response with JSON content."""
+    response_ = Response()
+    response_._content = json.dumps(params).encode("utf-8")
+    response_.status_code = 201
+    return response_
+
+@pytest.mark.parametrize("params, expected", [
+    ({"id": 1, "name": "NAME"}, {1: {"id": 1, "name": "NAME"}}),
+    ({}, {}),
+    ({"id": "1", "name": "NAME"}, TypeError),
+])
+def test__decode_object(response_201, params, expected):
+    """helpers.decode_object()."""
+    if isinstance(expected, dict):
+        actual = helpers.decode_object(response_201)
+
+        diff = list(dictdiffer.diff(actual, expected))
+        assert not diff
+    else:
+        with pytest.raises(expected):
+            helpers.decode_object(response_201)
 
 @pytest.mark.parametrize("dependency, expected", [
     (helpers.DEPENDENT_MODELS, p.ORDERED_MODELS),

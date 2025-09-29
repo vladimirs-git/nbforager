@@ -1,17 +1,34 @@
 """Helper functions."""
 
 import itertools
+import json
 import re
 from copy import deepcopy
 from typing import Any
 from urllib.parse import ParseResult, urlencode, urlparse, parse_qs
 
-import unicodedata
+from requests import Response
 from vhelpers import vlist, vparam
 
 from nbforager.constants import DEPENDENT_MODELS
 from nbforager.types_ import LStr, LDAny, LValue, LParam, LDList, DList, DLStr, ODLStr, DDDLInt
-from nbforager.types_ import LTInt2, DAny, SeqStr, SStr, TValues, TLists
+from nbforager.types_ import LTInt2, DAny, SeqStr, SStr, TValues, TLists, DiDAny
+
+
+def decode_object(response: Response) -> DiDAny:
+    """Decode Netbox object from API response.
+
+    :param response: Response object received from the Netbox API.
+    :return: Dictionary with object ID as key and object data as value.
+    """
+    html: str = response.content.decode("utf-8")
+    data: DAny = dict(json.loads(html))
+    id_ = data.get("id")
+    if id_ is None:
+        return {}
+    if not isinstance(id_, int):
+        raise TypeError(f"{id_=}, int expected")
+    return {id_: data}
 
 
 def dependency_ordered_paths(dependency: ODLStr = None) -> LStr:
