@@ -23,40 +23,40 @@ class NbValue(NbParser):
 
     @check_strict
     def a_terminations(self) -> list:
-        """dcim/cables/a_terminations."""
+        """dcim/cables.a_terminations."""
         return self.list("a_terminations")
 
     @check_strict
     def a_terminations_object_circuit_cid(self) -> LStr:
-        """dcim/cables/a_terminations/0/object/circuit/cid."""
+        """dcim/cables.a_terminations.0.object.circuit.cid."""
         items: LDAny = self.list("a_terminations")
         values: LStr = [str(d["object"]["circuit"]["cid"]) for d in items]
         return values
 
     @check_strict
     def a_terminations_object_circuit_id(self) -> LInt:
-        """dcim/cables/a_terminations/0/object/circuit/id."""
+        """dcim/cables.a_terminations.0.object.circuit.id."""
         items: LDAny = self.list("a_terminations")
         values: LInt = [int(d["object"]["circuit"]["id"]) for d in items]
         return values
 
     @check_strict
     def a_terminations_object_cable(self) -> LInt:
-        """dcim/cables/a_terminations/0/object/cable."""
+        """dcim/cables.a_terminations.0.object.cable."""
         items: LDAny = self.list("a_terminations")
         values: LInt = [int(d["object"]["cable"]) for d in items]
         return values
 
     @check_strict
     def a_terminations_object_id(self) -> LInt:
-        """dcim/cables/a_terminations/0/object/id."""
+        """dcim/cables.a_terminations.0.object.id."""
         items: LDAny = self.list("a_terminations")
         values: LInt = [int(d["object"]["id"]) for d in items]
         return values
 
     @check_strict
     def a_terminations_object_term_side(self) -> LStr:
-        """dcim/cables/a_terminations/0/object/term_side."""
+        """dcim/cables.a_terminations.0.object.term_side."""
         items: LDAny = self.list("a_terminations")
         values: LStr = [str(d["object"]["term_side"]) for d in items]
         return values
@@ -69,53 +69,58 @@ class NbValue(NbParser):
         return values
 
     def address(self) -> str:
-        """ipam/ip-addresses/address."""
+        """ipam/ip-addresses.address."""
         address = self.str("address")
         if self.strict and not re.fullmatch(RE_PREFIX, address):
             raise NbParserError(f"address A.B.C.D/LEN expected in {self.data}.")
         return address
 
     @check_strict
+    def asn(self) -> str:
+        """ipam/asns.asn."""
+        return self.str("assigned_object", "device", "name")
+
+    @check_strict
     def assigned_device_name(self) -> str:
-        """ipam/ip-addresses/assigned_object/device/name."""
+        """ipam/ip-addresses.assigned_object.device.name."""
         return self.str("assigned_object", "device", "name")
 
     @check_strict
     def b_terminations(self) -> list:
-        """dcim/cables/b_terminations."""
+        """dcim/cables.b_terminations."""
         return self.list("b_terminations")
 
     @check_strict
     def b_terminations_object_circuit_cid(self) -> LStr:
-        """dcim/cables/b_terminations/0/object/circuit/cid."""
+        """dcim/cables.b_terminations.0.object.circuit.cid."""
         items: LDAny = self.list("b_terminations")
         values: LStr = [str(d["object"]["circuit"]["cid"]) for d in items]
         return values
 
     @check_strict
     def b_terminations_object_circuit_id(self) -> LInt:
-        """dcim/cables/b_terminations/0/object/circuit/id."""
+        """dcim/cables.b_terminations.0.object.circuit.id."""
         items: LDAny = self.list("b_terminations")
         values: LInt = [int(d["object"]["circuit"]["id"]) for d in items]
         return values
 
     @check_strict
     def b_terminations_object_cable(self) -> LInt:
-        """dcim/cables/b_terminations/0/object/cable."""
+        """dcim/cables.b_terminations.0.object.cable."""
         items: LDAny = self.list("b_terminations")
         values: LInt = [int(d["object"]["cable"]) for d in items]
         return values
 
     @check_strict
     def b_terminations_object_id(self) -> LInt:
-        """dcim/cables/b_terminations/0/object/id."""
+        """dcim/cables.b_terminations.0.object.id."""
         items: LDAny = self.list("b_terminations")
         values: LInt = [int(d["object"]["id"]) for d in items]
         return values
 
     @check_strict
     def b_terminations_object_term_side(self) -> LStr:
-        """dcim/cables/b_terminations/0/object/term_side."""
+        """dcim/cables.b_terminations.0.object.term_side."""
         items: LDAny = self.list("b_terminations")
         values: LStr = [str(d["object"]["term_side"]) for d in items]
         return values
@@ -129,67 +134,67 @@ class NbValue(NbParser):
 
     @check_strict
     def cable_id(self) -> int:
-        """circuits/circuit-terminations/cable/id."""
+        """circuits/circuit-terminations.cable.id."""
         return self.int("cable", "id")
 
     @check_strict
     def cable_display(self) -> str:
-        """circuits/circuit-terminations/cable/display."""
+        """circuits/circuit-terminations.cable.display."""
         return self.str("cable", "display")
 
     @check_strict
     def cable_end(self) -> str:
-        """circuits/circuit-terminations/cable_end."""
+        """circuits/circuit-terminations.cable_end."""
         return self.str("cable_end")
 
     @check_strict
     def cable_label(self) -> str:
-        """circuits/circuit-terminations/cable/label."""
+        """circuits/circuit-terminations.cable.label."""
         return self.str("cable", "label")
 
     @check_strict
     def cid(self) -> str:
-        """ipam/circuits/circuits/cid."""
+        """ipam/circuits.circuits.cid."""
         return self.str("cid")
 
     @check_strict
     def circuit_count(self) -> int:
-        """ipam/circuits/circuit-types/circuit_count."""
+        """ipam/circuits.circuit-types.circuit_count."""
         return self.int("circuit_count")
 
     @check_strict
     def circuit_id(self) -> int:
-        """circuits/circuit-terminations/circuit/id."""
+        """circuits/circuit-terminations.circuit.id."""
         return self.int("circuit", "id")
 
     @check_strict
     def circuit_cid(self) -> str:
-        """circuits/circuit-terminations/circuit/cid."""
+        """circuits/circuit-terminations.circuit.cid."""
         return self.str("circuit", "cid")
 
     @check_strict
     def cluster_id(self) -> int:
-        """virtualization/virtual-machines/cluster/id."""
+        """virtualization/virtual-machines.cluster.id."""
         return self.int("cluster", "id")
 
     @check_strict
     def cluster_name(self) -> str:
-        """virtualization/virtual-machines/cluster/name."""
+        """virtualization/virtual-machines.cluster.name."""
         return self.str("cluster", "name")
 
     @check_strict
     def color(self) -> str:
-        """circuits/circuit-types/color."""
+        """circuits/circuit-types.color."""
         return self.str("color")
 
     @check_strict
     def comments(self) -> str:
-        """dcim/devices/comments."""
+        """dcim/devices.comments."""
         return self.str("comments")
 
     @check_strict
     def connected_endpoints(self) -> list:
-        """dcim/interfaces/connected_endpoints."""
+        """dcim/interfaces.connected_endpoints."""
         return self.list("connected_endpoints")
 
     @check_strict
@@ -208,72 +213,72 @@ class NbValue(NbParser):
 
     @check_strict
     def connected_endpoints_type(self) -> str:
-        """dcim/interfaces/connected_endpoints_type."""
+        """dcim/interfaces.connected_endpoints_type."""
         return self.str("connected_endpoints_type")
 
     @check_strict
     def connected_endpoints_reachable(self) -> bool:
-        """dcim/interfaces/connected_endpoints_reachable."""
+        """dcim/interfaces.connected_endpoints_reachable."""
         return bool(self.data.get("connected_endpoints_reachable"))
 
     @check_strict
     def created(self) -> str:
-        """dcim/devices/created."""
+        """dcim/devices.created."""
         return self.str("created")
 
     @check_strict
     def custom_fields(self) -> dict:
-        """circuits/circuit-terminations/custom_fields."""
+        """circuits/circuit-terminations.custom_fields."""
         return self.dict("custom_fields")
 
     @check_strict
     def description(self) -> str:
-        """dcim/devices/description."""
+        """dcim/devices.description."""
         return self.str("description")
 
     @check_strict
     def device_id(self) -> int:
-        """dcim/console-ports/device/id."""
+        """dcim/console-ports.device.id."""
         return self.int("device", "id")
 
     @check_strict
     def device_name(self) -> str:
-        """dcim/console-ports/device/name."""
+        """dcim/console-ports.device.name."""
         return self.str("device", "name")
 
     @check_strict
     def device_type_id(self) -> int:
-        """dcim/devices/device_type/id."""
+        """dcim/devices.device_type.id."""
         return self.int("device_type", "id")
 
     @check_strict
     def device_type_manufacturer_id(self) -> int:
-        """dcim/devices/device_type/manufacturer/id."""
+        """dcim/devices.device_type.manufacturer.id."""
         return self.int("device_type", "manufacturer", "id")
 
     @check_strict
     def device_type_manufacturer_name(self) -> str:
-        """dcim/devices/device_type/manufacturer/name."""
+        """dcim/devices.device_type.manufacturer.name."""
         return self.str("device_type", "manufacturer", "name")
 
     @check_strict
     def device_type_manufacturer_slug(self) -> str:
-        """dcim/devices/device_type/manufacturer/slug."""
+        """dcim/devices.device_type.manufacturer.slug."""
         return self.str("device_type", "manufacturer", "slug")
 
     @check_strict
     def device_type_model(self) -> str:
-        """dcim/devices/device_type/model."""
+        """dcim/devices.device_type.model."""
         return self.str("device_type", "model")
 
     @check_strict
     def device_type_slug(self) -> str:
-        """dcim/devices/device_type/slug."""
+        """dcim/devices.device_type.slug."""
         return self.str("device_type", "slug")
 
     @check_strict
     def device_role_id(self) -> int:
-        """dcim/devices/device_role/id."""
+        """dcim/devices.device_role.id."""
         # dcim/devices
         if self.is_dcim("devices"):
             # Netbox >= v4.2
@@ -286,12 +291,11 @@ class NbValue(NbParser):
 
     @check_strict
     def device_role_name(self) -> str:
-        """dcim/devices/device_role/name.
+        """dcim/devices.device_role.name.
 
-        Provide compatability for dcim/devices in Netbox >= v4.2 and Netbox < v4.2
+        Provide compatability for dcim/devices in Netbox >= v4.2 and Netbox < v4.2.
 
         :return: Role name.
-
         :raise NbParserError: if strict=True and object has no role name.
         """
         # dcim/devices
@@ -306,12 +310,11 @@ class NbValue(NbParser):
 
     @check_strict
     def device_role_slug(self) -> str:
-        """dcim/devices/device_role/slug.
+        """dcim/devices.device_role.slug.
 
-        Provide compatability for dcim/devices in Netbox >= v4.2 and Netbox < v4.2
+        Provide compatability for dcim/devices in Netbox >= v4.2 and Netbox < v4.2.
 
         :return: Role slug.
-
         :raise NbParserError: if strict=True and object has no role slug.
         """
         # dcim/devices
@@ -326,21 +329,21 @@ class NbValue(NbParser):
 
     @check_strict
     def display(self) -> str:
-        """ipam/aggregates/display."""
+        """ipam/aggregates.display."""
         return self.str("display")
 
     @check_strict
     def dns_name(self) -> str:
-        """ipam/ip-addresses/dns_name."""
+        """ipam/ip-addresses.dns_name."""
         return self.str("dns_name")
 
     def enabled(self) -> bool:
-        """dcim/interfaces/enabled."""
+        """dcim/interfaces.enabled."""
         return bool(self.data.get("enabled"))
 
     @check_strict
     def export_targets(self) -> list:
-        """ipam/vrfs/export_targets."""
+        """ipam/vrfs.export_targets."""
         return self.list("export_targets")
 
     @check_strict
@@ -359,26 +362,26 @@ class NbValue(NbParser):
 
     @check_strict
     def face_value(self) -> str:
-        """dcim/devices/face/value."""
+        """dcim/devices.face.value."""
         return self.str("face", "value")
 
     @check_strict
     def family_value(self) -> int:
-        """ipam/prefixes/family/value."""
+        """ipam/prefixes.family.value."""
         return self.int("family", "value")
 
     @check_strict
     def group_name(self) -> str:
-        """imap/vlans/group/name."""
+        """imap/vlans.group.name."""
         return self.str("group", "name")
 
     def id_(self) -> int:
-        """ipam/prefixes/id."""
+        """ipam/prefixes.id."""
         return self.int("id")
 
     @check_strict
     def import_targets(self) -> list:
-        """ipam/vrfs/import_targets."""
+        """ipam/vrfs.import_targets."""
         return self.list("import_targets")
 
     @check_strict
@@ -396,26 +399,26 @@ class NbValue(NbParser):
         return names
 
     def is_pool(self) -> bool:
-        """ipam/prefixes/is_pool."""
+        """ipam/prefixes.is_pool."""
         return bool(self.data.get("is_pool"))
 
     def is_private(self) -> bool:
-        """ipam/rirs/is_private."""
+        """ipam/rirs.is_private."""
         return bool(self.data.get("is_private"))
 
     @check_strict
     def label(self) -> str:
-        """dcim/cables/label."""
+        """dcim/cables.label."""
         return self.str("label")
 
     @check_strict
     def last_updated(self) -> str:
-        """dcim/devices/last_updated."""
+        """dcim/devices.last_updated."""
         return self.str("last_updated")
 
     @check_strict
     def link_peers(self) -> list:
-        """circuits/circuit-terminations/link_peers."""
+        """circuits/circuit-terminations.link_peers."""
         return self.list("link_peers")
 
     @check_strict
@@ -441,31 +444,31 @@ class NbValue(NbParser):
 
     @check_strict
     def link_peers_type(self) -> str:
-        """circuits/circuit-terminations/link_peers_type."""
+        """circuits/circuit-terminations.link_peers_type."""
         return self.str("link_peers_type")
 
     @check_strict
     def manufacturer_id(self) -> int:
-        """dcim/device-types/manufacturer/id."""
+        """dcim/device-types.manufacturer.id."""
         return self.int("manufacturer", "id")
 
     @check_strict
     def manufacturer_name(self) -> str:
-        """dcim/device-types/manufacturer/name."""
+        """dcim/device-types.manufacturer.name."""
         return self.str("manufacturer", "name")
 
     @check_strict
     def manufacturer_slug(self) -> str:
-        """dcim/device-types/manufacturer/name."""
+        """dcim/device-types.manufacturer.name."""
         return self.str("manufacturer", "slug")
 
     def occupied(self) -> bool:
-        """dcim/devices/_occupied."""
+        """dcim/devices._occupied."""
         return bool(self.data.get("_occupied"))
 
     @check_strict
     def model(self) -> str:
-        """dcim/device-types/model."""
+        """dcim/device-types.model."""
         return self.str("model")
 
     @check_strict
@@ -474,38 +477,37 @@ class NbValue(NbParser):
         return self.str("name")
 
     def mark_connected(self) -> bool:
-        """dcim/interfaces/mark_connected."""
+        """dcim/interfaces.mark_connected."""
         return bool(self.data.get("mark_connected"))
 
     def mark_utilized(self) -> bool:
-        """ipam/prefixes/mark_utilized."""
+        """ipam/prefixes.mark_utilized."""
         return bool(self.data.get("mark_utilized"))
 
     @check_strict
     def part_number(self) -> str:
-        """dcim/device-types/part_number."""
+        """dcim/device-types.part_number."""
         return self.str("part_number")
 
     @check_strict
     def platform_id(self) -> int:
-        """dcim/devices/platform/id."""
+        """dcim/devices.platform.id."""
         return self.int("platform", "id")
 
     @check_strict
     def platform_name(self) -> str:
-        """dcim/devices/platform/name."""
+        """dcim/devices.platform.name."""
         return self.str("platform", "name")
 
     @check_strict
     def platform_slug(self) -> str:
-        """dcim/devices/platform/slug."""
+        """dcim/devices.platform.slug."""
         return self.str("platform", "slug")
 
     def prefix(self) -> str:
         """ipam/prefixes/prefix, ipam/aggregates/prefix.
 
         :return: Prefix with length A.B.C.D/LEN.
-
         :raise NbParserError: if strict=True and the prefix does not match the naming
             convention A.B.C.D/LEN.
         """
@@ -515,10 +517,9 @@ class NbValue(NbParser):
         return prefix
 
     def primary_ip_address(self) -> str:
-        """dcim/devices/primary_ip/address.
+        """dcim/devices.primary_ip.address.
 
         :return: primary_ip address.
-
         :raise NbParserError: if strict=True and device has no primary_ip address.
         """
         address: str = self.str("primary_ip", "address")
@@ -530,10 +531,9 @@ class NbValue(NbParser):
         return address
 
     def primary_ip_family(self) -> int:
-        """dcim/devices/primary_ip/family.
+        """dcim/devices.primary_ip.family.
 
         :return: primary_ip family.
-
         :raise NbParserError: if strict=True and device has no primary_ip family.
         """
         family = dict(self.data.get("primary_ip") or {}).get("family")
@@ -557,7 +557,6 @@ class NbValue(NbParser):
         """dcim/devices/primary_ip4/address.
 
         :return: primary_ip4 address.
-
         :raise NbParserError: if strict=True and device has no primary_ip4 address.
         """
         address: str = self.str("primary_ip4", "address")
@@ -572,7 +571,6 @@ class NbValue(NbParser):
         """dcim/devices/primary_ip4/family.
 
         :return: primary_ip4 family.
-
         :raise NbParserError: if strict=True and device has no primary_ip4 family.
         """
         family = dict(self.data.get("primary_ip4") or {}).get("family")
@@ -594,87 +592,87 @@ class NbValue(NbParser):
 
     @check_strict
     def provider_id(self) -> int:
-        """circuits/circuits/provider/id."""
+        """circuits/circuits.provider.id."""
         return self.int("provider", "id")
 
     @check_strict
     def provider_name(self) -> str:
-        """circuits/circuits/provider/name."""
+        """circuits/circuits.provider.name."""
         return self.str("provider", "name")
 
     @check_strict
     def provider_slug(self) -> str:
-        """circuits/circuits/provider/slug."""
+        """circuits/circuits.provider.slug."""
         return self.str("provider", "slug")
 
     @check_strict
     def rack_id(self) -> int:
-        """dcim/devices/rack/id."""
+        """dcim/devices.rack.id."""
         return self.int("rack", "id")
 
     @check_strict
     def rack_name(self) -> str:
-        """dcim/devices/rack/name."""
+        """dcim/devices.rack.name."""
         return self.str("rack", "name")
 
     @check_strict
     def rd(self) -> str:
-        """ipam/vrfs/rd."""
+        """ipam/vrfs.rd."""
         return self.str("rd")
 
     @check_strict
     def rir_id(self) -> int:
-        """ipam/aggregates/rir/id."""
+        """ipam/aggregates.rir.id."""
         return self.int("rir", "id")
 
     @check_strict
     def rir_name(self) -> str:
-        """ipam/aggregates/rir/name."""
+        """ipam/aggregates.rir.name."""
         return self.str("rir", "name")
 
     @check_strict
     def rir_slug(self) -> str:
-        """ipam/aggregates/rir/slug."""
+        """ipam/aggregates.rir.slug."""
         return self.str("rir", "slug")
 
     @check_strict
     def role_id(self) -> int:
-        """dcim/devices/role/id."""
+        """dcim/devices.role.id."""
         return self.int("role", "id")
 
     @check_strict
     def role_name(self) -> str:
-        """dcim/devices/role/name."""
+        """dcim/devices.role.name."""
         return self.str("role", "name")
 
     @check_strict
     def role_slug(self) -> str:
-        """dcim/devices/role/slug."""
+        """dcim/devices.role.slug."""
         return self.str("role", "slug")
 
     @check_strict
     def scope_id(self) -> int:
-        """ipam/vlan-groups/scope/id."""
+        """ipam/vlan-groups.scope.id."""
         return self.int("scope", "id")
 
     @check_strict
     def scope_name(self) -> str:
-        """ipam/vlan-groups/scope/name."""
+        """ipam/vlan-groups.scope.name."""
         return self.str("scope", "name")
 
     @check_strict
     def scope_slug(self) -> str:
-        """ipam/vlan-groups/scope/slug."""
+        """ipam/vlan-groups.scope.slug."""
         return self.str("scope", "slug")
 
     @check_strict
     def scope_type(self) -> str:
-        """ipam/vlan-groups/scope_type."""
+        """ipam/vlan-groups.scope_type."""
         return self.str("scope_type")
 
     @check_strict
     def serial(self) -> str:
-        """dcim/devices/serial."""
+        """dcim/devices.serial."""
         return self.str("serial")
 
     @check_strict
@@ -699,15 +697,14 @@ class NbValue(NbParser):
         """ipam/prefixes/site/name, dcim/devices/sites/name.
 
         Provide compatability for ipam/prefixes in Netbox >= v4.2 and Netbox < v4.2
-
         Convert site name to the same manner.
+
         Note: Different models may have different upper or lower case:
             - sites/name="SITE1",
             - devices/site/name="SITE1",
             - vlans/site/name="site1".
 
         :return: Site name.
-
         :raise NbParserError: if strict=True and object has no site name.
         """
         # ipam/prefix
@@ -743,19 +740,18 @@ class NbValue(NbParser):
 
     @check_strict
     def slug(self) -> str:
-        """ipam/roles/slug."""
+        """ipam/roles.slug."""
         return self.str("slug")
 
     @check_strict
     def status_value(self) -> str:
-        """ipam/prefixes/status/value."""
+        """ipam/prefixes.status.value"""
         return self.str("status", "value")
 
     def tags(self) -> LStr:
-        """Get tag slugs from the data.
+        """app/model.tags.0.slug.
 
         :return: Slugs of tag.
-        :rtype: List[str]
         """
         tags_ = self.list("tags")
         if not tags_:
@@ -769,160 +765,160 @@ class NbValue(NbParser):
 
     @check_strict
     def tenant_id(self) -> int:
-        """ipam/aggregates/tenant/id."""
+        """ipam/aggregates.tenant.id."""
         return self.int("tenant", "id")
 
     @check_strict
     def tenant_name(self) -> str:
-        """ipam/aggregates/tenant/name."""
+        """ipam/aggregates.tenant.name."""
         return self.str("tenant", "name")
 
     @check_strict
     def tenant_slug(self) -> str:
-        """ipam/aggregates/tenant/name."""
+        """ipam/aggregates.tenant.name."""
         return self.str("tenant", "slug")
 
     @check_strict
     def term_side(self) -> str:
-        """circuits/circuit-terminations/term_side."""
+        """circuits/circuit-terminations.term_side."""
         return self.str("term_side")
 
     @check_strict
     def termination_a(self) -> dict:
-        """ipam/circuits/circuits/termination_a."""
+        """ipam/circuits.circuits.termination_a."""
         return self.dict("termination_a")
 
     @check_strict
     def termination_a_id(self) -> int:
-        """ipam/circuits/circuits/termination_a/id."""
+        """ipam/circuits.circuits.termination_a.id."""
         return self.int("termination_a", "id")
 
     @check_strict
     def termination_a_site_id(self) -> int:
-        """ipam/circuits/circuits/termination_a/site/id."""
+        """ipam/circuits.circuits.termination_a.site.id."""
         return self.int("termination_a", "site", "id")
 
     @check_strict
     def termination_a_site_name(self) -> str:
-        """ipam/circuits/circuits/termination_a/site/name."""
+        """ipam/circuits.circuits.termination_a.site.name."""
         return self.str("termination_a", "site", "name")
 
     @check_strict
     def termination_a_site_slug(self) -> str:
-        """ipam/circuits/circuits/termination_a/site/slug."""
+        """ipam/circuits.circuits.termination_a.site.slug."""
         return self.str("termination_a", "site", "slug")
 
     @check_strict
     def termination_a_provider_id(self) -> int:
-        """ipam/circuits/circuits/termination_a/provider/id."""
+        """ipam/circuits.circuits.termination_a.provider.id."""
         return self.int("termination_a", "provider", "id")
 
     @check_strict
     def termination_a_provider_name(self) -> str:
-        """ipam/circuits/circuits/termination_a/provider/name."""
+        """ipam/circuits.circuits.termination_a.provider.name."""
         return self.str("termination_a", "provider", "name")
 
     @check_strict
     def termination_a_xconnect_id(self) -> str:
-        """ipam/circuits/circuits/termination_a/xconnect_id."""
+        """ipam/circuits.circuits.termination_a.xconnect_id."""
         return self.str("termination_a", "xconnect_id")
 
     @check_strict
     def termination_z(self) -> dict:
-        """ipam/circuits/circuits/termination_z."""
+        """ipam/circuits.circuits.termination_z."""
         return self.dict("termination_z")
 
     @check_strict
     def termination_z_id(self) -> int:
-        """ipam/circuits/circuits/termination_z/id."""
+        """ipam/circuits.circuits.termination_z.id."""
         return self.int("termination_z", "id")
 
     @check_strict
     def termination_z_site_id(self) -> int:
-        """ipam/circuits/circuits/termination_z/site/id."""
+        """ipam/circuits.circuits.termination_z.site.id."""
         return self.int("termination_z", "site", "id")
 
     @check_strict
     def termination_z_site_name(self) -> str:
-        """ipam/circuits/circuits/termination_z/site/name."""
+        """ipam/circuits.circuits.termination_z.site.name."""
         return self.str("termination_z", "site", "name")
 
     @check_strict
     def termination_z_site_slug(self) -> str:
-        """ipam/circuits/circuits/termination_z/site/slug."""
+        """ipam/circuits.circuits.termination_z.site.slug."""
         return self.str("termination_z", "site", "slug")
 
     @check_strict
     def termination_z_provider_id(self) -> int:
-        """ipam/circuits/circuits/termination_z/provider/id."""
+        """ipam/circuits.circuits.termination_z.provider.id."""
         return self.int("termination_z", "provider", "id")
 
     @check_strict
     def termination_z_provider_name(self) -> str:
-        """ipam/circuits/circuits/termination_z/provider/name."""
+        """ipam/circuits.circuits.termination_z.provider.name."""
         return self.str("termination_z", "provider", "name")
 
     @check_strict
     def termination_z_xconnect_id(self) -> str:
-        """ipam/circuits/circuits/termination_z/xconnect_id."""
+        """ipam/circuits.circuits.termination_z.xconnect_id."""
         return self.str("termination_z", "xconnect_id")
 
     @check_strict
     def type_(self) -> str:
-        """dcim/cables/type."""
+        """dcim/cables.type."""
         return self.str("type")
 
     @check_strict
     def type_id(self) -> int:
-        """circuits/circuits/type/id."""
+        """circuits/circuits.type.id."""
         return self.int("type", "id")
 
     @check_strict
     def type_name(self) -> str:
-        """circuits/circuits/type/name."""
+        """circuits/circuits.type.name."""
         return self.str("type", "name")
 
     @check_strict
     def type_slug(self) -> str:
-        """circuits/circuits/type/slug."""
+        """circuits/circuits.type.slug."""
         return self.str("type", "slug")
 
     @check_strict
     def type_value(self) -> str:
-        """dcim/console-ports/type/value."""
+        """dcim/console-ports.type.value."""
         return self.str("type", "value")
 
     def vid(self) -> int:
-        """ipam/vlans/vid."""
+        """ipam/vlans.vid."""
         return self.int("vid")
 
     @check_strict
     def vlan_name(self) -> str:
-        """ipam/prefixes/vlan/name."""
+        """ipam/prefixes.vlan.name."""
         return self.str("vlan", "name")
 
     def vlan_vid(self) -> int:
-        """ipam/prefixes/vlan/vid."""
+        """ipam/prefixes.vlan.vid."""
         return self.int("vlan", "vid")
 
     @check_strict
     def vrf_id(self) -> int:
-        """ipam/ip-addresses/vrf/id."""
+        """ipam/ip-addresses.vrf.id."""
         return self.int("vrf", "id")
 
     @check_strict
     def vrf_name(self) -> str:
-        """ipam/ip-addresses/vrf/name."""
+        """ipam/ip-addresses.vrf.name."""
         return self.str("vrf", "name")
 
     @check_strict
     def vrf_rd(self) -> str:
-        """ipam/ip-addresses/vrf/rd."""
+        """ipam/ip-addresses.vrf.rd."""
         return self.str("vrf", "rd")
 
     @check_strict
     def url(self) -> str:
-        """ipam/prefixes/url."""
+        """ipam/prefixes.url."""
         return self.str("url")
 
     # ================================ is ================================
@@ -931,9 +927,7 @@ class NbValue(NbParser):
         """Check if model is dcim.
 
         :return: True - if model is dcim, False - otherwise.
-        :rtype: bool
-
-        :raise NbParserError: - if url is not /api/dcim/ and self.strict=True
+        :raise NbParserError: - if url is not /api/dcim/ and self.strict=True.
         """
         try:
             return bool(re.search(f"/api/dcim/{key}/", self.data["url"]))
@@ -946,10 +940,8 @@ class NbValue(NbParser):
         """Check If model is ipam.
 
         :return: True - if model is ipam, False - otherwise.
-        :rtype: bool
-
         :raise NbParserError: If url is not aggregate or prefix or address
-            and self.strict=True
+            and self.strict=True.
         """
         try:
             return bool(re.search(f"/api/ipam/{key}/", self.data["url"]))
@@ -962,9 +954,7 @@ class NbValue(NbParser):
         """Check if model is virtualization.
 
         :return: True - if model is virtualization, False - otherwise.
-        :rtype: bool
-
-        :raise NbParserError: - if url is not /api/dcim/ and self.strict=True
+        :raise NbParserError: - if url is not /api/dcim/ and self.strict=True.
         """
         try:
             return bool(re.search(f"/api/virtualization/{key}/", self.data["url"]))
