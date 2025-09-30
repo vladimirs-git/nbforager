@@ -76,9 +76,9 @@ class NbValue(NbParser):
         return address
 
     @check_strict
-    def asn(self) -> str:
+    def asn(self) -> int:
         """ipam/asns.asn."""
-        return self.str("assigned_object", "device", "name")
+        return self.int("asn")
 
     @check_strict
     def assigned_device_name(self) -> str:
