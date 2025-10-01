@@ -4,7 +4,7 @@ import urllib
 from typing import Any
 from urllib.parse import ParseResult
 
-from vhelpers import vlist, vint
+from vhelpers import vlist, vint, vre
 
 from nbforager.exceptions import NbApiError
 from nbforager.types_ import LStr, LDAny
@@ -182,24 +182,40 @@ def url_to_ami_items(url: str) -> T3Str:
     :example:
         split_url("https://domain.com/api/ipam/vrfs?id=1") -> ("ipam", "vrfs", "1")
     """
+    not_ami = ("", "", "")
     url_o: ParseResult = urllib.parse.urlparse(url)
     if not url_o.path:
-        return "", "", ""
+        return not_ami
 
     path = url_o.path.strip("/")
-    items = path.split("/")
-    if len(items) < 2:
-        return "", "", ""
-    if items[0] == "api":
-        items = items[1:]
-    if len(items) < 2 or len(items) > 3:
-        return "", "", ""
+    if path.startswith("api/"):
+        path = path[4:]
+    path = path.strip("/")
 
-    app = str(items[0])
-    model = str(items[1])
-    id_ = ""
-    if len(items) == 3:
-        id_ = str(items[2])
+    re_item = r"[\w_-]+"
+    re_end = r"?:/|$"
+
+    # app
+    app = vre.find1(f"^({re_item})({re_end})", path)
+    if not app:
+        return not_ami
+
+    # model
+    path = path[len(app):].lstrip("/")
+    model = vre.find1(f"^({re_item})({re_end})", path)
+    if not model:
+        return not_ami
+
+    # not id
+    re_not_id = r"\D+"
+    path = path[len(model):].lstrip("/")
+    not_id = vre.find1(f"^({re_not_id})", path)
+    if not_id:
+        return not_ami
+
+    # id
+    re_id = r"\d+"
+    id_ = vre.find1(f"^({re_id})", path)
     return app, model, id_
 
 

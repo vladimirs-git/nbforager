@@ -102,7 +102,7 @@ def test__models():
     ({"url": f"/typo/ip_addresses/{p.A1}"}, AttributeError, None),
     ({"url": f"/ipam/typo/{p.A1}"}, AttributeError, None),
     ({"url": f"/ipam/{p.A1}"}, AttributeError, None),
-    ({"url": "/ipam/ip_addresses/typo"}, ValueError, None),
+    ({"url": "/ipam/ip_addresses/typo"}, AttributeError, None),
     ({"id": 9, "url": "/ipam/ip_addresses/9/"}, None, None),
     ({"id": 9, "url": ""}, None, None),
     ({"id": 9}, None, None),

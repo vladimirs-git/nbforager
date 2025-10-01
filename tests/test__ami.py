@@ -133,22 +133,33 @@ def test__replace_upper(word, expected):
 
 
 @pytest.mark.parametrize("url, expected", [
-    ("https://domain.com/api/app/model/1", ("app", "model", "1")),
-    ("https://domain.com/api/app/model/1/", ("app", "model", "1")),
-    ("https://domain.com/api/app/model-group/1", ("app", "model-group", "1")),
-    ("https://domain.com/api/app/model/1?k=v", ("app", "model", "1")),
-    ("https://domain.com/api/app/model-group/1/", ("app", "model-group", "1")),
-    # invalid
+    # ui
     ("", ("", "", "")),
     ("typo", ("", "", "")),
-    ("https://domain.com", ("", "", "")),
-    ("https://domain.com/api", ("", "", "")),
-    ("https://domain.com/api/app", ("", "", "")),
-    ("https://domain.com/api/app/model/model/1", ("", "", "")),
-    ("https://domain.com/api/app/model/1/1", ("", "", "")),
-    ("https://domain.com/api/app/model", ("app", "model", "")),
-    ("https://domain.com/api/app/model/", ("app", "model", "")),
-
+    ("https://nb", ("", "", "")),
+    ("https://nb/app", ("", "", "")),
+    ("https://nb/app/model", ("app", "model", "")),
+    ("https://nb/app/model/12", ("app", "model", "12")),
+    ("https://nb/app/model/12/path", ("app", "model", "12")),
+    ("https://nb/app/model/12|path", ("app", "model", "12")),
+    ("https://nb/app/model/12?k=v", ("app", "model", "12")),
+    ("https://nb/app/model/12path", ("app", "model", "12")),
+    ("https://nb/app/mo-del", ("app", "mo-del", "")),
+    ("https://nb/app/mo-del/12", ("app", "mo-del", "12")),
+    ("https://nb/app/model/typo", ("", "", "")),
+    ("https://nb/app/model/typo/12", ("", "", "")),
+    # api
+    ("https://nb/api/app", ("", "", "")),
+    ("https://nb/api/app/model", ("app", "model", "")),
+    ("https://nb/api/app/model/12", ("app", "model", "12")),
+    ("https://nb/api/app/model/12/path", ("app", "model", "12")),
+    ("https://nb/api/app/model/12|path", ("app", "model", "12")),
+    ("https://nb/api/app/model/12?k=v", ("app", "model", "12")),
+    ("https://nb/api/app/model/12path", ("app", "model", "12")),
+    ("https://nb/api/app/mo-del", ("app", "mo-del", "")),
+    ("https://nb/api/app/mo-del/12", ("app", "mo-del", "12")),
+    ("https://nb/api/app/model/typo", ("", "", "")),
+    ("https://nb/api/app/model/typo/12", ("", "", "")),
 ])
 def test__url_to_ami_items(url, expected):
     """ami.url_to_ami_items()"""
@@ -158,23 +169,22 @@ def test__url_to_ami_items(url, expected):
 
 @pytest.mark.parametrize("url, path, expected", [
     # attr
-    ("https://domain.com/api/ipam/ip-addresses/123", False, ("ipam", "ip_addresses", 123)),
-    ("https://domain.com/api/ipam/ip-addresses/1/", False, ("ipam", "ip_addresses", 1)),
-    ("https://domain.com/api/ipam/ip-addresses/1?k=v", False, ("ipam", "ip_addresses", 1)),
-    ("https://domain.com/api/ipam/ip-addresses", False, ("ipam", "ip_addresses", 0)),
-    ("https://domain.com/api/ipam/ip-addresses/", False, ("ipam", "ip_addresses", 0)),
+    ("https://nb/api/ipam/ip-addresses/12", False, ("ipam", "ip_addresses", 12)),
+    ("https://nb/api/ipam/ip-addresses/12/", False, ("ipam", "ip_addresses", 12)),
+    ("https://nb/api/ipam/ip-addresses/12?k=v", False, ("ipam", "ip_addresses", 12)),
+    ("https://nb/api/ipam/ip-addresses", False, ("ipam", "ip_addresses", 0)),
+    ("https://nb/api/ipam/ip-addresses/", False, ("ipam", "ip_addresses", 0)),
     # path
-    ("https://domain.com/api/ipam/ip-addresses/123", True, ("ipam", "ip-addresses", 123)),
+    ("https://nb/api/ipam/ip-addresses/12", True, ("ipam", "ip-addresses", 12)),
     # invalid
     ("", False, NbApiError),
     ("typo", False, NbApiError),
-    ("https://domain.com", False, NbApiError),
-    ("https://domain.com/api", False, NbApiError),
-    ("https://domain.com/api/ipam", False, NbApiError),
-    ("https://domain.com/api/ipam/ip-addresses/ip-addresses/1", False, NbApiError),
-    ("https://domain.com/api/ipam/ip-addresses/1/1", False, NbApiError),
-    ("https://domain.com/api/ipam/1/1", False, NbApiError),
-    ("https://domain.com/api/1/ip-addresses/1", False, NbApiError),
+    ("https://nb", False, NbApiError),
+    ("https://nb/api", False, NbApiError),
+    ("https://nb/api/ipam", False, NbApiError),
+    ("https://nb/api/ipam/ip-addresses/path/1", False, NbApiError),
+    ("https://nb/api/ipam/12/34", False, NbApiError),
+    ("https://nb/api/1/ip-addresses/12", False, NbApiError),
 ])
 def test__url_to_ami(url, path, expected):
     """ami.url_to_ami()"""
@@ -187,10 +197,10 @@ def test__url_to_ami(url, path, expected):
 
 
 @pytest.mark.parametrize("url, expected", [
-    ("https://domain.com/api/app/model/1?k=v", "app/model/"),
-    ("https://domain.com/api/app/model/1/", "app/model/"),
-    ("https://domain.com/api/app/model/1", "app/model/"),
-    ("https://domain.com/api/app/model", "app/model/"),
+    ("https://nb/api/app/model/1?k=v", "app/model/"),
+    ("https://nb/api/app/model/1/", "app/model/"),
+    ("https://nb/api/app/model/1", "app/model/"),
+    ("https://nb/api/app/model", "app/model/"),
     ("", ValueError),
     ("typo", ValueError),
 ])
@@ -205,10 +215,10 @@ def test__url_to_am_path(url, expected):
 
 
 @pytest.mark.parametrize("url, expected", [
-    ("https://domain.com/api/app/model/1?k=v", "app/model/1/"),
-    ("https://domain.com/api/app/model/1/", "app/model/1/"),
-    ("https://domain.com/api/app/model/1", "app/model/1/"),
-    ("https://domain.com/api/app/model", ValueError),
+    ("https://nb/api/app/model/1?k=v", "app/model/1/"),
+    ("https://nb/api/app/model/1/", "app/model/1/"),
+    ("https://nb/api/app/model/1", "app/model/1/"),
+    ("https://nb/api/app/model", ValueError),
     ("", ValueError),
     ("typo", ValueError),
 ])
@@ -223,13 +233,13 @@ def test__url_to_ami_path(url, expected):
 
 
 @pytest.mark.parametrize("url, expected", [
-    ("https://domain.com/api/ipam/ip-address/1?k=v", "/api/ipam/ip-address/1/"),
-    ("https://domain.com/api/ipam/ip-address/1/", "/api/ipam/ip-address/1/"),
-    ("https://domain.com/api/ipam/ip-address/1", "/api/ipam/ip-address/1/"),
-    ("https://domain.com/api/ipam/ip-address", "/api/ipam/ip-address/"),
-    ("https://domain.com/api/ipam", NbApiError),
-    ("https://domain.com/api", NbApiError),
-    ("https://domain.com", NbApiError),
+    ("https://nb/api/ipam/ip-address/1?k=v", "/api/ipam/ip-address/1/"),
+    ("https://nb/api/ipam/ip-address/1/", "/api/ipam/ip-address/1/"),
+    ("https://nb/api/ipam/ip-address/1", "/api/ipam/ip-address/1/"),
+    ("https://nb/api/ipam/ip-address", "/api/ipam/ip-address/"),
+    ("https://nb/api/ipam", NbApiError),
+    ("https://nb/api", NbApiError),
+    ("https://nb", NbApiError),
     ("", NbApiError),
 ])
 def test__url_to_ami_url(url, expected):
@@ -244,19 +254,19 @@ def test__url_to_ami_url(url, expected):
 
 @pytest.mark.parametrize("url, expected", [
     # ui
-    ("https://domain.com/ipam/ip-address/1?k=v", "https://domain.com/api/ipam/ip-address/1/"),
-    ("https://domain.com/ipam/ip-address/1/", "https://domain.com/api/ipam/ip-address/1/"),
-    ("https://domain.com/ipam/ip-address/1", "https://domain.com/api/ipam/ip-address/1/"),
-    ("https://domain.com/ipam/ip-address", "https://domain.com/api/ipam/ip-address/"),
+    ("https://nb/ipam/ip-address/1?k=v", "https://nb/api/ipam/ip-address/1/"),
+    ("https://nb/ipam/ip-address/1/", "https://nb/api/ipam/ip-address/1/"),
+    ("https://nb/ipam/ip-address/1", "https://nb/api/ipam/ip-address/1/"),
+    ("https://nb/ipam/ip-address", "https://nb/api/ipam/ip-address/"),
     # api
-    ("https://domain.com/api/ipam/ip-address/1?k=v", "https://domain.com/api/ipam/ip-address/1/"),
-    ("https://domain.com/api/ipam/ip-address/1/", "https://domain.com/api/ipam/ip-address/1/"),
-    ("https://domain.com/api/ipam/ip-address/1", "https://domain.com/api/ipam/ip-address/1/"),
-    ("https://domain.com/api/ipam/ip-address", "https://domain.com/api/ipam/ip-address/"),
+    ("https://nb/api/ipam/ip-address/1?k=v", "https://nb/api/ipam/ip-address/1/"),
+    ("https://nb/api/ipam/ip-address/1/", "https://nb/api/ipam/ip-address/1/"),
+    ("https://nb/api/ipam/ip-address/1", "https://nb/api/ipam/ip-address/1/"),
+    ("https://nb/api/ipam/ip-address", "https://nb/api/ipam/ip-address/"),
     # invalid
-    ("https://domain.com/api/ipam", NbApiError),
-    ("https://domain.com/api", NbApiError),
-    ("https://domain.com", NbApiError),
+    ("https://nb/api/ipam", NbApiError),
+    ("https://nb/api", NbApiError),
+    ("https://nb", NbApiError),
     ("", NbApiError),
 ])
 def test__url_to_api_url(url, expected):
