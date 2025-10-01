@@ -72,22 +72,18 @@ def test__url(params, expected):
 
 # noinspection PyTestUnpassedFixture
 @pytest.mark.parametrize("params, expected", [
-    ({"host": "netbox"}, "https://netbox/circuits/circuit-terminations/"),
-    ({"host": "netbox", "scheme": "http"}, "http://netbox/circuits/circuit-terminations/"),
-    ({"host": "netbox", "scheme": "http", "port": 80},
-     "http://netbox/circuits/circuit-terminations/"),
-    ({"host": "netbox", "scheme": "http", "port": 1},
-     "http://netbox:1/circuits/circuit-terminations/"),
-    ({"host": "netbox", "scheme": "https"}, "https://netbox/circuits/circuit-terminations/"),
-    ({"host": "netbox", "scheme": "https", "port": 443},
-     "https://netbox/circuits/circuit-terminations/"),
-    ({"host": "netbox", "scheme": "https", "port": 1},
-     "https://netbox:1/circuits/circuit-terminations/"),
+    ({"host": "nb"}, "https://nb/ipam/vrfs/"),
+    ({"host": "nb", "scheme": "http"}, "http://nb/ipam/vrfs/"),
+    ({"host": "nb", "scheme": "http", "port": 80}, "http://nb/ipam/vrfs/"),
+    ({"host": "nb", "scheme": "http", "port": 1}, "http://nb:1/ipam/vrfs/"),
+    ({"host": "nb", "scheme": "https"}, "https://nb/ipam/vrfs/"),
+    ({"host": "nb", "scheme": "https", "port": 443}, "https://nb/ipam/vrfs/"),
+    ({"host": "nb", "scheme": "https", "port": 1}, "https://nb:1/ipam/vrfs/"),
 ])
 def test__url_ui(params, expected):
     """BaseC.url_ui."""
     api = NbApi(**params)
-    actual = api.circuits.circuit_terminations.url_ui
+    actual = api.ipam.vrfs.url_ui
     assert actual == expected
 
 

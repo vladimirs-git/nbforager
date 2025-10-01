@@ -306,7 +306,7 @@ def url_to_object_type(url: str) -> str:
     return object_type
 
 
-def url_to_ui_url(url: str) -> str:
+def url_to_ui(url: str) -> str:
     """Convert Netbox API URl to UI URL.
 
     :param url: A string representing the Netbox API URL.
@@ -315,9 +315,7 @@ def url_to_ui_url(url: str) -> str:
     :example:
         url_to_ui_url("https://domain.com/api/ipam/vrf/1/") -> "https://domain.com/ipam/vrf/1/"
     """
-    url_o: ParseResult = urllib.parse.urlparse(url)
-    app, model, id_ = url_to_ami(url=url, path=True)
-    ui_url = f"{url_o.scheme}://{url_o.netloc}/{app}/{model}/"
-    if id_:
-        ui_url += f"{id_}/"
-    return ui_url
+    url = url.replace("/api/extras/object-changes/", "/api/extras/changelog/", 1)
+    url = url.replace("/api/core/object-changes/", "/api/core/changelog/", 1)
+    url = url.replace("/api/", "/", 1)
+    return url

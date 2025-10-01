@@ -19,7 +19,7 @@ from requests import Session, Response
 from requests.exceptions import ReadTimeout, ConnectionError as RequestsConnectionError
 from vhelpers import vlist, vparam
 
-from nbforager import helpers
+from nbforager import helpers, ami
 from nbforager.api import extended_get
 from nbforager.api.extended_get import ParamPath, DParamPath
 from nbforager.exceptions import NbApiError
@@ -203,10 +203,7 @@ class BaseC:
     @property
     def url_ui(self) -> str:
         """URL to the UI endpoint to the Netbox object."""
-        url = self.url
-        url = url.replace("/api/extras/object-changes/", "/api/extras/changelog/", 1)
-        url = url.replace("/api/core/object-changes/", "/api/core/changelog/", 1)
-        return url.replace("/api/", "/", 1)
+        return ami.url_to_ui(self.url)
 
     @property
     def url_base(self) -> str:

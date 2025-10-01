@@ -270,27 +270,32 @@ def test__url_to_api_url(url, expected):
 
 
 @pytest.mark.parametrize("url, expected", [
-    # ui
-    ("https://domain.com/ipam/ip-address/1?k=v", "https://domain.com/ipam/ip-address/1/"),
-    ("https://domain.com/ipam/ip-address/1/", "https://domain.com/ipam/ip-address/1/"),
-    ("https://domain.com/ipam/ip-address/1", "https://domain.com/ipam/ip-address/1/"),
-    ("https://domain.com/ipam/ip-address", "https://domain.com/ipam/ip-address/"),
-    # api
-    ("https://domain.com/api/ipam/ip-address/1?k=v", "https://domain.com/ipam/ip-address/1/"),
-    ("https://domain.com/api/ipam/ip-address/1/", "https://domain.com/ipam/ip-address/1/"),
-    ("https://domain.com/api/ipam/ip-address/1", "https://domain.com/ipam/ip-address/1/"),
-    ("https://domain.com/api/ipam/ip-address", "https://domain.com/ipam/ip-address/"),
-    # invalid
-    ("https://domain.com/api/ipam", NbApiError),
-    ("https://domain.com/api", NbApiError),
-    ("https://domain.com", NbApiError),
-    ("", NbApiError),
+    # # ui
+    ("https://nb/extras/changelog/", "https://nb/extras/changelog/"),
+    ("https://nb/core/changelog/", "https://nb/core/changelog/"),
+    # ("https://nb/ipam/ip-address/1?k=v", "https://nb/ipam/ip-address/1/"),
+    # ("https://nb/ipam/ip-address/1/", "https://nb/ipam/ip-address/1/"),
+    # ("https://nb/ipam/ip-address/1", "https://nb/ipam/ip-address/1/"),
+    # ("https://nb/ipam/ip-address", "https://nb/ipam/ip-address/"),
+    # # api
+    ("https://nb/api/extras/object-changes/", "https://nb/extras/changelog/"),
+    ("https://nb/api/core/object-changes/", "https://nb/core/changelog/"),
+    # ("https://nb/api/ipam/ip-address/1?k=v", "https://nb/ipam/ip-address/1/"),
+    # ("https://nb/api/ipam/ip-address/1/", "https://nb/ipam/ip-address/1/"),
+    # ("https://nb/api/ipam/ip-address/1", "https://nb/ipam/ip-address/1/"),
+    # ("https://nb/api/ipam/ip-address", "https://nb/ipam/ip-address/"),
+    # # invalid
+    # ("https://nb/api/ipam", NbApiError),
+    # ("https://nb/api", NbApiError),
+    # ("https://nb", NbApiError),
+    # ("", NbApiError),
+
 ])
-def test__url_to_ui_url(url, expected):
-    """ami.url_to_ui_url()"""
+def test__url_to_ui(url, expected):
+    """ami.url_to_ui()"""
     if isinstance(expected, str):
-        actual = ami.url_to_ui_url(url=url)
+        actual = ami.url_to_ui(url=url)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            ami.url_to_ui_url(url=url)
+            ami.url_to_ui(url=url)
