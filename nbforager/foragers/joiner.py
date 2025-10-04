@@ -20,14 +20,14 @@ class Joiner:
     """
 
     def __init__(self, tree: NbTree):
-        """Init Joiner.
+        """Initialize Joiner.
         :param NbTree tree: Contains Netbox that need to be updated similar to the WEB UI.
         """
         self.tree = tree
 
     # noinspection PyProtectedMember
     def init_extra_keys(self) -> None:
-        """Init extra keys to represent Netbox objects similar to the WEB UI.
+        """Initialize extra keys to represent Netbox objects similar to the WEB UI.
 
         :return: None. Update NbTree object.
         """

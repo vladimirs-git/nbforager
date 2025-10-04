@@ -22,7 +22,7 @@ from tests.api.test__base_c import mock_session
 
 @pytest.fixture
 def api():
-    """Init API"""
+    """Initialize API"""
     return NbApi(host="netbox")
 
 

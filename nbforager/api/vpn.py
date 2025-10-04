@@ -7,7 +7,7 @@ class VpnAC:
     """Vpn connectors."""
 
     def __init__(self, **kwargs):
-        """Init VpnAC."""
+        """Initialize VpnAC."""
         self.ike_policies = self.IkePoliciesC(**kwargs)
         self.ike_proposal = self.IkeProposalC(**kwargs)
         self.ipsec_policies = self.IpsecPoliciesC(**kwargs)

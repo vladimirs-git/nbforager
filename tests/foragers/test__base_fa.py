@@ -6,7 +6,7 @@ from nbforager import NbForager
 
 @pytest.fixture
 def nbf() -> NbForager:
-    """Init NbForager without data."""
+    """Initialize NbForager without data."""
     return NbForager(host="netbox")
 
 

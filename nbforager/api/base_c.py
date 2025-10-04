@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import logging
 import re
 import time
@@ -10,7 +9,7 @@ import urllib
 from operator import itemgetter
 from queue import Queue
 from threading import Thread
-from typing import Callable
+from typing import Callable, Optional
 from urllib.parse import ParseResult
 
 import netports
@@ -35,6 +34,7 @@ LONERS: DLStr = {
     "ipam/vlan-groups/": ["site"],
     "extras/content-types/": ["id", "app_label", "model"],
 }
+"""Filtering parameters in an OR manner."""
 
 
 class BaseC:
@@ -114,7 +114,7 @@ class BaseC:
     """
 
     def __init__(self, **kwargs):
-        """Init BaseC.
+        """Initialize BaseC.
 
         :param str host: Netbox host name.
 
@@ -319,6 +319,8 @@ class BaseC:
         results: LDAny = []
         while True:
             response: Response = self._retry_requests(url)
+
+            # no data if strict is False and status 400
             if not response.ok:
                 break
 
@@ -356,6 +358,8 @@ class BaseC:
         url = f"{self.url_base}{path}?{urllib.parse.urlencode(params_l)}"
 
         response: Response = self._retry_requests(url)
+
+        # no data if strict is False and status 400
         if not response.ok:
             return
 
@@ -467,19 +471,30 @@ class BaseC:
         raise ConnectionError(f"Netbox server error: {msg}")
 
     def _retry_requests(self, url: str) -> Response:
-        """Retry multiple requests if the session times out.
+        """Perform an HTTP GET request with automatic retry logic.
 
-        Multiple requests are useful if Netbox is overloaded and cannot process the request
-        right away, but can do so after a sleep interval.
+        This method repeatedly attempts to fetch the given URL.
+        It is designed to handle temporary network or server issues (such as
+        timeouts or Netbox overloads) by retrying the request after a `sleep` interval.
 
-        :param url: The URL that needs to be requested.
+        The method will:
+          - Return the response if the status code indicates success (2xx).
+          - Raise a `ConnectionError` if a connection failure occurs.
+          - Return response with empty data if status code is 400 and `strict` is False.
+          - Retry the request up to `max_retries` times if a ReadTimeout occurs.
 
-        :return: The response.
+        :param url: The URL to send the GET request to.
 
-        :raise: ConnectionError if the limit of retries is reached.
+        :return: Response: The HTTP response object, either from the final successful
+            request or a generated 504 response if all retries failed.
+
+        :raises ConnectionError: If a persistent connection issue occurs or
+            the limit of retries is reached.
         """
         max_retries = self.max_retries + 1
+        sleep = self.sleep
         counter = 0
+
         while counter < max_retries:
             counter += 1
             try:
@@ -494,9 +509,9 @@ class BaseC:
                 msg = f"Session timeout={self.timeout!r}sec reached, {attempts=}."
                 logging.warning(msg)
                 if counter < max_retries:
-                    msg = f"Next attempt after sleep={self.sleep}sec."
+                    msg = f"Next attempt after {sleep=} sec."
                     logging.warning(msg)
-                    time.sleep(self.sleep)
+                    time.sleep(sleep)
                 continue
             except RequestsConnectionError as ex:
                 raise ConnectionError(f"Netbox connection error: {ex}") from ex
@@ -504,21 +519,57 @@ class BaseC:
             if response.ok:
                 return response
 
-            msg = self._msg_status_code(response)
-            if self._is_status_code_5xx(response):
-                raise ConnectionError(f"Netbox server error: {msg}.")
-            if self._is_status_code_403_credentials_error(response):
-                raise ConnectionError(f"Netbox credentials error: {msg}.")
-            if self._is_status_code_400(response):
-                if self.strict:
-                    logging.warning(msg)
-                    return response
-            raise ConnectionError(f"ConnectionError: {msg}.")
+            self._handle_server_error(response)
+            return response
 
-        msg = f"max_retries={self.max_retries!r} reached."
+        return self._response_gateway_timeout()
+
+    def _handle_server_error(self, response: Response) -> None:
+        """Handle server errors based on the response status code.
+
+        If strict is False and the status is 400, empty data should be returned.
+
+        :param response: The response object to evaluate.
+        :return: None. Raises ConnectionError for various server error conditions.
+        :raise ConnectionError: For various server error conditions.
+        """
+        if 200 <= response.status_code < 300:
+            return
+
+        msg = self._msg_status_code(response)
+
+        # Handle 5xx – server errors
+        if 500 <= response.status_code < 600:
+            raise ConnectionError(f"Netbox server error: {msg}")
+
+        # Handle 403 – authentication or permission error
+        if response.status_code == 403:
+            if re.search("Invalid token", response.text, re.I):
+                raise ConnectionError(f"Netbox credentials error: {msg}")
+
+        if self.strict:
+            raise ConnectionError(f"ConnectionError: {msg}")
+
+        # Handle 400 – bad request, only warn if not strict
+        if response.status_code == 400:
+            logging.warning(msg)
+            return None
+
+        # Catch-all for other unexpected codes (non-2xx)
+        raise ConnectionError(f"ConnectionError: {msg}.")
+
+    def _response_gateway_timeout(self) -> Response:
+        """Create Response when `max_retries` are reached.
+
+        :return: Response object with status code 504 (Gateway Timeout).
+        """
+        max_retries = self.max_retries
+        msg = f"{max_retries=} reached."
         logging.warning(msg)
+
         response = Response()
-        response.status_code = 504  # Gateway Timeout
+        response.status_code = 504
+        response.reason = "Gateway Timeout"
         response._content = str.encode(msg)  # pylint: disable=protected-access
         return response
 
@@ -580,41 +631,10 @@ class BaseC:
             params.extend(params_)
         return params
 
-    # ============================== is ==============================
-
-    @staticmethod
-    def _is_status_code_4xx(response: Response) -> bool:
-        """Return True if status_code 4xx."""
-        if 400 <= response.status_code < 500:
-            return True
-        return False
-
-    @staticmethod
-    def _is_status_code_5xx(response: Response) -> bool:
-        """Return True if status_code 5xx."""
-        if 500 <= response.status_code < 600:
-            return True
-        return False
-
-    @staticmethod
-    def _is_status_code_403_credentials_error(response: Response) -> bool:
-        """Return True if invalid credentials."""
-        if response.status_code == 403:
-            if re.search("Invalid token", response.text, re.I):
-                return True
-        return False
-
-    @staticmethod
-    def _is_status_code_400(response: Response) -> bool:
-        """Return True if the object (tag) absent in Netbox."""
-        if response.status_code == 400:
-            return True
-        return False
-
     # =========================== helpers ===========================
 
     def _init_loners(self) -> LStr:
-        """Init loners filtering parameters."""
+        """Initialize loners filtering parameters."""
         loners_d: DAny = self.loners or LONERS
         loners: LStr = list(loners_d.get("any") or [])
         for path, loners_ in loners_d.items():
@@ -677,15 +697,24 @@ class BaseC:
         return params_d_
 
     @staticmethod
-    def _msg_status_code(response: Response) -> str:
+    def _msg_status_code(response: Optional[Response]) -> str:
         """Return message ready for logging ConnectionError."""
-        if not hasattr(response, "status_code"):
+        if not isinstance(response, Response):
             return ""
-        status_code, text, url = response.status_code, response.text, response.url
 
-        pattern = "Page Not Found."
-        if re.search(f"<title>{pattern}.+", text):
-            text = pattern
+        status_code = 0
+        if hasattr(response, "status_code"):
+            status_code = response.status_code
+
+        text = ""
+        if hasattr(response, "text"):
+            text = response.text
+        if re.search("<title>Page Not Found.+", text):
+            text = "Page Not Found."
+
+        url = ""
+        if hasattr(response, "url"):
+            url = response.url
 
         return f"{status_code=} {text=} {url=}"
 
@@ -694,7 +723,7 @@ class BaseC:
 
 
 def _init_host(**kwargs) -> str:
-    """Init Netbox host name."""
+    """Initialize Netbox host name."""
     host = str(kwargs.get("host") or "")
     if not host:
         raise ValueError("Host is required.")
@@ -702,7 +731,7 @@ def _init_host(**kwargs) -> str:
 
 
 def _init_port(**kwargs) -> int:
-    """Init port."""
+    """Initialize port."""
     if port := int(kwargs.get("port") or 0):
         if netports.check_port(port, strict=True):
             return port
@@ -715,7 +744,7 @@ def _init_port(**kwargs) -> int:
 
 
 def _init_scheme(**kwargs) -> str:
-    """Init scheme: https or http."""
+    """Initialize scheme: https or http."""
     scheme = str(kwargs.get("scheme") or "").lower()
     expected = ["https", "http"]
     if scheme not in expected:
@@ -724,14 +753,14 @@ def _init_scheme(**kwargs) -> str:
 
 
 def _init_threads(**kwargs) -> int:
-    """Init threads count, default 1."""
+    """Initialize threads count, default 1."""
     threads = int(kwargs.get("threads") or 1)
     threads = max(threads, 1)
     return int(threads)
 
 
 def _init_verify(**kwargs) -> bool:
-    """Init verify. False - Requests will accept any TLS certificate."""
+    """Initialize verify. False - Requests will accept any TLS certificate."""
     verify = kwargs.get("verify")
     if verify is None:
         return True

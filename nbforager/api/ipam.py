@@ -10,7 +10,7 @@ class IpamAC:
     """IPAM connectors."""
 
     def __init__(self, **kwargs):
-        """Init IpamAC."""
+        """Initialize IpamAC."""
         self.aggregates = self.AggregatesC(**kwargs)
         self.asn_ranges = self.AsnRangesC(**kwargs)
         self.asns = self.AsnsC(**kwargs)

@@ -16,7 +16,7 @@ from tests import params as p
 
 
 def full_tree() -> NbTree:
-    """Init tree with data, ready for tests."""
+    """Initialize tree with data, ready for tests."""
     tree = NbTree(
         circuits=CircuitsM(
             circuit_terminations=p.TERMINATIONS,
@@ -133,7 +133,7 @@ def full_tree() -> NbTree:
 
 
 def vrf_d(ids: LInt) -> DiDAny:
-    """Init simple Netbox ipam vrf object."""
+    """Initialize simple Netbox ipam vrf object."""
     data = {}
     for id_ in ids:
         vrf = deepcopy(p.VRF1_D)

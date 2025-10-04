@@ -10,7 +10,7 @@ class VirtualizationAF(BaseAF):
     """Virtualization Forager."""
 
     def __init__(self, api: NbApi, root: NbTree, tree: NbTree):
-        """Init VirtualizationAF.
+        """Initialize VirtualizationAF.
 
         :param api: NbApi object, connector to Netbox API.
         :param root: NbTree object where raw data from Netbox needs to be saved.

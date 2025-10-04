@@ -7,7 +7,7 @@ class ExtrasAC:
     """Extras connectors."""
 
     def __init__(self, **kwargs):
-        """Init ExtrasAC."""
+        """Initialize ExtrasAC."""
         self.bookmarks = self.BookmarksC(**kwargs)
         self.config_contexts = self.ConfigContextsC(**kwargs)
         self.config_templates = self.ConfigTemplatesC(**kwargs)

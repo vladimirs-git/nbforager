@@ -7,7 +7,7 @@ class VirtualizationAC:
     """Virtualization connectors."""
 
     def __init__(self, **kwargs):
-        """Init VirtualizationAC."""
+        """Initialize VirtualizationAC."""
         self.cluster_groups = self.ClusterGroupsC(**kwargs)
         self.cluster_types = self.ClusterTypesC(**kwargs)
         self.clusters = self.ClustersC(**kwargs)

@@ -16,16 +16,23 @@ from nbforager.types_ import DAny, LDAny
 
 
 @pytest.fixture
-def api():
-    """Init API"""
-    return NbApi(host="netbox")
+def api(params: DAny) -> NbApi:
+    """Initializeialize NbApi."""
+    return NbApi(host="nb", **params)
+
+
+@pytest.fixture
+def nbf(params: DAny) -> NbForager:
+    """Initialize NbForager."""
+    return NbForager(host="nb", **params)
+
 
 
 @pytest.fixture
 def mock_requests_vrf():
     """Mock Session."""
     with requests_mock.Mocker() as mock:
-        url = "https://netbox/api/ipam/vrfs/?limit=1000&offset=0"
+        url = "https://nb/api/ipam/vrfs/?limit=1000&offset=0"
         json = {"results": [{"id": 1, "name": "VRF 1"}, {"id": 2, "name": "VRF 2"}]}
         mock.get(url=url, json=json)
         yield mock
@@ -45,83 +52,77 @@ def mock_session(status_code: int, content: str = ""):
     return mock
 
 
-# noinspection PyTestUnpassedFixture
 @pytest.mark.parametrize("params, expected", [
-    ({"host": "netbox"}, "https://netbox/api/circuits/circuit-terminations/"),
-    ({"host": "netbox", "scheme": "http"}, "http://netbox/api/circuits/circuit-terminations/"),
-    ({"host": "netbox", "scheme": "http", "port": 80},
-     "http://netbox/api/circuits/circuit-terminations/"),
-    ({"host": "netbox", "scheme": "http", "port": 1},
-     "http://netbox:1/api/circuits/circuit-terminations/"),
-    ({"host": "netbox", "scheme": "https"}, "https://netbox/api/circuits/circuit-terminations/"),
-    ({"host": "netbox", "scheme": "https", "port": 443},
-     "https://netbox/api/circuits/circuit-terminations/"),
-    ({"host": "netbox", "scheme": "https", "port": 1},
-     "https://netbox:1/api/circuits/circuit-terminations/"),
+    ({}, "https://nb/api/ipam/vrfs/"),
+    ({"scheme": "http"}, "http://nb/api/ipam/vrfs/"),
+    ({"scheme": "http", "port": 80}, "http://nb/api/ipam/vrfs/"),
+    ({"scheme": "http", "port": 1}, "http://nb:1/api/ipam/vrfs/"),
+    ({"scheme": "https"}, "https://nb/api/ipam/vrfs/"),
+    ({"scheme": "https", "port": 443}, "https://nb/api/ipam/vrfs/"),
+    ({"scheme": "https", "port": 1}, "https://nb:1/api/ipam/vrfs/"),
 ])
-def test__url(params, expected):
+def test__url(api, nbf, params, expected):
     """BaseC.url."""
-    api = NbApi(**params)
-    actual = api.circuits.circuit_terminations.url
+    actual = api.ipam.vrfs.url
     assert actual == expected
 
-    nbf = NbForager(**params)
-    actual = nbf.api.circuits.circuit_terminations.url
+    actual = nbf.api.ipam.vrfs.url
     assert actual == expected
 
 
-# noinspection PyTestUnpassedFixture
 @pytest.mark.parametrize("params, expected", [
-    ({"host": "nb"}, "https://nb/ipam/vrfs/"),
-    ({"host": "nb", "scheme": "http"}, "http://nb/ipam/vrfs/"),
-    ({"host": "nb", "scheme": "http", "port": 80}, "http://nb/ipam/vrfs/"),
-    ({"host": "nb", "scheme": "http", "port": 1}, "http://nb:1/ipam/vrfs/"),
-    ({"host": "nb", "scheme": "https"}, "https://nb/ipam/vrfs/"),
-    ({"host": "nb", "scheme": "https", "port": 443}, "https://nb/ipam/vrfs/"),
-    ({"host": "nb", "scheme": "https", "port": 1}, "https://nb:1/ipam/vrfs/"),
+    ({}, "https://nb/ipam/vrfs/"),
+    ({"scheme": "http"}, "http://nb/ipam/vrfs/"),
+    ({"scheme": "http", "port": 80}, "http://nb/ipam/vrfs/"),
+    ({"scheme": "http", "port": 1}, "http://nb:1/ipam/vrfs/"),
+    ({"scheme": "https"}, "https://nb/ipam/vrfs/"),
+    ({"scheme": "https", "port": 443}, "https://nb/ipam/vrfs/"),
+    ({"scheme": "https", "port": 1}, "https://nb:1/ipam/vrfs/"),
 ])
-def test__url_ui(params, expected):
+def test__url_ui(api, params, expected):
     """BaseC.url_ui."""
-    api = NbApi(**params)
     actual = api.ipam.vrfs.url_ui
     assert actual == expected
 
 
-# noinspection PyTestUnpassedFixture
-@pytest.mark.parametrize("params, expected", [
-    ({"host": "netbox"}, "https://netbox/extras/changelog/"),
+@pytest.mark.parametrize("params, app, model, expected", [
+    ({}, "extras", "object_changes", "https://nb/extras/changelog/"),
+    ({}, "core", "object_changes", "https://nb/core/changelog/"),
+    ({}, "ipam", "ip_addresses", "https://nb/ipam/ip-addresses/"),
 ])
-def test__url_ui__changelog(params, expected):
+def test__url_ui__changelog(api, params, app, model, expected):
     """BaseC.url_ui."""
-    api = NbApi(**params)
-    actual = api.extras.object_changes.url_ui
+    connector = getattr(getattr(api, app), model)
+
+    actual = connector.url_ui
+
     assert actual == expected
 
 
-# noinspection PyTestUnpassedFixture
 @pytest.mark.parametrize("params, expected", [
-    ({"host": "netbox"}, "https://netbox/api/"),
-    ({"host": "netbox", "scheme": "http"}, "http://netbox/api/"),
-    ({"host": "netbox", "scheme": "http", "port": 80}, "http://netbox/api/"),
-    ({"host": "netbox", "scheme": "http", "port": 1}, "http://netbox:1/api/"),
-    ({"host": "netbox", "scheme": "https"}, "https://netbox/api/"),
-    ({"host": "netbox", "scheme": "https", "port": 443}, "https://netbox/api/"),
-    ({"host": "netbox", "scheme": "https", "port": 1}, "https://netbox:1/api/"),
+    ({}, "https://nb/api/"),
+    ({"scheme": "http"}, "http://nb/api/"),
+    ({"scheme": "http", "port": 80}, "http://nb/api/"),
+    ({"scheme": "http", "port": 1}, "http://nb:1/api/"),
+    ({"scheme": "https"}, "https://nb/api/"),
+    ({"scheme": "https", "port": 443}, "https://nb/api/"),
+    ({"scheme": "https", "port": 1}, "https://nb:1/api/"),
 ])
-def test__url_base(params, expected):
+def test__url_base(api, nbf, params, expected):
     """BaseC.url_base."""
-    api = NbApi(**params)
     actual = api.circuits.circuit_terminations.url_base
     assert actual == expected
 
-    nbf = NbForager(**params)
     actual = nbf.api.circuits.circuit_terminations.url_base
     assert actual == expected
 
 
 # ============================== helper ==============================
 
-def test__loners(api: NbApi):
+@pytest.mark.parametrize("params", [
+    {},
+])
+def test__loners(api, params):
     """BaseC._loners default."""
     assert api.dcim.devices._loners == ["q", "airflow"]
     assert api.ipam.aggregates._loners == ["q", "family", "prefix"]
@@ -136,26 +137,26 @@ def test__loners(api: NbApi):
 ])
 def test__init_loners(loners, expected):
     """BaseC._init_loners()."""
-    api = NbApi(host="netbox", loners=loners)
-    actual = api.ipam.aggregates._loners
+    api_ = NbApi(host="nb", loners=loners)
+    actual = api_.ipam.aggregates._loners
     assert actual == expected
 
-    api.ipam.aggregates.loners = loners
-    actual = api.ipam.aggregates._init_loners()
+    api_.ipam.aggregates.loners = loners
+    actual = api_.ipam.aggregates._init_loners()
     assert actual == expected
 
-    nbf = NbForager(host="netbox", loners=loners)
-    actual = nbf.api.ipam.aggregates._loners
+    nbf_ = NbForager(host="nb", loners=loners)
+    actual = nbf_.api.ipam.aggregates._loners
     assert actual == expected
 
 
-@pytest.mark.parametrize("items, expected", [
-    ([], None),
-    ([{"url": "ipam/prefixes/", "aggregate": {}}], None),
-    ([{"url": "ipam/prefixes/", "id": 1}], None),
-    ([{"url": "ipam/prefixes/", "_aggregate": {}}], NbApiError),
+@pytest.mark.parametrize("params, items, expected", [
+    ({}, [], None),
+    ({}, [{"url": "ipam/prefixes/", "aggregate": {}}], None),
+    ({}, [{"url": "ipam/prefixes/", "id": 1}], None),
+    ({}, [{"url": "ipam/prefixes/", "_aggregate": {}}], NbApiError),
 ])
-def test__check_extra_keys__ipam_prefixes(api: NbApi, items, expected: Any):
+def test__check_extra_keys__ipam_prefixes(api, params, items, expected):
     """BaseC._check_extra_keys() ipam/prefixes/."""
     if expected is None:
         api.ipam.prefixes._check_extra_keys(items=items)
@@ -164,13 +165,13 @@ def test__check_extra_keys__ipam_prefixes(api: NbApi, items, expected: Any):
             api.ipam.prefixes._check_extra_keys(items=items)
 
 
-@pytest.mark.parametrize("items, expected", [
-    ([], None),
-    ([{"url": "dcim/devices/", "id": 1}], None),
-    ([{"url": "dcim/devices/", "interfaces": {}}], None),
-    ([{"url": "dcim/devices/", "_interfaces": {}}], NbApiError),
+@pytest.mark.parametrize("params, items, expected", [
+    ({}, [], None),
+    ({}, [{"url": "dcim/devices/", "id": 1}], None),
+    ({}, [{"url": "dcim/devices/", "interfaces": {}}], None),
+    ({}, [{"url": "dcim/devices/", "_interfaces": {}}], NbApiError),
 ])
-def test__check_extra_keys__dcim_devices(api: NbApi, items, expected: Any):
+def test__check_extra_keys__dcim_devices(api, params, items, expected: Any):
     """BaseC._check_extra_keys(). dcim/devices/"""
     if expected is None:
         api.dcim.devices._check_extra_keys(items=items)
@@ -198,15 +199,16 @@ def test__check_extra_keys__dcim_devices(api: NbApi, items, expected: Any):
     (False, {"vrf": ["VRF 1"]}, {"vrf": ["VRF 1"]}),
 ])
 def test__change_params_name_to_id(
-        api: NbApi,
         mock_requests_vrf: Mocker,  # pylint: disable=unused-argument
         extended_get,
         params_d: DAny,
         expected: DAny,
 ):
     """BaseC._change_params_name_to_id()."""
-    api = NbApi(host="netbox", extended_get=extended_get)
-    actual = api.ipam.ip_addresses._change_params_name_to_id(params_d=params_d)
+    api_ = NbApi(host="nb", extended_get=extended_get)
+
+    actual = api_.ipam.ip_addresses._change_params_name_to_id(params_d=params_d)
+
     assert actual == expected
 
 
@@ -215,49 +217,92 @@ def test__change_params_name_to_id(
     (False, {"site_id": [1], "region_id": [2]}, {"site_id": [1], "region_id": [2]}),
 ])
 def test__change_params_exceptions(
-        api: NbApi,
         mock_requests_vrf: Mocker,  # pylint: disable=unused-argument
         extended_get,
         params_d: DAny,
         expected: DAny,
 ):
     """BaseC._change_params_exceptions()."""
-    api = NbApi(host="netbox", extended_get=extended_get)
-    actual = api.ipam.vlan_groups._change_params_exceptions(params_d=params_d)
+    api_ = NbApi(host="nb", extended_get=extended_get)
+
+    actual = api_.ipam.vlan_groups._change_params_exceptions(params_d=params_d)
+
     assert actual == expected
 
 
-@pytest.mark.parametrize("kwargs, exp_status_code, exp_text, error", [
+@pytest.mark.parametrize("params, resp_status_code, resp_text, error", [
     # strict=True
-    ({"host": "netbox", "strict": True}, 200, "", None),
-    ({"host": "netbox", "strict": True}, 400, "", None),
-    ({"host": "netbox", "strict": True}, 500, "any", ConnectionError),
-    ({"host": "netbox", "strict": True}, 403, "Invalid token", ConnectionError),
-    ({"host": "netbox", "timeout": 1, "max_retries": 1, "sleep": 1, "strict": True}, 200, "", None),
-    ({"host": "netbox", "timeout": 1, "max_retries": 2, "sleep": 1, "strict": True},
-     504, "", ConnectionError),  # was implemented in old version
+    ({"strict": True}, 200, "any", None),
+    ({"strict": True}, 400, "choice ... is not one of the available choices", ConnectionError),
+    ({"strict": True}, 403, "Invalid token", ConnectionError),
+    ({"strict": True}, 500, "any server error", ConnectionError),
+    ({"strict": True, "timeout": 1, "max_retries": 1, "sleep": 1}, 200, "any", None),
+    ({"strict": True, "timeout": 1, "max_retries": 2, "sleep": 1}, 504, "Session timeout",
+     ConnectionError),  # max_retries used in old version
     # strict=False
-    ({"host": "netbox", "strict": False}, 200, "", None),
-    ({"host": "netbox", "strict": False}, 400, "", ConnectionError),
-    ({"host": "netbox", "strict": False}, 500, "any", ConnectionError),
-    ({"host": "netbox", "strict": False}, 403, "Invalid token", ConnectionError),
-    ({"host": "netbox", "timeout": 1, "max_retries": 1, "sleep": 1, "strict": False},
-     200, "", None),
-    ({"host": "netbox", "timeout": 1, "max_retries": 2, "sleep": 1, "strict": False},
-     504, "", ConnectionError),  # was implemented in old version
+    ({"strict": False}, 200, "any", None),
+    ({"strict": False}, 400, "choice ... is not one of the available choices", None),
+    ({"strict": False}, 403, "Invalid token", ConnectionError),
+    ({"strict": False}, 500, "any server error", ConnectionError),
+    ({"strict": False, "timeout": 1, "max_retries": 1, "sleep": 1}, 200, "any", None),
+    ({"strict": False, "timeout": 1, "max_retries": 2, "sleep": 1}, 504, "Session timeout",
+     ConnectionError),  # max_retries used in old version
 ])
-def test__retry_requests(monkeypatch: MonkeyPatch,
-                         kwargs: DAny, exp_status_code, exp_text, error: Any):
+def test__retry_requests(api, monkeypatch: MonkeyPatch,
+                         params, resp_status_code, resp_text, error):
     """BaseC._retry_requests()."""
-    api = NbApi(**kwargs)
-    monkeypatch.setattr(Session, "get", mock_session(exp_status_code, exp_text))
+    monkeypatch.setattr(Session, "get", mock_session(resp_status_code, resp_text))
     if error:
         with pytest.raises(error):
             api.ipam.ip_addresses._retry_requests(url="")
     else:
         response = api.ipam.ip_addresses._retry_requests(url="")
         actual = response.status_code
-        assert actual == exp_status_code
+        assert actual == resp_status_code
+
+
+@pytest.mark.parametrize("strict, status_code, text, error", [
+    # strict=False
+    (False, 100, "any", ConnectionError),
+    (False, 200, "any", None),
+    (False, 300, "any", ConnectionError),
+    (False, 400, "any", None),
+    (False, 403, "any", ConnectionError),
+    (False, 500, "any", ConnectionError),
+    (False, 600, "any", ConnectionError),
+    # strict=True
+    (True, 100, "any", ConnectionError),
+    (True, 200, "any", None),
+    (True, 300, "any", ConnectionError),
+    (True, 400, "any", ConnectionError),
+    (True, 403, "any", ConnectionError),
+    (True, 500, "any", ConnectionError),
+    (True, 600, "any", ConnectionError),
+])
+def test__handle_server_error(strict, status_code, text, error):
+    """BaseC._handle_server_error()."""
+    api_ = NbApi(host="nb", strict=strict)
+
+    response = Response()
+    response.status_code = status_code
+    response._content = str.encode(text)
+
+    if error is None:
+        api_.ipam.ip_addresses._handle_server_error(response=response)
+    else:
+        with pytest.raises(error):
+            api_.ipam.ip_addresses._handle_server_error(response=response)
+
+
+def test__response_gateway_timeout():
+    """BaseC._response_gateway_timeout()."""
+    api_ = NbApi(host="nb")
+
+    response_ = api_.ipam.ip_addresses._response_gateway_timeout()
+
+    assert response_.status_code == 504
+    assert response_.reason == "Gateway Timeout"
+    assert response_.text == "max_retries=0 reached."
 
 
 # ============================= helpers ==============================
@@ -269,65 +314,64 @@ def test__retry_requests(monkeypatch: MonkeyPatch,
     ({"offset": [3]}, {"limit": [1000], "offset": [3]}),
     ({"limit": [2], "offset": [3]}, {"limit": [2], "offset": [3]}),
 ])
-def test__add_default_limit_offset(api: NbApi, params_d, expected):
+def test__add_default_limit_offset(params_d, expected):
     """BaseC._add_default_limit_offset()."""
-    actual = api.ipam.ip_addresses._add_default_limit_offset(params_d=params_d)
+    api_ = NbApi(host="nb")
+
+    actual = api_.ipam.ip_addresses._add_default_limit_offset(params_d=params_d)
+
     assert actual == expected
 
 
 @pytest.mark.parametrize("status_code, text, expected", [
-    (400, "text", "status_code=400 text='text' url='netbox'"),
-    (400, "<title>Page Not Found. text<title>",
-     "status_code=400 text='Page Not Found.' url='netbox'"),
+    (400, "text", "status_code=400 text='text' url='nb'"),
+    (400, "<title>Page Not Found. text<title>", "status_code=400 text='Page Not Found.' url='nb'"),
+    (None, "text", ""),
 ])
-def test__msg_status_code(
-        api: NbApi,
-        monkeypatch: MonkeyPatch,
-        status_code: int,
-        text: str,
-        expected: Any,
-):
+def test__msg_status_code(status_code, text, expected):
     """BaseC._msg_status_code()."""
-    monkeypatch.setattr(Session, "get", mock_session(status_code, text))
-    response: Response = api.ipam.ip_addresses._session.get(url="netbox")
-    actual = api.ipam.ip_addresses._msg_status_code(response=response)
+    api_ = NbApi(host="nb")
+    if isinstance(status_code, int):
+        response_ = Response()
+        response_.status_code = status_code
+        response_._content = str.encode(text)
+        response_.url = "nb"
+    else:
+        response_ = None
+
+    actual = api_.ipam.ip_addresses._msg_status_code(response=response_)
+
     assert actual == expected
 
 
-def test__msg_status_code__none(api: NbApi):
-    """BaseC._msg_status_code()."""
-    actual = api.ipam.ip_addresses._msg_status_code(response=None)  # type: ignore
-    assert actual == ""
-
-
-@pytest.mark.parametrize("results, expected", [
-    ([], []),
-    ([{"count": 1, "params_d": {}}], [{"limit": 1000, "offset": 0}]),
-    ([{"count": 1001, "params_d": {}}],
+@pytest.mark.parametrize("params, results, expected", [
+    ({}, [], []),
+    ({}, [{"count": 1, "params_d": {}}], [{"limit": 1000, "offset": 0}]),
+    ({}, [{"count": 1001, "params_d": {}}],
      [{"limit": 1000, "offset": 0}, {"limit": 1000, "offset": 1000}]),
 ])
-def test__slice_params_counters(api: NbApi, results: LDAny, expected: LDAny):
+def test__slice_params_counters(api, params, results, expected):
     """BaseC._slice_params_counters()."""
     actual = api.ipam.ip_addresses._slice_params_counters(results=results)
     assert actual == expected
 
 
-@pytest.mark.parametrize("kwargs, expected", [
+@pytest.mark.parametrize("params, expected", [
     ({}, ValueError),
     ({"host": ""}, ValueError),
     ({"host": "netbox"}, "netbox"),
 ])
-def test__init_host(kwargs, expected: Any):
+def test__init_host(params, expected: Any):
     """base_c._init_host()"""
     if isinstance(expected, str):
-        actual = base_c._init_host(**kwargs)
+        actual = base_c._init_host(**params)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            base_c._init_host(**kwargs)
+            base_c._init_host(**params)
 
 
-@pytest.mark.parametrize("kwargs, expected", [
+@pytest.mark.parametrize("params, expected", [
     ({}, 443),
     ({"port": ""}, 443),
     ({"port": 0}, 443),
@@ -345,17 +389,17 @@ def test__init_host(kwargs, expected: Any):
     ({"scheme": "https", "port": 1}, 1),
     ({"scheme": "typo", "port": "1"}, 1),
 ])
-def test__init_port(kwargs, expected: Any):
+def test__init_port(params, expected: Any):
     """base_c._init_port()"""
     if isinstance(expected, int):
-        actual = base_c._init_port(**kwargs)
+        actual = base_c._init_port(**params)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            base_c._init_port(**kwargs)
+            base_c._init_port(**params)
 
 
-@pytest.mark.parametrize("kwargs, expected", [
+@pytest.mark.parametrize("params, expected", [
     ({}, ValueError),
     ({"scheme": ""}, ValueError),
     ({"scheme": "typo"}, ValueError),
@@ -364,24 +408,24 @@ def test__init_port(kwargs, expected: Any):
     ({"scheme": "https"}, "https"),
     ({"scheme": "HTTPs"}, "https"),
 ])
-def test__init_scheme(kwargs, expected: Any):
+def test__init_scheme(params, expected: Any):
     """base_c._init_scheme()"""
     if isinstance(expected, str):
-        actual = base_c._init_scheme(**kwargs)
+        actual = base_c._init_scheme(**params)
         assert actual == expected
     else:
         with pytest.raises(expected):
-            base_c._init_scheme(**kwargs)
+            base_c._init_scheme(**params)
 
 
-@pytest.mark.parametrize("kwargs, expected", [
+@pytest.mark.parametrize("params, expected", [
     ({}, {}),
     ({"a": 1}, {"a": [1]}),
     ({"a": [1, 1]}, {"a": [1]}),
     ({"a": (1, 2)}, {"a": [1, 2]}),
     ({"a": 1, "b": 3}, {"a": [1], "b": [3]}),
 ])
-def test__lists_wo_dupl(kwargs: DAny, expected: LDAny):
+def test__lists_wo_dupl(params, expected: LDAny):
     """base_c._lists_wo_dupl()."""
-    actual = base_c._lists_wo_dupl(kwargs=kwargs)
+    actual = base_c._lists_wo_dupl(kwargs=params)
     assert actual == expected

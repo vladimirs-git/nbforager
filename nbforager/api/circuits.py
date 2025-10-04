@@ -8,7 +8,7 @@ class CircuitsAC(BaseAC):
     """Circuits connectors."""
 
     def __init__(self, **kwargs):
-        """Init CircuitsAC."""
+        """Initialize CircuitsAC."""
         self.circuit_group_assignments = self.CircuitGroupAssignmentsC(**kwargs)
         self.circuit_groups = self.CircuitGroupsC(**kwargs)
         self.circuit_terminations = self.CircuitTerminationsC(**kwargs)

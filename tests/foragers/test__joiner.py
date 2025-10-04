@@ -13,7 +13,7 @@ from tests import params as p
 
 @pytest.fixture
 def joiner() -> Joiner:
-    """Init Joiner with root data."""
+    """Initialize Joiner with root data."""
     tree: NbTree = func.full_tree()
     tree = nb_tree.join_tree(tree)
     joiner_ = Joiner(tree=tree)

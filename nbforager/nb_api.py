@@ -71,7 +71,7 @@ class NbApi:
         loners: ODLStr = None,
         **kwargs,
     ):
-        """Init NbApi.
+        """Initialize NbApi.
 
         :param str host: Netbox host name.
 

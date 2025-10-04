@@ -23,7 +23,7 @@ class Forager:
     """Base for Foragers."""
 
     def __init__(self, forager_a):
-        """Init Forager.
+        """Initialize Forager.
 
         :param forager_a: Parent forager.
         :type forager_a: CircuitsF or DcimF or IpamF or TenancyF

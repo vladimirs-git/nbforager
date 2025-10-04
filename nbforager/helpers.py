@@ -25,6 +25,7 @@ def decode_response_d(response: Response) -> DAny:
     data: DAny = dict(json.loads(html))
     return data
 
+
 def decode_response_l(response: Response) -> LDAny:
     """Decode Netbox object as a list from API response.
 

@@ -62,7 +62,7 @@ class NbForager:
         cache: str = "",
         **kwargs,
     ):
-        """Init NbForager.
+        """Initialize NbForager.
 
         :param cache: Path to cache. If the value ends with .pickle,
             it is the path to a file; otherwise, it is the path to a directory.

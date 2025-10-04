@@ -280,25 +280,25 @@ def test__url_to_api_url(url, expected):
 
 
 @pytest.mark.parametrize("url, expected", [
-    # # ui
+    # ui
     ("https://nb/extras/changelog/", "https://nb/extras/changelog/"),
     ("https://nb/core/changelog/", "https://nb/core/changelog/"),
-    # ("https://nb/ipam/ip-address/1?k=v", "https://nb/ipam/ip-address/1/"),
-    # ("https://nb/ipam/ip-address/1/", "https://nb/ipam/ip-address/1/"),
-    # ("https://nb/ipam/ip-address/1", "https://nb/ipam/ip-address/1/"),
-    # ("https://nb/ipam/ip-address", "https://nb/ipam/ip-address/"),
-    # # api
+    ("https://nb/ipam/ip-address/1?k=v", "https://nb/ipam/ip-address/1?k=v"),
+    ("https://nb/ipam/ip-address/1/", "https://nb/ipam/ip-address/1/"),
+    ("https://nb/ipam/ip-address/1", "https://nb/ipam/ip-address/1"),
+    ("https://nb/ipam/ip-address", "https://nb/ipam/ip-address"),
+    # api
     ("https://nb/api/extras/object-changes/", "https://nb/extras/changelog/"),
     ("https://nb/api/core/object-changes/", "https://nb/core/changelog/"),
-    # ("https://nb/api/ipam/ip-address/1?k=v", "https://nb/ipam/ip-address/1/"),
-    # ("https://nb/api/ipam/ip-address/1/", "https://nb/ipam/ip-address/1/"),
-    # ("https://nb/api/ipam/ip-address/1", "https://nb/ipam/ip-address/1/"),
-    # ("https://nb/api/ipam/ip-address", "https://nb/ipam/ip-address/"),
-    # # invalid
-    # ("https://nb/api/ipam", NbApiError),
-    # ("https://nb/api", NbApiError),
-    # ("https://nb", NbApiError),
-    # ("", NbApiError),
+    ("https://nb/api/ipam/ip-address/1?k=v", "https://nb/ipam/ip-address/1?k=v"),
+    ("https://nb/api/ipam/ip-address/1/", "https://nb/ipam/ip-address/1/"),
+    ("https://nb/api/ipam/ip-address/1", "https://nb/ipam/ip-address/1"),
+    ("https://nb/api/ipam/ip-address", "https://nb/ipam/ip-address"),
+    # invalid
+    ("https://nb/api/ipam", "https://nb/ipam"),
+    ("https://nb/api", "https://nb/api"),
+    ("https://nb", "https://nb"),
+    ("", ""),
 
 ])
 def test__url_to_ui(url, expected):

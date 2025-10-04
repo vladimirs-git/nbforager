@@ -7,7 +7,7 @@ class CoreAC:
     """Core connectors."""
 
     def __init__(self, **kwargs):
-        """Init CoreAC."""
+        """Initialize CoreAC."""
         self.background_queues = self.BackgroundQueuesC(**kwargs)
         self.background_tasks = self.BackgroundTasksC(**kwargs)
         self.background_workers = self.BackgroundWorkersC(**kwargs)

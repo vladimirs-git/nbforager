@@ -110,7 +110,7 @@ class NbParser:
     """
 
     def __init__(self, data: DAny, strict: bool = False, **kwargs):  # pylint: disable=E0601
-        """Init NbParser.
+        """Initialize NbParser.
 
         :param data: Netbox object.
         :type data: dict
@@ -454,7 +454,7 @@ class NbParser:
 
 
 def _init_data(data: DAny) -> DAny:
-    """Init data."""
+    """Initialize data."""
     if data is None:
         return {}
     if isinstance(data, dict):

@@ -23,7 +23,7 @@ class NbCache:
         cache: str = "",
         **kwargs,
     ):
-        """Init NbCache.
+        """Initialize NbCache.
 
         :param tree: NbTree object to be cached.
         :param status: Netbox status data with metadata.

@@ -12,7 +12,7 @@ class Msg:
     """Message."""
 
     def __init__(self, level: str, name: str, text: str):
-        """Init Message.
+        """Initialize Message.
 
         :param level: "example", "info", "warning", "error".
         :param name: Header.
@@ -39,7 +39,7 @@ class Messages:
     """Messages. Processing info/warning/error messages."""
 
     def __init__(self, name: str = ""):
-        """Init Messages.
+        """Initialize Messages.
 
         :param name: Default header for all messages.
         """

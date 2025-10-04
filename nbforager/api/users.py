@@ -8,7 +8,7 @@ class UsersAC:
     """Users connectors."""
 
     def __init__(self, **kwargs):
-        """Init UsersAC."""
+        """Initialize UsersAC."""
         self.config = self.ConfigC(**kwargs)
         self.groups = self.GroupsC(**kwargs)
         self.permissions = self.PermissionsC(**kwargs)

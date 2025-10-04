@@ -13,7 +13,7 @@ from tests import functions as func
 
 @pytest.fixture
 def tree_meta():
-    """Init NbTree and NbMeta objects."""
+    """Initialize NbTree and NbMeta objects."""
     tree = NbTree()
     tree.ipam.vrfs.update(func.vrf_d([1]))  # pylint: disable=E1101
 

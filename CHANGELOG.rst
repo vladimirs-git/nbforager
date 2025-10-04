@@ -4,6 +4,12 @@
 CHANGELOG
 =========
 
+1.0.14 (2025-10-04)
+-------------------
+
+**Fixed:** BaseC._retry_requests() return empty data if strict False, status 400
+
+
 1.0.13 (2025-10-01)
 -------------------
 

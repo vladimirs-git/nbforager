@@ -7,7 +7,7 @@ class DcimAC:
     """DCIM connectors."""
 
     def __init__(self, **kwargs):
-        """Init DcimAC."""
+        """Initialize DcimAC."""
         self.cable_terminations = self.CableTerminationsC(**kwargs)
         self.cables = self.CablesC(**kwargs)
         self.connected_device = self.ConnectedDeviceC(**kwargs)

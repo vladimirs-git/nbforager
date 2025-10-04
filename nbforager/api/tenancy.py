@@ -7,7 +7,7 @@ class TenancyAC:
     """Tenancy connectors."""
 
     def __init__(self, **kwargs):
-        """Init TenancyAC."""
+        """Initialize TenancyAC."""
         self.contact_assignments = self.ContactAssignmentsC(**kwargs)
         self.contact_groups = self.ContactGroupsC(**kwargs)
         self.contact_roles = self.ContactRolesC(**kwargs)

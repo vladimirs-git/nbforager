@@ -35,7 +35,7 @@ class BaseAF:
     """Base for Application Foragers."""
 
     def __init__(self, api: NbApi, root: NbTree, tree: NbTree):
-        """Init BaseAF.
+        """Initialize BaseAF.
 
         :param root: Dictionary where data from Netbox needs to be saved.
         """

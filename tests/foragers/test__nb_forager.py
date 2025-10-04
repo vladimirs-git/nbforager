@@ -19,13 +19,13 @@ from tests import params as p
 
 @pytest.fixture
 def nbf() -> NbForager:
-    """Init NbForager without data."""
+    """Initialize NbForager without data."""
     return NbForager(host="netbox")
 
 
 @pytest.fixture
 def nbf_r() -> NbForager:
-    """Init NbForager with NbForager.root data."""
+    """Initialize NbForager with NbForager.root data."""
     nbf_ = NbForager(host="netbox")
     tree: NbTree = func.full_tree()
     nb_tree.insert_tree(src=tree, dst=nbf_.root)
@@ -34,7 +34,7 @@ def nbf_r() -> NbForager:
 
 @pytest.fixture
 def nbf_t() -> NbForager:
-    """Init NbForager with NbForager.tree data."""
+    """Initialize NbForager with NbForager.tree data."""
     nbf_ = NbForager(host="netbox")
     tree: NbTree = func.full_tree()
 

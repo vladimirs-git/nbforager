@@ -16,13 +16,13 @@ from tests.functions import full_tree
 
 @pytest.fixture
 def nbf() -> NbForager:
-    """Init NbForager without data."""
+    """Initialize NbForager without data."""
     return NbForager(host="netbox")
 
 
 @pytest.fixture
 def nbf_r() -> NbForager:
-    """Init NbForager with NbForager.root data."""
+    """Initialize NbForager with NbForager.root data."""
     nbf_ = NbForager(host="netbox")
     nb_tree.insert_tree(src=full_tree(), dst=nbf_.root)
     return nbf_
@@ -30,7 +30,7 @@ def nbf_r() -> NbForager:
 
 @pytest.fixture
 def nbf_t() -> NbForager:
-    """Init NbForager."""
+    """Initialize NbForager."""
     nbf_ = NbForager(host="netbox")
     nb_tree.insert_tree(src=full_tree(), dst=nbf_.tree)
     return nbf_

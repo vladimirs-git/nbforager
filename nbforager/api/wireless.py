@@ -7,7 +7,7 @@ class WirelessAC:
     """Wireless connectors."""
 
     def __init__(self, **kwargs):
-        """Init WirelessAC."""
+        """Initialize WirelessAC."""
         self.wireless_lan_groups = self.WirelessLanGroupsC(**kwargs)
         self.wireless_lans = self.WirelessLansC(**kwargs)
         self.wireless_links = self.WirelessLinksC(**kwargs)

@@ -8,7 +8,7 @@ class PluginsAC:
     """Plugins connectors."""
 
     def __init__(self, **kwargs):
-        """Init PluginsAC."""
+        """Initialize PluginsAC."""
         self.installed_plugins = self.InstalledPluginsC(**kwargs)
 
     class InstalledPluginsC(Connector):
