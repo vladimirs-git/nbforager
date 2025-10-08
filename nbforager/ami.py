@@ -180,7 +180,7 @@ def url_to_ami_items(url: str) -> T3Str:
              If the URL is invalid or does not contain the necessary items, returns empty strings.
 
     :example:
-        split_url("https://domain.com/api/ipam/vrfs?id=1") -> ("ipam", "vrfs", "1")
+        url_to_ami_items("https://domain.com/api/ipam/vrfs?id=1") -> ("ipam", "vrfs", "1")
     """
     not_ami = ("", "", "")
     url_o: ParseResult = urllib.parse.urlparse(url)
@@ -227,7 +227,7 @@ def url_to_ami(url: str, path: bool = False) -> T3StrInt:
     :return: Tuple of application attribute name, model attribute name and object ID.
 
     :example:
-        url_to_attrs("https://domain.com/api/ipam/ip-addresses/1") -> "ipam", "ip_addresses", 1
+        url_to_ami("https://domain.com/api/ipam/ip-addresses/1") -> "ipam", "ip_addresses", 1
     """
     app, model, idx = url_to_ami_items(url)
     expected = "expected app/modem/id format"
@@ -267,7 +267,7 @@ def url_to_ami_path(url: str) -> str:
     :return: A string representing the app/mode/id path.
 
     :example:
-        url_to_am_path("https://domain.com/api/ipam/vrf/1") -> "ipam/vrf/1/"
+        url_to_ami_path("https://domain.com/api/ipam/vrf/1") -> "ipam/vrf/1/"
     """
     app, model, id_ = url_to_ami_items(url)
     if not (app and model and id_):
@@ -298,7 +298,7 @@ def url_to_api_url(url: str) -> str:
     :return: A string representing the Netbox API URL.
 
     :example:
-        url_to_ui_url("https://domain.com/ipam/vrf/1/") -> "https://domain.com/api/ipam/vrf/1/"
+        url_to_api_url("https://domain.com/ipam/vrf/1/") -> "https://domain.com/api/ipam/vrf/1/"
     """
     url_o: ParseResult = urllib.parse.urlparse(url)
     app, model, id_ = url_to_ami(url=url, path=True)
@@ -329,7 +329,7 @@ def url_to_ui(url: str) -> str:
     :return: A string representing the Netbox UI URL.
 
     :example:
-        url_to_ui_url("https://domain.com/api/ipam/vrf/1/") -> "https://domain.com/ipam/vrf/1/"
+        url_to_ui("https://domain.com/api/ipam/vrf/1/") -> "https://domain.com/ipam/vrf/1/"
     """
     url = url.replace("/api/extras/object-changes/", "/api/extras/changelog/", 1)
     url = url.replace("/api/core/object-changes/", "/api/core/changelog/", 1)
