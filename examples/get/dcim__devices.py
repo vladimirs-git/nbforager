@@ -71,6 +71,7 @@ objects = nb.dcim.devices.get(interfaces=True)
 objects = nb.dcim.devices.get(pass_through_ports=True)
 
 # Miscellaneous
+objects = nb.dcim.devices.get(primary_ip4_id=123)  # management IPv4
 objects = nb.dcim.devices.get(has_primary_ip=True)
 objects = nb.dcim.devices.get(has_oob_ip=True)
 objects = nb.dcim.devices.get(virtual_chassis_member=True)

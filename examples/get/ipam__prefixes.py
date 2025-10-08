@@ -20,8 +20,9 @@ objects = nb.ipam.prefixes.get(tag="tag1")
 objects = nb.ipam.prefixes.get(or_tag=["tag1", "tag2"])
 
 # Addressing
-objects1 = nb.ipam.prefixes.get(within_include="10.0.0.0/20")  # aggregate
-objects2 = nb.ipam.prefixes.get(within_include="10.11.0.0/16")  # aggregate
+objects = nb.ipam.prefixes.get(within="10.0.0.0/20")  # sub-prefixes
+objects1 = nb.ipam.prefixes.get(within_include="10.0.0.0/20")  # aggregate + sub-prefixes
+objects2 = nb.ipam.prefixes.get(within_include="10.11.0.0/16")  # aggregate + sub-prefixes
 objects = nb.ipam.prefixes.get(within_include=["10.0.0.0/20", "10.11.0.0/16"])  # aggregates
 objects = nb.ipam.prefixes.get(family=[4, 6])
 objects = nb.ipam.prefixes.get(status=["active"])
