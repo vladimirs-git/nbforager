@@ -278,7 +278,14 @@ class NbValue(NbParser):
 
     @check_strict
     def device_role_id(self) -> int:
-        """dcim/devices.device_role.id."""
+        """dcim/devices.device_role.id.
+
+        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+
+        :return: Role ID.
+        :raise NbParserError: if strict=True and object has no value.
+        :raise NbVersionError: If the key is deprecated for specific app/model.
+        """
         # dcim/devices
         if self.is_dcim("devices"):
             # Netbox >= v4.2
@@ -293,10 +300,11 @@ class NbValue(NbParser):
     def device_role_name(self) -> str:
         """dcim/devices.device_role.name.
 
-        Provide compatability for dcim/devices in Netbox >= v4.2 and Netbox < v4.2.
+        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
 
         :return: Role name.
-        :raise NbParserError: if strict=True and object has no role name.
+        :raise NbParserError: if strict=True and object has no value.
+        :raise NbVersionError: If the key is deprecated for specific app/model.
         """
         # dcim/devices
         if self.is_dcim("devices"):
@@ -312,10 +320,11 @@ class NbValue(NbParser):
     def device_role_slug(self) -> str:
         """dcim/devices.device_role.slug.
 
-        Provide compatability for dcim/devices in Netbox >= v4.2 and Netbox < v4.2.
+        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
 
         :return: Role slug.
-        :raise NbParserError: if strict=True and object has no role slug.
+        :raise NbParserError: if strict=True and object has no value.
+        :raise NbVersionError: If the key is deprecated for specific app/model.
         """
         # dcim/devices
         if self.is_dcim("devices"):
@@ -519,8 +528,11 @@ class NbValue(NbParser):
     def primary_ip_address(self) -> str:
         """dcim/devices.primary_ip.address.
 
+        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+
         :return: primary_ip address.
-        :raise NbParserError: if strict=True and device has no primary_ip address.
+        :raise NbParserError: if strict=True and object has no value.
+        :raise NbVersionError: If the key is deprecated for specific app/model.
         """
         address: str = self.str("primary_ip", "address")
         if self.strict:
@@ -533,8 +545,11 @@ class NbValue(NbParser):
     def primary_ip_family(self) -> int:
         """dcim/devices.primary_ip.family.
 
+        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+
         :return: primary_ip family.
-        :raise NbParserError: if strict=True and device has no primary_ip family.
+        :raise NbParserError: if strict=True and object has no value.
+        :raise NbVersionError: If the key is deprecated for specific app/model.
         """
         family = dict(self.data.get("primary_ip") or {}).get("family")
         # Netbox < v4.2
@@ -556,8 +571,11 @@ class NbValue(NbParser):
     def primary_ip4_address(self) -> str:
         """dcim/devices/primary_ip4/address.
 
+        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+
         :return: primary_ip4 address.
-        :raise NbParserError: if strict=True and device has no primary_ip4 address.
+        :raise NbParserError: if strict=True and object has no value.
+        :raise NbVersionError: If the key is deprecated for specific app/model.
         """
         address: str = self.str("primary_ip4", "address")
         if self.strict:
@@ -570,8 +588,11 @@ class NbValue(NbParser):
     def primary_ip4_family(self) -> int:
         """dcim/devices/primary_ip4/family.
 
+        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+
         :return: primary_ip4 family.
-        :raise NbParserError: if strict=True and device has no primary_ip4 family.
+        :raise NbParserError: if strict=True and object has no value.
+        :raise NbVersionError: If the key is deprecated for specific app/model.
         """
         family = dict(self.data.get("primary_ip4") or {}).get("family")
         # Netbox < v4.2
@@ -677,7 +698,14 @@ class NbValue(NbParser):
 
     @check_strict
     def site_id(self) -> int:
-        """ipam/prefixes/site/id, dcim/devices/sites/id."""
+        """ipam/prefixes/site/id, dcim/devices/sites/id.
+
+        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+
+        :return: Site ID.
+        :raise NbParserError: if strict=True and object has no value.
+        :raise NbVersionError: If the key is deprecated for specific app/model.
+        """
         # ipam/prefix
         if self.is_ipam("prefixes"):
             # Netbox >= v4.2
@@ -696,8 +724,7 @@ class NbValue(NbParser):
     def site_name(self) -> str:
         """ipam/prefixes/site/name, dcim/devices/sites/name.
 
-        Provide compatability for ipam/prefixes in Netbox >= v4.2 and Netbox < v4.2
-        Convert site name to the same manner.
+        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
 
         Note: Different models may have different upper or lower case:
             - sites/name="SITE1",
@@ -705,7 +732,8 @@ class NbValue(NbParser):
             - vlans/site/name="site1".
 
         :return: Site name.
-        :raise NbParserError: if strict=True and object has no site name.
+        :raise NbParserError: if strict=True and object has no value.
+        :raise NbVersionError: If the key is deprecated for specific app/model.
         """
         # ipam/prefix
         if self.is_ipam("prefixes"):
@@ -722,8 +750,15 @@ class NbValue(NbParser):
         return self.str("site", "name")
 
     @check_strict
-    def site_slug(self) -> str:  # TOD|vp
-        """ipam/prefixes/site/slug, dcim/devices/sites/slug."""
+    def site_slug(self) -> str:
+        """ipam/prefixes/site/slug, dcim/devices/sites/slug.
+
+        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+
+        :return: Site slug.
+        :raise NbParserError: if strict=True and object has no value.
+        :raise NbVersionError: If the key is deprecated for specific app/model.
+        """
         # ipam/prefix
         if self.is_ipam("prefixes"):
             # Netbox >= v4.2
