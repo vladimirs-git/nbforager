@@ -6,6 +6,7 @@ import re
 
 from netports.ipv4 import RE_PREFIX, RE_IP
 
+from nbforager import ami
 from nbforager.exceptions import NbParserError
 from nbforager.parser.nb_parser import NbParser, check_strict
 from nbforager.types_ import LStr, LInt, LDAny
@@ -955,6 +956,12 @@ class NbValue(NbParser):
     def url(self) -> str:
         """ipam/prefixes.url."""
         return self.str("url")
+
+    @check_strict
+    def url_ui(self) -> str:
+        """URL of object to Web UI."""
+        url = self.str("url")
+        return ami.url_to_ui(url)
 
     # ================================ is ================================
 

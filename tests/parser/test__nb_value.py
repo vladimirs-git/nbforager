@@ -699,11 +699,11 @@ def test__vlan_vid(nbv, params, expected):
 
 
 @pytest.mark.parametrize("params, expected", [
-    ({"data": {"url": "name"}, "strict": False}, "name"),
+    ({"data": {"url": "/api/ipam/vrf/1/"}, "strict": False}, "/api/ipam/vrf/1/"),
     ({"data": {"url": ""}, "strict": False}, ""),
     ({"data": None, "strict": False}, ""),
     # strict
-    ({"data": {"url": "name"}, "strict": True}, "name"),
+    ({"data": {"url": "/api/ipam/vrf/1/"}, "strict": True}, "/api/ipam/vrf/1/"),
     ({"data": {"url": ""}, "strict": True}, NbParserError),
     ({"data": None, "strict": True}, NbParserError),
 ])
@@ -716,6 +716,25 @@ def test__url(nbv, params, expected):
         with pytest.raises(expected):
             nbv.url()
 
+@pytest.mark.parametrize("params, expected", [
+    ({"data": {"url": "/api/ipam/vrf/1/"}, "strict": False}, "/ipam/vrf/1/"),
+    ({"data": {"url": "/api/core/object-changes/1/"}, "strict": False}, "/core/changelog/1/"),
+    ({"data": {"url": ""}, "strict": False}, ""),
+    ({"data": None, "strict": False}, ""),
+    # strict
+    ({"data": {"url": "/api/ipam/vrf/1/"}, "strict": False}, "/ipam/vrf/1/"),
+    ({"data": {"url": "/api/core/object-changes/1/"}, "strict": False}, "/core/changelog/1/"),
+    ({"data": {"url": ""}, "strict": True}, NbParserError),
+    ({"data": None, "strict": True}, NbParserError),
+])
+def test__url_ui(nbv, params, expected):
+    """NbValue.url_ui()."""
+    if isinstance(expected, str):
+        actual = nbv.url_ui()
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbv.url_ui()
 
 # ============================== is ==================================
 
