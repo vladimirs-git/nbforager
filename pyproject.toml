@@ -14,6 +14,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Natural Language :: English",
 ]
+# requires-poetry = "^2.1.2"
 
 [tool.poetry.urls]
 homepage = "https://github.com/vladimirs-git/nbforager"
