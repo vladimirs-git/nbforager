@@ -182,6 +182,45 @@ class NbParser:
         self._raise_deprecated_type(keys=list(keys), type_req=dict)
         return self._get_keys(type_=dict, keys=keys)
 
+
+    def float(self, *keys) -> float:
+        """Get float value by keys.
+
+        :param keys: Chaining dictionary keys to retrieve the desired value.
+
+        :return: Float value or 0.0 if the value is absent.
+        :rtype: float
+
+        :raise NbParserError: If strict=True and the value is not a digit or key is absent.
+        """
+        first_key = keys[0]
+        self._raise_deprecated_key(first_key)
+        self._raise_deprecated_type(keys=list(keys), type_req=float)
+
+        data = self.data
+        try:
+            for key in keys:
+                data = data[key]
+        except (KeyError, TypeError) as ex:
+            if self.strict:
+                type_ = type(ex).__name__
+                raise NbParserError(f"{type_}: {ex}, {keys=} in {self._source()}") from ex
+            return 0
+
+        if isinstance(data, float):
+            return data
+
+        if isinstance(data, int):
+            return float(data)
+
+
+        if isinstance(data, str) and not set(data).difference(set("0123456789.")):
+            return float(data)
+
+        if self.strict:
+            raise NbParserError(f"{keys=} {float} expected in {self._source()}.")
+        return 0
+
     def int(self, *keys) -> int:
         """Get integer value by keys.
 

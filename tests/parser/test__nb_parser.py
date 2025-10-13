@@ -187,6 +187,48 @@ def test__dict__deprecated(caplog, nbp, keys: LStr, params, expected):
             nbp.dict(*keys)
 
 
+
+@pytest.mark.parametrize("keys, params, expected", [
+    (["a"], {"data": {"a": 1.0}, "strict": True}, 1.0),
+    (["a"], {"data": {"a": 1.0}, "strict": False}, 1.0),
+    (["a"], {"data": {"a": "1.0"}, "strict": True}, 1.0),
+    (["a"], {"data": {"a": "1.0"}, "strict": False}, 1.0),
+    (["a"], {"data": {"a": "1.00"}, "strict": True}, 1.0),
+    (["a"], {"data": {"a": "1.00"}, "strict": False}, 1.0),
+    (["a"], {"data": {"a": 0.0}, "strict": True}, 0.0),
+    (["a"], {"data": {"a": 0.0}, "strict": False}, 0.0),
+    (["a"], {"data": {"a": "0.0"}, "strict": True}, 0.0),
+    (["a"], {"data": {"a": "0.0"}, "strict": False}, 0.0),
+    (["a", "b"], {"data": {"a": {"b": 1.0}}, "strict": True}, 1.0),
+    (["a", "b"], {"data": {"a": {"b": 1.0}}, "strict": False}, 1.0),
+    (["a", "b"], {"data": {"a": {"b": None}}, "strict": True}, NbParserError),
+    (["a", "b"], {"data": {"a": {"b": None}}, "strict": False}, 0.0),
+    (["a", "b"], {"data": {"a": {"b": "1.0"}}, "strict": True}, 1.0),
+    (["a", "b"], {"data": {"a": {"b": "1.0"}}, "strict": False}, 1.0),
+    (["a", "b", "c"], {"data": {"a": {"b": {"c": 1.0}}}, "strict": True}, 1.0),
+    (["a", "b", "c"], {"data": {"a": {"b": {"c": "1.0"}}}, "strict": True}, 1.0),
+    (["a", "b", "c"], {"data": {"a": {"b": {"c": None}}}, "strict": True}, NbParserError),
+    (["a", "b", "c"], {"data": {"a": {"b": {"c": None}}}, "strict": False}, 0.0),
+    (["a"], {"data": None, "strict": True}, NbParserError),
+    (["a"], {"data": None, "strict": False}, 0.0),
+    # list
+    (["a", 0, "b"], {"data": {"a": [{"b": None}]}, "strict": False}, 0.0),
+    (["a", 0, "b"], {"data": {"a": [{"b": None}]}, "strict": True}, NbParserError),
+    (["a", 0, "b"], {"data": {"a": [{"b": 1.0}]}, "strict": False}, 1.0),
+    (["a", 0, "b"], {"data": {"a": [{"b": 1.0}]}, "strict": True}, 1.0),
+    (["a", 0, "b"], {"data": {"a": {"b": 1.0}}, "strict": False}, 0.0),
+    (["a", 0, "b"], {"data": {"a": {"b": 1.0}}, "strict": True}, NbParserError),
+])
+def test__float(nbp, keys: LStr, params, expected):
+    """NbParser.float()."""
+    if isinstance(expected, float):
+        actual = nbp.float(*keys)
+        assert actual == expected
+    else:
+        with pytest.raises(expected):
+            nbp.float(*keys)
+
+
 @pytest.mark.parametrize("keys, params, expected", [
     (["id"], {"data": {"id": "1"}, "strict": True}, 1),
     (["id"], {"data": {"id": "1"}, "strict": False}, 1),
