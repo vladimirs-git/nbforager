@@ -4,6 +4,14 @@
 CHANGELOG
 =========
 
+1.2.0 (2026-02-22)
+-------------------
+
+**Changed:** NbForager.join_tree(ipam_prefixes)
+
+**Changed:** Joiner.join_ipam_ipv4(ipam, ipam_prefixes)
+
+
 1.0.16 (2025-10-13)
 -------------------
 

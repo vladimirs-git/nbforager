@@ -270,13 +270,18 @@ class NbForager:
             status = {}
         self.status = status
 
-    def join_tree(self, dcim: bool = False, ipam: bool = False) -> None:
+    def join_tree(
+        self,
+        dcim: bool = False,
+        ipam: bool = False,
+        ipam_prefixes: bool = False,
+    ) -> None:
         """Assemble Netbox objects in NbForager.tree within itself.
 
         The Netbox objects are represented as a multidimensional dictionary.
+        Join objects that are present in the API response.
 
         :param dcim: True - Create additional keys to represent Netbox dcim objects.
-            False - Only join objects that are present in the API response.
 
             In dcim.devices, virtualization.virtual_machines:
 
@@ -297,7 +302,6 @@ class NbForager:
             - ``_ip_addresses``
 
         :param ipam: True - Create additional keys to represent Netbox ipam objects.
-            False - Only join objects that are present in the API response.
 
             In ipam.aggregate, ipam.prefixes, ipam.ip_addresses:
 
@@ -306,6 +310,8 @@ class NbForager:
             - ``_super_prefix`` Related parent prefix data for ipam.prefixes and ipam.ip_addresses
             - ``_sub_prefixes`` Related child prefixes data for ipam.prefixes and ipam.ip_addresses
             - ``_ip_addresses`` Related IP addresses data for ipam.aggregates and ipam.prefixes
+
+        :param ipam_prefixes: True - Join only ipam/prefixes, skip ipam/ip-addresses.
 
         :return: NbTree object with the joined Netbox objects.
 
@@ -319,8 +325,8 @@ class NbForager:
         joiner = Joiner(self.tree)
         if dcim:
             joiner.join_dcim_devices()
-        if ipam:
-            joiner.join_ipam_ipv4()
+        if ipam or ipam_prefixes:
+            joiner.join_ipam_ipv4(ipam=ipam, ipam_prefixes=ipam_prefixes)
 
     def read_cache(self) -> None:
         """Read cached data from a pickle file.

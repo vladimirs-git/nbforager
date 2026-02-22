@@ -272,6 +272,7 @@ def test__join_tree(nbf_r: NbForager):
     assert nbf_r.tree.ipam.prefixes == {}
     assert nbf_r.tree.ipam.ip_addresses == {}
 
+    # test default API objects
     nbf_r.join_tree()
 
     tree: NbTree = nbf_r.tree
@@ -287,11 +288,14 @@ def test__join_tree(nbf_r: NbForager):
     device = tree.dcim.devices[p.D1]
     assert device.get("_interfaces") == {}
 
+    # test dcim
     nbf_r.join_tree(dcim=True)
+
     tree = nbf_r.tree
     device = tree.dcim.devices[p.D1]
     assert device["_interfaces"][p.ETHERNET11]["name"] == p.ETHERNET11
 
+    # test ipam
     nbf_r.join_tree(ipam=True)
 
     tree = nbf_r.tree

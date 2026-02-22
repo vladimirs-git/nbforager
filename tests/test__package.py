@@ -128,7 +128,7 @@ def test__last_modified_date():
 def test__tested_function_names():
     """Check unittest function names."""
     skip_files = ["test__package.py"]
-    skip_tests: LStr = ["test__init_extra_keys"]
+    skip_tests: LStr = ["test__init_extra_keys", "test__models"]
 
     root = ROOT.joinpath("tests")
     paths: LPath = [Path(s) for s in vpath.get_files(root, r"\btest_\S+\.py$")]

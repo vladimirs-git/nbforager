@@ -184,125 +184,173 @@ class Joiner:
                     if extra_key in nb_intf:
                         nb_intf[extra_key][address] = nb_addr
 
-    def join_ipam_ipv4(self) -> None:
+    def join_ipam_ipv4(self, ipam: bool = False, ipam_prefixes: bool = False) -> None:
         """Create additional keys to represent ipam similar to the WEB UI.
 
-            Add new attributes in ipam.aggregate, ipam.prefixes, ipam.ip_addresses:
+            Add new attributes in ipam/aggregates, ipam/prefixes, ipam/ip-addresses:
 
             - ``_ipv4`` IPv4 object
-            - ``_aggregate`` Aggregate data for ipam.prefixes and ipam.ip_addresses
-            - ``_super_prefix`` Related parent prefix data for ipam.prefixes and ipam.ip_addresses
-            - ``_sub_prefixes`` Related child prefixes data for ipam.prefixes and ipam.ip_addresses
-            - ``_ip_addresses`` Related IP addresses data for ipam.aggregates and ipam.prefixes
+            - ``_aggregate`` Aggregate data for ipam/prefixes and ipam/ip-addresses
+            - ``_super_prefix`` Related parent prefix data for ipam/prefixes and ipam/ip-addresses
+            - ``_sub_prefixes`` Related child prefixes data for ipam/prefixes and ipam/ip-addresses
+            - ``_ip_addresses`` Related IP addresses data for ipam/aggregates and ipam/prefixes
+
+        :param ipam: True - Create additional keys to represent Netbox ipam objects.
+            Set all `ipam_{model}` arguments to True, to join related objects.
+
+        :param ipam_prefixes: True - Join only ipam/prefixes, skip ipam/ip-addresses.
 
         :return: None. Update NbTree object.
         """
-        self._join_ipam_aggregates()
-        self._join_ipam_prefixes()
-        self._join_ipam_ip_addresses()
-        self._join_update_sub_prefixes()
+        if ipam or ipam_prefixes:
+            self._join_ipam_aggregates()
+            self._join_ipam_prefixes()
+        if ipam:
+            self._join_ipam_ip_addresses()
+        if ipam or ipam_prefixes:
+            self._join_update_sub_prefixes()
 
     def _join_ipam_aggregates(self) -> None:
-        """Add prefixes to tree.ipam.aggregates._sub_prefixes."""
-        aggregates: LDAny = self._get_aggregates_ip4()
-        prefixes_d: DiLDAny = self._get_prefixes_ip4_d()
-        for aggregate in aggregates:
-            for depth, prefixes in prefixes_d.items():
-                for prefix in prefixes:
-                    _aggregate = aggregate["prefix"]
-                    _prefix = prefix["prefix"]
-                    if prefix["_ipv4"] in aggregate["_ipv4"]:
-                        prefix["_aggregate"] = aggregate
-                        if depth == 0:
-                            aggregate["_sub_prefixes"].append(prefix)
+        """Add prefixes to aggregates.
+
+        :return: None. Update ipam/aggregates._sub_prefixes, ipam/prefixes._aggregate.
+        """
+        nb_aggregates: LDAny = self._filter_aggregates_ip4()
+        depth_prefixes_dl: DiLDAny = self._group_prefixes_ip4()
+
+        for nb_aggregate in nb_aggregates:
+            for depth, nb_prefixes in depth_prefixes_dl.items():
+                for nb_prefix in nb_prefixes:
+                    aggregate: IPv4 = nb_aggregate["_ipv4"]
+                    prefix: IPv4 = nb_prefix["_ipv4"]
+                    if prefix in aggregate:
+                        nb_prefix["_aggregate"] = nb_aggregate
+                        if depth == 0:  # super-prefix
+                            nb_aggregate["_sub_prefixes"].append(nb_prefix)
 
     def _join_ipam_ip_addresses(self) -> None:
-        """Add prefixes to tree.ipam.ip-addresses._super_prefix."""
-        ip_addresses: LDAny = self._get_ip_addresses_ip4()
-        prefixes_d: DiLDAny = self._get_prefixes_ip4_d()
-        depths: LInt = list(prefixes_d)
+        """Add prefixes to ip-addresses.
+
+        :return: None. Update ipam/aggregates._sub_prefixes, ipam/prefixes._aggregate.
+        """
+        nb_addresses: LDAny = self._filter_ip_addresses_ip4()
+        depth_prefixes_dl: DiLDAny = self._group_prefixes_ip4()
+        depths: LInt = list(depth_prefixes_dl)
         depths.reverse()
 
-        added_addresses: LDAny = []
+        updated: LInt = []  # IDs of updated ipam/ip-addresses, to skip
+
         for depth in depths:
-            ip_addresses_ = ip_addresses.copy()
-            prefixes: LDAny = prefixes_d.get(depth, [])
-            for ip_address in ip_addresses_:
-                for prefix in prefixes:
-                    if ip_address["_ipv4"] not in prefix["_ipv4"]:
+            nb_addresses_ = nb_addresses.copy()
+            nb_prefixes: LDAny = depth_prefixes_dl.get(depth, [])
+            for nb_address in nb_addresses_:
+                address: IPv4 = nb_address["_ipv4"]
+                for nb_prefix in nb_prefixes:
+                    if nb_address["id"] in updated:
                         continue
-                    if ip_address in added_addresses:
-                        continue
-                    ip_address["_aggregate"] = prefix["_aggregate"]
-                    ip_address["_super_prefix"] = prefix
-                    prefix["_ip_addresses"].append(ip_address)
-                    added_addresses.append(ip_address)
-            ip_addresses = [d for d in ip_addresses if d not in added_addresses]
+                    prefix: IPv4 = nb_prefix["_ipv4"]
+                    if address in prefix:
+                        nb_address["_aggregate"] = nb_prefix["_aggregate"]
+                        nb_address["_super_prefix"] = nb_prefix
+                        nb_prefix["_ip_addresses"].append(nb_address)
+                        updated.append(nb_address["id"])
+            nb_addresses = [d for d in nb_addresses if d["id"] not in updated]
 
     def _join_ipam_prefixes(self) -> None:
-        """Add prefixes to tree.ipam.prefixes._sub_prefixes, _super_prefix"""
-        super_prefixes = []
-        prefixes_d: DiLDAny = self._get_prefixes_ip4_d()
-        for depth, sub_prefixes in enumerate(prefixes_d.values()):
+        """Add prefixes to prefixes.
+
+        :return: None. Update ipam/prefixes._sub_prefixes, ipam/prefixes._super_prefix.
+        """
+        nb_super_prefixes: LDAny = []
+        depth_prefixes_dl: DiLDAny = self._group_prefixes_ip4()
+
+        for depth, nb_sub_prefixes in enumerate(depth_prefixes_dl.values()):
             if not depth:
-                super_prefixes = sub_prefixes
+                nb_super_prefixes = nb_sub_prefixes
                 continue
-            for super_prefix in super_prefixes:
-                if super_prefix["_ipv4"].len == 32:
+            for nb_super_prefix in nb_super_prefixes:
+                super_prefix: IPv4 = nb_super_prefix["_ipv4"]
+                if super_prefix == 32:
                     continue
-                for sub_prefix in sub_prefixes:
-                    if sub_prefix["_ipv4"] in (super_prefix["_ipv4"]):
-                        super_prefix["_sub_prefixes"].append(sub_prefix)
-                        sub_prefix["_super_prefix"] = super_prefix
-            super_prefixes = sub_prefixes
+                for nb_sub_prefix in nb_sub_prefixes:
+                    sub_prefix: IPv4 = nb_sub_prefix["_ipv4"]
+                    if sub_prefix in super_prefix:
+                        nb_super_prefix["_sub_prefixes"].append(nb_sub_prefix)
+                        nb_sub_prefix["_super_prefix"] = nb_super_prefix
+            nb_super_prefixes = nb_sub_prefixes
 
     def _join_update_sub_prefixes(self) -> None:
-        """Update _sub_prefixes in ipam.aggregates and ipam.prefixes.
+        """Update _sub_prefixes in aggregates and prefixes.
 
         Remove duplicates, remove objects with improper depth, sort by IPv4.
-        """
-        aggregates = self._get_aggregates_ip4()
-        for aggregate in aggregates:
-            sub_prefixes = vlist.no_dupl(aggregate["_sub_prefixes"])
-            sub_prefixes = [d for d in sub_prefixes if not d["_super_prefix"]]
-            aggregate["_sub_prefixes"] = sorted(sub_prefixes, key=itemgetter("_ipv4"))
 
-        prefixes = self._get_prefixes_ip4()
-        for prefix in prefixes:
-            sub_prefixes = vlist.no_dupl(prefix["_sub_prefixes"])
-            prefix["_sub_prefixes"] = sorted(sub_prefixes, key=itemgetter("_ipv4"))
-            ip_addresses = vlist.no_dupl(prefix["_ip_addresses"])
-            prefix["_ip_addresses"] = sorted(ip_addresses, key=itemgetter("_ipv4"))
+        :return: None. Update ipam/aggregates._sub_prefixes, ipam/prefixes._sub_prefixes.
+        """
+        nb_aggregates: LDAny = self._filter_aggregates_ip4()
+        for nb_aggregate in nb_aggregates:
+            sub_prefixes: LDAny = vlist.no_dupl(nb_aggregate["_sub_prefixes"])
+            sub_prefixes = [d for d in sub_prefixes if not d["_super_prefix"]]
+            nb_aggregate["_sub_prefixes"] = sorted(sub_prefixes, key=itemgetter("_ipv4"))
+
+        nb_prefixes: LDAny = self._filter_prefixes_ip4()
+        for nb_prefix in nb_prefixes:
+            sub_prefixes = vlist.no_dupl(nb_prefix["_sub_prefixes"])
+            nb_prefix["_sub_prefixes"] = sorted(sub_prefixes, key=itemgetter("_ipv4"))
+            ip_addresses = vlist.no_dupl(nb_prefix["_ip_addresses"])
+            nb_prefix["_ip_addresses"] = sorted(ip_addresses, key=itemgetter("_ipv4"))
 
     # ============================= helpers ==============================
 
-    def _get_aggregates_ip4(self) -> LDAny:
-        """Return ipam.aggregates family=4 sorted by IPv4."""
-        aggregates: LDAny = list(self.tree.ipam.aggregates.values())
-        aggregates = [d for d in aggregates if d["family"]["value"] == 4]
-        return sorted(aggregates, key=itemgetter("_ipv4"))
+    def _filter_aggregates_ip4(self) -> LDAny:
+        """Filter ipam/aggregates family=4, sorted by IPv4.
 
-    def _get_ip_addresses_ip4(self) -> LDAny:
-        """Return ipam.ip_addresses family=4 sorted by IPv4."""
-        ip_addresses: LDAny = list(self.tree.ipam.ip_addresses.values())
-        ip_addresses = [d for d in ip_addresses if d["family"]["value"] == 4 and d["vrf"] is None]
+        :return: ipam/aggregates objects.
+        """
+        nb_aggregates: LDAny = []
+
+        for nb_aggregate in self.tree.ipam.aggregates.values():
+            if nb_aggregate["family"]["value"] == 4:
+                nb_aggregates.append(nb_aggregate)
+
+        return sorted(nb_aggregates, key=itemgetter("_ipv4"))
+
+    def _filter_ip_addresses_ip4(self) -> LDAny:
+        """Filter ipam/ip-addresses family=4 without VRF, sorted by IPv4.
+
+        :return: ipam/ip-addresses objects.
+        """
+        ip_addresses: LDAny = []
+
+        for ip_address in self.tree.ipam.ip_addresses.values():
+            if ip_address["family"]["value"] == 4 and ip_address["vrf"] is None:
+                ip_addresses.append(ip_address)
+
         return sorted(ip_addresses, key=itemgetter("_ipv4"))
 
-    def _get_prefixes_ip4(self) -> LDAny:
-        """Return ipam.prefixes family=4 sorted by IPv4."""
-        prefixes: LDAny = list(self.tree.ipam.prefixes.values())
-        prefixes = [d for d in prefixes if d["family"]["value"] == 4 and d["vrf"] is None]
-        return sorted(prefixes, key=itemgetter("_ipv4"))
+    def _filter_prefixes_ip4(self) -> LDAny:
+        """Filter ipam/prefixes family=4, sorted by IPv4.
 
-    def _get_prefixes_ip4_d(self) -> DiLDAny:
-        """Split prefixes by depth.
+        :return: ipam/prefixes objects.
+        """
+        nb_prefixes: LDAny = []
+
+        for nb_prefix in self.tree.ipam.prefixes.values():
+            if nb_prefix["family"]["value"] == 4 and nb_prefix["vrf"] is None:
+                nb_prefixes.append(nb_prefix)
+
+        return sorted(nb_prefixes, key=itemgetter("_ipv4"))
+
+    def _group_prefixes_ip4(self) -> DiLDAny:
+        """Group ipam/prefixes by depth counter.
 
         :return: A dictionary of prefixes where the key represents the depth
-            and the value represents a list of prefixes at that depth.
+            and the value represents a list of imap/prefixes at that depth.
         """
-        prefixes: LDAny = self._get_prefixes_ip4()
-        prefixes_d: DiLDAny = {d["_depth"]: [] for d in prefixes}
-        for prefix in prefixes:
-            depth = int(prefix["_depth"])
-            prefixes_d[depth].append(prefix)
-        return prefixes_d
+        nb_prefixes: LDAny = self._filter_prefixes_ip4()
+        depth_prefixes_dl: DiLDAny = {d["_depth"]: [] for d in nb_prefixes}
+
+        for nb_prefix in nb_prefixes:
+            depth: int = int(nb_prefix["_depth"])
+            depth_prefixes_dl[depth].append(nb_prefix)
+
+        return depth_prefixes_dl

@@ -75,7 +75,7 @@ def test__join_virtual_chassis(joiner: Joiner):
 
 def test__join_ipam_ipv4(joiner: Joiner):
     """Joiner.join_ipam_ipv4()."""
-    joiner.join_ipam_ipv4()
+    joiner.join_ipam_ipv4(ipam=True)
 
     aggregate = joiner.tree.ipam.aggregates[p.AG1]
     assert aggregate["prefix"] == p.AGGREGATE1
@@ -122,27 +122,29 @@ def test__join_ipam_aggregates(joiner: Joiner):
     """Joiner._join_ipam_aggregates()."""
     joiner._join_ipam_aggregates()
 
-    for idx, network, sub_prefixes in [
-        (p.AG1, p.AGGREGATE1, [p.PREFIX1]),
-        (p.AG2, p.AGGREGATE2, [p.PREFIX2]),
+    # test aggregate
+    for idx, aggregate, sub_prefixes in [
+        (p.AG1, "10.0.0.0/16", ["10.0.0.0/24"]),
+        (p.AG2, "1.0.0.0/16", ["1.0.0.0/24"]),
     ]:
-        data = joiner.tree.ipam.aggregates[idx]
-        assert data["_ipv4"] == IPv4(network)
-        assert data["_aggregate"] == {}
-        assert data["_super_prefix"] == {}
-        assert [d["prefix"] for d in data["_sub_prefixes"]] == sub_prefixes
-        assert data["_ip_addresses"] == []
+        nb_aggregate: DAny = joiner.tree.ipam.aggregates[idx]
+        assert nb_aggregate["_ipv4"] == IPv4(aggregate)
+        assert nb_aggregate["_aggregate"] == {}
+        assert nb_aggregate["_super_prefix"] == {}
+        assert [d["prefix"] for d in nb_aggregate["_sub_prefixes"]] == sub_prefixes
+        assert nb_aggregate["_ip_addresses"] == []
 
-    for idx, prefix, aggregate in [
-        (p.P1, p.PREFIX1, p.AGGREGATE1),
-        (p.P2, p.PREFIX2, p.AGGREGATE2),
-        (p.P3, p.PREFIX1, None),
-        (p.P4, p.PREFIX4, p.AGGREGATE1),
-        (p.P5, p.PREFIX5, p.AGGREGATE1),
+    # test prefix
+    for idx, prefix, aggregate_ in [
+        (p.P1, "10.0.0.0/24", "10.0.0.0/16"),
+        (p.P2, "1.0.0.0/24", "1.0.0.0/16"),
+        (p.P3, "10.0.0.0/24", None),
+        (p.P4, "10.0.0.0/31", "10.0.0.0/16"),
+        (p.P5, "10.0.0.0/32", "10.0.0.0/16"),
     ]:
-        data = joiner.tree.ipam.prefixes[idx]
-        assert data["prefix"] == prefix
-        assert data["_aggregate"].get("prefix") == aggregate
+        nb_prefix: DAny = joiner.tree.ipam.prefixes[idx]
+        assert nb_prefix["prefix"] == prefix
+        assert nb_prefix["_aggregate"].get("prefix") == aggregate_
 
 
 def test__extra__join_ipam_ip_addresses(joiner: Joiner):
@@ -188,41 +190,45 @@ def test__join_ipam_prefixes(joiner: Joiner):
 
 # ============================= helpers ==============================
 
-def test__get_aggregates_ip4(joiner: Joiner):
-    """Joiner._get_aggregates_ip4()."""
+def test__filter_aggregates_ip4(joiner: Joiner):
+    """Joiner._filter_aggregates_ip4()."""
     unsorted = [d["prefix"] for d in joiner.tree.ipam.aggregates.values()]
     assert unsorted == [p.AGGREGATE1, p.AGGREGATE2]
 
-    aggregates = joiner._get_aggregates_ip4()
+    aggregates = joiner._filter_aggregates_ip4()
+
     actual = [d["prefix"] for d in aggregates]
     assert actual == [p.AGGREGATE2, p.AGGREGATE1]
 
 
-def test__get_ip_addresses_ip4(joiner: Joiner):
-    """Joiner._get_ip_addresses_ip4()."""
+def test__filter_ip_addresses_ip4(joiner: Joiner):
+    """Joiner._filter_ip_addresses_ip4()."""
     unsorted = [d["address"] for d in joiner.tree.ipam.ip_addresses.values()]
     assert unsorted == [p.ADDRESS1, p.ADDRESS2, p.ADDRESS3, p.ADDRESS4]
 
-    ip_addresses = joiner._get_ip_addresses_ip4()
+    ip_addresses = joiner._filter_ip_addresses_ip4()
+
     actual = [d["address"] for d in ip_addresses]
     assert actual == [p.ADDRESS2, p.ADDRESS1]
 
 
-def test__get_prefixes_ip4(joiner: Joiner):
-    """Joiner._get_prefixes_ip4()."""
+def test__filter_prefixes_ip4(joiner: Joiner):
+    """Joiner._filter_prefixes_ip4()."""
     unsorted = [d["prefix"] for d in joiner.tree.ipam.prefixes.values()]
     assert unsorted == [p.PREFIX1, p.PREFIX2, p.PREFIX1, p.PREFIX4, p.PREFIX5]
 
-    prefixes = joiner._get_prefixes_ip4()
+    prefixes = joiner._filter_prefixes_ip4()
+
     actual = [d["prefix"] for d in prefixes]
     assert actual == [p.PREFIX2, p.PREFIX1, p.PREFIX4, p.PREFIX5]
 
 
-def test__get_prefixes_ip4_d(joiner: Joiner):
-    """Joiner._get_prefixes_ip4_d()."""
+def test__group_prefixes_ip4(joiner: Joiner):
+    """Joiner._group_prefixes_ip4()."""
     unsorted = [d["prefix"] for d in joiner.tree.ipam.prefixes.values()]
     assert unsorted == [p.PREFIX1, p.PREFIX2, p.PREFIX1, p.PREFIX4, p.PREFIX5]
 
-    prefixes_d = joiner._get_prefixes_ip4_d()
+    prefixes_d = joiner._group_prefixes_ip4()
+
     actual = {k: [d["prefix"] for d in ld] for k, ld in prefixes_d.items()}
     assert actual == {0: [p.PREFIX2, p.PREFIX1], 1: [p.PREFIX4], 2: [p.PREFIX5]}
