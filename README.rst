@@ -21,8 +21,7 @@ Python package designed to help work with the `Netbox`_ REST API.
 Versions
 
 - nbforager ``<1`` is designed for Netbox ``v3`` (checked with Python >= v3.8, Netbox v3.5.4)
-- nbforager ``>=1,<2`` is designed for Netbox ``>=v4.2`` (checked with Python >= v3.8, Netbox v4.3.3)
-- Netbox ``>=v4.0,<=4.1`` is not tested.
+- nbforager ``>=1,<3`` is designed for Netbox ``>=v4.2`` (checked with Python >= v3.8, Netbox v4.3.3)
 
 Fully documented on `Read the Docs`_.
 
