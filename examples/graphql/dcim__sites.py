@@ -3,7 +3,7 @@ import logging
 
 from requests import HTTPError
 
-from nbforager import NbApi
+from nbforager import NbApi, NbForager
 
 # Enable logging DEBUG mode
 logging.getLogger().setLevel(logging.DEBUG)
@@ -29,3 +29,16 @@ try:
     sites = nb.dcim.sites.graphql(fields="id name", filters="{status: {")
 except HTTPError as ex:
     print(ex)  # 200 Errors: [{"message": "Syntax Error: Expected Name, found ...
+
+
+# Write cache
+nbf = NbForager(host=HOST, token=TOKEN)
+nbf.dcim.sites.graphql(fields="id name")
+print(nbf.root.dcim.sites.values())  # [{"id": 1, "name": "SITE1", "url": "..."}, ...
+nbf.write_cache()
+
+
+# Read cache
+nbf = NbForager(host=HOST, token=TOKEN)
+nbf.read_cache()
+print(nbf.root.dcim.sites.values())  # [{"id": 1, "name": "SITE1", "url": "..."}, ...

@@ -4,17 +4,22 @@
 CHANGELOG
 =========
 
+2.0.1 (2026-03-09)
+------------------
+
+**Added:** Forager.graphql
+
+
 2.0.0 (2026-03-09)
 ------------------
 
 **Changed:** quality improvement
 
-**Added:** graphql
+**Added:** Connector.graphql
 
 
 1.2.0 (2026-02-22)
 ------------------
->>>>>>> graphql3
 
 **Changed:** NbForager.join_tree(ipam_prefixes)
 

@@ -69,7 +69,7 @@ class Forager:
 
     # noinspection PyProtectedMember
     def get(self, nested: bool = False, **kwargs) -> None:
-        """Retrieve data from Netbox.
+        """Retrieve data from Netbox API.
 
         Request data based on the filter parameters (kwargs described in the
         NbApi connector) and save to the NbForager.root.
@@ -79,7 +79,7 @@ class Forager:
 
         :param kwargs: Filtering parameters.
 
-        :return: None. Update self object.
+        :return: None. Update self root data in related app/model.
         """
         # Query main data
         kwargs_: DAny = self._delete_existing_nested_ids(**kwargs)
@@ -122,6 +122,26 @@ class Forager:
                     results.extend(results_)
 
         self._save_results(results)
+
+    def graphql(self, fields: str, filters: str = "") -> None:
+        """Request data from Netbox GraphQL API.
+
+        :param fields: Fields to include in the query,
+            e.g. ``id name tenant { id name }``.
+        :param filters: Parameters to filter Netbox objects,
+            e.g. ``{ status: STATUS_ACTIVE, name: {exact: "SITE1"}}``.
+
+        :return: None. Update self root data in related app/model.
+        """
+        path = f"{self.app}/{self.model}"
+        items: LDAny = self.api._base_c._graphql(path=path, fields=fields, filters=filters)
+
+        # add url
+        for data in items:
+            id_: int = data["id"]
+            data["url"] = f"{self.api.url}{path}/{id_}/"
+
+        self._save_results(items)
 
     def connector_by_path(self, path: str) -> Connector:
         """Get Connector instance by app/model path.
