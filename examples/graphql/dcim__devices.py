@@ -18,12 +18,15 @@ nb = NbApi(host=HOST, token=TOKEN)
 # print(devices)  # [{"id": 1, "name": "DEVICE1"}, ...
 
 # Filter dcim/devices
+fields="id name primary_ip4 { id address } tenant { id slug }"
 filters='''
 {
     status: {exact: STATUS_ACTIVE},
-    primary_ip4: {},
+    primary_ip4: {id: {is_null: false}},
+    tenant: {slug: {exact: "dunder-mifflin"}},
 }
 '''
-devices = nb.dcim.devices.graphql(fields="id name primary_ip4", filters=filters)
+devices = nb.dcim.devices.graphql(fields=fields, filters=filters)
 print(devices)  # [{"id": 1, "name": "DEVICE1"}, ...
+xx = [d for d in devices if d["id"] == "108"]
 x = 1
