@@ -1,14 +1,14 @@
-# pylint: disable=R0801,R0902,R0913,R0914,R0915
-
 """NbApi, Python wrapper of Netbox REST API."""
 
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import Callable
 
 from requests import Response
 
 from nbforager import ami, helpers
+from nbforager.api.base_c import BaseC
 from nbforager.api.circuits import CircuitsAC
 from nbforager.api.connector import Connector, GConnector
 from nbforager.api.core import CoreAC
@@ -24,7 +24,7 @@ from nbforager.api.vpn import VpnAC
 from nbforager.api.wireless import WirelessAC
 from nbforager.constants import APPS
 from nbforager.parser.nb_parser import NbParser
-from nbforager.types_ import ODLStr, DAny, LDAny, LStr, LT2Str
+from nbforager.types import ODLStr, DAny, LDAny, LStr, LT2Str
 
 
 class NbApi:
@@ -46,7 +46,7 @@ class NbApi:
     The parameters for the ``get`` method are different for each model.
     Only ``NbApi.ipam.ip_addresses.get()`` is described in this documentation.
     Other models are implemented in a similar manner.
-    Exact parameters you can find in `Schema`_.
+    Exact parameters can be found in `Schema`_.
     """
 
     def __init__(
@@ -83,7 +83,7 @@ class NbApi:
             Default is `443` for scheme=`https`, `80` for scheme=`http`.
 
         :param bool verify: Transport Layer Security.
-            `True` - A TLS certificate required,
+            `True` - A TLS certificate is required,
             `False` - Requests will accept any TLS certificate.
             Default is `True`.
 
@@ -95,7 +95,7 @@ class NbApi:
             GET parameters. Default is `2047`.
 
         :param int threads: Threads count. <=1 is loop mode, >=2 is threading mode.
-            Default id `1`.
+            Default is `1`.
 
         :param float interval: Wait this time between the threading requests (seconds).
             Default is `0`. Useful to optimize session spikes and achieve
@@ -113,7 +113,7 @@ class NbApi:
 
         :param bool strict: When querying objects by tag, if there are no tags present,
             the Netbox API response returns a status_code=400.
-            True - ConnectionError is raised when status_code=400.
+            True - HTTPError is raised when status_code=400.
             False - WARNING message is logged and an empty list is returned with status_code=200.
             Default is `False`.
 
@@ -135,7 +135,7 @@ class NbApi:
         :ivar obj virtualization: :py:class:`.VirtualizationAC` :doc:`VirtualizationAC`.
         :ivar obj wireless: :py:class:`.WirelessAC` :doc:`WirelessAC`.
         """
-        kwargs = {
+        params: DAny = {
             "host": host,
             "token": token,
             "scheme": scheme,
@@ -153,47 +153,47 @@ class NbApi:
             "loners": loners,
             **kwargs,
         }
-        # application connectors
-        self.circuits = CircuitsAC(**kwargs)
-        self.core = CoreAC(**kwargs)
-        self.dcim = DcimAC(**kwargs)
-        self.extras = ExtrasAC(**kwargs)
-        self.ipam = IpamAC(**kwargs)
-        self.plugins = PluginsAC(**kwargs)
-        self.status = StatusC(**kwargs)  # connector
-        self.tenancy = TenancyAC(**kwargs)
-        self.users = UsersAC(**kwargs)
-        self.vpn = VpnAC(**kwargs)
-        self.virtualization = VirtualizationAC(**kwargs)
-        self.wireless = WirelessAC(**kwargs)
+        self._base_c = BaseC(**params)
+        # app/model
+        self.circuits = CircuitsAC(**params)
+        self.core = CoreAC(**params)
+        self.dcim = DcimAC(**params)
+        self.extras = ExtrasAC(**params)
+        self.ipam = IpamAC(**params)
+        self.plugins = PluginsAC(**params)
+        self.status = StatusC(**params)
+        self.tenancy = TenancyAC(**params)
+        self.users = UsersAC(**params)
+        self.vpn = VpnAC(**params)
+        self.virtualization = VirtualizationAC(**params)
+        self.wireless = WirelessAC(**params)
 
     def __repr__(self) -> str:
         """__repr__."""
-        name = self.__class__.__name__
-        return f"<{name}: {self.host}>"
+        return repr(self._base_c)
 
     def __copy__(self) -> NbApi:
         """Create a duplicate of the object.
 
         :return: A copy of the current object.
         """
-        connector = self.circuits.circuit_terminations
+        base_c: BaseC = self._base_c
         return type(self)(
-            host=connector.host,
-            token=connector.token,
-            scheme=connector.scheme,
-            port=connector.port,
-            verify=connector.verify,
-            limit=connector.limit,
-            url_length=connector.url_length,
-            threads=connector.threads,
-            interval=connector.interval,
-            timeout=connector.timeout,
-            max_retries=connector.max_retries,
-            sleep=connector.sleep,
-            strict=connector.strict,
-            extended_get=connector.extended_get,
-            loners=connector.loners,
+            host=base_c.host,
+            token=base_c.token,
+            scheme=base_c.scheme,
+            port=base_c.port,
+            verify=base_c.verify,
+            limit=base_c.limit,
+            url_length=base_c.url_length,
+            threads=base_c.threads,
+            interval=base_c.interval,
+            timeout=base_c.timeout,
+            max_retries=base_c.max_retries,
+            sleep=base_c.sleep,
+            strict=base_c.strict,
+            extended_get=base_c.extended_get,
+            loners=base_c.loners,
         )
 
     # ============================= property =============================
@@ -201,17 +201,22 @@ class NbApi:
     @property
     def host(self) -> str:
         """Netbox host name."""
-        return self.circuits.circuit_terminations.host
+        return self._base_c.host
 
     @property
     def url(self) -> str:
-        """Netbox base URL."""
-        return self.circuits.circuit_terminations.url_base
+        """Netbox URL to API endpoints."""
+        return self._base_c.url_api
+
+    @property
+    def url_api(self) -> str:
+        """Netbox URL to API endpoints."""
+        return self._base_c.url_api
 
     @property
     def threads(self) -> int:
         """Threads count."""
-        return self.circuits.circuit_terminations.threads
+        return self._base_c.threads
 
     @threads.setter
     def threads(self, threads: int) -> None:
@@ -219,12 +224,13 @@ class NbApi:
 
         :param threads: Threads count to set.
 
-        :return: None. Update threads in all connectors.
+        :return: None. Updates threads in all connectors.
         """
+        self._base_c.threads = threads
         for app in self.apps():
             models: LStr = [s for s in dir(getattr(self, app)) if s[0].islower()]
             for model in models:
-                connector = self.get_connector(f"{app}/{model}")
+                connector = self.connector_by_path(f"{app}/{model}")
                 setattr(connector, "threads", threads)
 
     # ============================= methods ==============================
@@ -261,13 +267,13 @@ class NbApi:
         for app in self.apps():
             models: LStr = [s for s in dir(getattr(self, app)) if s[0].islower()]
             for model in models:
-                connector: Connector = self.get_connector(f"{app}/{model}")
+                connector: Connector = self.connector_by_path(f"{app}/{model}")
                 path = getattr(connector, "path")
                 path = path.rstrip("/")
                 app_paths.append(path)
         return app_paths
 
-    def get_connector(self, path: str) -> Connector:
+    def connector_by_path(self, path: str) -> Connector:
         """Get Connector instance by app/model path.
 
         :param path: app/model path.
@@ -282,62 +288,85 @@ class NbApi:
 
     def connectors(self) -> GConnector:
         """Return generator of Connector instances ordered based on dependencies.
-            Connectors to models with the lowes count of dependencies will be first.
+            Connectors to models with the lowest count of dependencies will be first.
 
         :return: Generator of Connector instances.
         """
         paths: LStr = helpers.dependency_ordered_paths()
         for path in paths:
-            connector: Connector = self.get_connector(path)
+            connector: Connector = self.connector_by_path(path)
             yield connector
 
     def copy(self, **kwargs) -> NbApi:
         """Create a duplicate of the object.
 
-        :param kwargs: Keyword arguments to replace in original object.
+        :param kwargs: Keyword arguments to replace in the original object.
         :return: A copy of the current object.
         """
-        connector = self.circuits.circuit_terminations
+        base_c: BaseC = self._base_c
         params: DAny = {
-            "host": connector.host,
-            "token": connector.token,
-            "scheme": connector.scheme,
-            "port": connector.port,
-            "verify": connector.verify,
-            "limit": connector.limit,
-            "url_length": connector.url_length,
-            "threads": connector.threads,
-            "interval": connector.interval,
-            "timeout": connector.timeout,
-            "max_retries": connector.max_retries,
-            "sleep": connector.sleep,
-            "strict": connector.strict,
-            "extended_get": connector.extended_get,
-            "loners": connector.loners,
+            "host": base_c.host,
+            "token": base_c.token,
+            "scheme": base_c.scheme,
+            "port": base_c.port,
+            "verify": base_c.verify,
+            "limit": base_c.limit,
+            "url_length": base_c.url_length,
+            "threads": base_c.threads,
+            "interval": base_c.interval,
+            "timeout": base_c.timeout,
+            "max_retries": base_c.max_retries,
+            "sleep": base_c.sleep,
+            "strict": base_c.strict,
+            "extended_get": base_c.extended_get,
+            "loners": deepcopy(base_c.loners),
         }
         params.update(kwargs)
         return type(self)(**params)
 
-    def get(self, **kwargs) -> LDAny:
-        """Get an objects in Netbox using the app/model in the provided URL.
+    def version(self) -> str:
+        """Get Netbox version.
 
-        :param kwargs: Parameters of object, only URL is required.
+        :return: Netbox version if version >= 3, otherwise an empty string.
+        """
+        status_d: DAny = self.status.get()
+        version = NbParser(status_d).str("netbox-version")
+        return version
+
+    # ======================== connector methods =========================
+
+    def graphql(self, query: str) -> Response:
+        """Request data from Netbox GraphQL API.
+
+        :param query: GraphQL query string.
+
+        :return: Session response.
+
+            - <Response [200]> - Request is successful or has syntax errors in the query.
+        :rtype: Response
+        """
+        return self._base_c._post_graphql(query=query)
+
+    def get(self, **kwargs) -> LDAny:
+        """Request objects from Netbox using the app/model in the provided URL.
+
+        :param kwargs: Parameters of the object, only the URL is required.
 
         :return: List of dictionaries containing Netbox objects.
         :rtype: List[dict]
         """
         url = str(kwargs.get("url") or "")
         app, model, id_ = ami.url_to_ami(url)
-        connector: Connector = self.get_connector(f"{app}/{model}")
+        connector: Connector = self.connector_by_path(f"{app}/{model}")
 
         method: Callable = getattr(connector, "get")
         params = {"id": id_} if id_ else {}
         return method(**params)
 
     def get_d(self, **kwargs) -> DAny:
-        """Get an objects in Netbox using the app/model in the provided URL.
+        """Request single object from Netbox using the app/model in the provided URL.
 
-        :param kwargs: Parameters of object, only URL with ID is required.
+        :param kwargs: Parameters of the object, only the URL with an ID is required.
 
         :return: Dictionary containing Netbox object.
         :rtype: dict
@@ -346,7 +375,7 @@ class NbApi:
         app, model, id_ = ami.url_to_ami(url)
         if not id_:
             raise ValueError("ID is required in the URL.")
-        connector: Connector = self.get_connector(f"{app}/{model}")
+        connector: Connector = self.connector_by_path(f"{app}/{model}")
 
         method: Callable = getattr(connector, "get")
         if objects := method(id=id_):
@@ -362,12 +391,12 @@ class NbApi:
         :return: Session response.
 
             - <Response [201]> Object successfully created,
-            - <Response [400]> Object already exist.
+            - <Response [400]> Object already exists.
         :rtype: Response
         """
         url = str(kwargs.get("url") or "")
         app, model, _ = ami.url_to_ami(url)
-        connector: Connector = self.get_connector(f"{app}/{model}")
+        connector: Connector = self.connector_by_path(f"{app}/{model}")
 
         method: Callable = getattr(connector, "create")
         data: DAny = {k: v for k, v in kwargs.items() if k not in ["url", "id"]}
@@ -384,7 +413,7 @@ class NbApi:
         """
         url = str(kwargs.get("url") or "")
         app, model, _ = ami.url_to_ami(url)
-        connector: Connector = self.get_connector(f"{app}/{model}")
+        connector: Connector = self.connector_by_path(f"{app}/{model}")
 
         data: DAny = {k: v for k, v in kwargs.items() if k not in ["url", "id"]}
         method: Callable = getattr(connector, "create_d")
@@ -393,7 +422,7 @@ class NbApi:
     def delete(self, **kwargs) -> Response:
         """Delete an object from Netbox using the ID in the provided URL.
 
-        :param kwargs: Parameters of object to delete. Only url to object is required.
+        :param kwargs: Parameters of the object to delete. Only the URL of the object is required.
         :return: Session response.
 
             - <Response [204]> Object successfully deleted,
@@ -402,7 +431,7 @@ class NbApi:
         """
         url = str(kwargs.get("url") or "")
         app, model, idx = ami.url_to_ami(url)
-        connector: Connector = self.get_connector(f"{app}/{model}")
+        connector: Connector = self.connector_by_path(f"{app}/{model}")
 
         method: Callable = getattr(connector, "delete")
         return method(id=idx)
@@ -411,7 +440,7 @@ class NbApi:
     def update(self, **kwargs) -> Response:
         """Update an object in Netbox using the app/model in the provided URL.
 
-        :param id: Netbox object id to update.
+        :param id: Netbox object ID to update.
         :type id: int
 
         :param kwargs: Parameters to update an object in Netbox.
@@ -424,18 +453,9 @@ class NbApi:
         """
         url = str(kwargs.get("url") or "")
         app, model, idx = ami.url_to_ami(url)
-        connector: Connector = self.get_connector(f"{app}/{model}")
+        connector: Connector = self.connector_by_path(f"{app}/{model}")
 
         method: Callable = getattr(connector, "update")
         data: DAny = {k: v for k, v in kwargs.items() if k not in ["url"]}
         data["id"] = idx
         return method(**data)
-
-    def version(self) -> str:
-        """Get Netbox version.
-
-        :return: Netbox version, if version >= 3, otherwise empty string.
-        """
-        status_d: DAny = self.status.get()
-        version = NbParser(status_d).str("netbox-version")
-        return version

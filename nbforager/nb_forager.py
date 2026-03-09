@@ -1,5 +1,3 @@
-# pylint: disable=R0801,R0902,R0913,R0914,R0915
-
 """NbForager."""
 
 from __future__ import annotations
@@ -29,13 +27,13 @@ from nbforager.nb_api import NbApi
 from nbforager.nb_cache import NbCache
 from nbforager.nb_tree import NbTree
 from nbforager.parser.nb_value import NbValue
-from nbforager.types_ import LStr, DAny, DiDAny, ODLStr
+from nbforager.types import LStr, DAny, DiDAny, ODLStr
 
 
 class NbForager:
     """Forages data from Netbox for further processing.
 
-    - Requests data from Netbox (using NbApi) and save in the NbForager.root object,
+    - Request data from Netbox (using NbApi) and save it in the NbForager.root object,
     - Assemble objects within itself as a multidimensional dictionary in NbForager.tree object,
     - Read/write objects from/to the cache pickle file,
     """
@@ -80,7 +78,7 @@ class NbForager:
             Default is `443` for scheme=`https`, `80` for scheme=`http`.
 
         :param bool verify: Transport Layer Security.
-            `True` - A TLS certificate required,
+            `True` - A TLS certificate is required,
             `False` - Requests will accept any TLS certificate.
             Default is `True`.
 
@@ -92,7 +90,7 @@ class NbForager:
             GET parameters. Default is `2047`.
 
         :param int threads: Threads count. <=1 is loop mode, >=2 is threading mode.
-            Default id `1`.
+            Default is `1`.
 
         :param float interval: Wait this time between the threading requests (seconds).
             Default is `0`. Useful to optimize session spikes and achieve
@@ -110,7 +108,7 @@ class NbForager:
 
         :param bool strict: When querying objects by tag, if there are no tags present,
             the Netbox API response returns a status_code=400.
-            True - ConnectionError is raised when status_code=400.
+            True - HTTPError is raised when status_code=400.
             False - WARNING message is logged and an empty list is returned with status_code=200.
             Default is `False`.
 
@@ -203,7 +201,7 @@ class NbForager:
 
     @property
     def url(self) -> str:
-        """Netbox URL."""
+        """Netbox URL to API endpoints."""
         return self.api.url
 
     @property
@@ -313,9 +311,7 @@ class NbForager:
 
         :param ipam_prefixes: True - Join only ipam/prefixes, skip ipam/ip-addresses.
 
-        :return: NbTree object with the joined Netbox objects.
-
-        :rtype: NbTree
+        :return: None. Update NbForager.tree with the joined Netbox objects.
         """
         tree: NbTree = deepcopy(self.root)
         Joiner(tree).init_extra_keys()
@@ -341,7 +337,7 @@ class NbForager:
         self.status = status
 
     def write_cache(self) -> None:
-        """Write NbForager.root nad NbForager.status to a pickle file.
+        """Write NbForager.root and NbForager.status to a pickle file.
 
         :return: None. Update a pickle file.
         """
@@ -361,7 +357,7 @@ class NbForager:
         Before getting the version, you need to update the NbForager.status by
         using the get_status() or read_cache() method.
 
-        :return: Netbox version if version >= 3, otherwise empty string.
+        :return: Netbox version if version >= 3, otherwise an empty string.
         """
         return str(self.status.get("netbox-version") or "0.0.0")
 
@@ -389,7 +385,7 @@ class NbForager:
                 data["address"] = ip_ + "/32"
 
     def _print_warnings(self) -> None:
-        """Print WARNINGS if found some errors/warnings in data processing."""
+        """Print warnings if any errors or warnings are found during data processing."""
         for app in self.root.apps():
             for model in getattr(self.root, app).models():
                 nb_objects: DiDAny = getattr(getattr(self.root, app), model)

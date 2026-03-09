@@ -1,4 +1,4 @@
-"""Params nb_pai.py."""
+"""Params nbforager/api/nb_pai.py."""
 
 ATTRS = [
     "self",

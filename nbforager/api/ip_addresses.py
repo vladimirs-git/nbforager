@@ -1,9 +1,7 @@
-# pylint: disable=R0801
-
 """IP Addresses connectors."""
 
 from nbforager.api.connector import Connector
-from nbforager.types_ import LDAny
+from nbforager.types import LDAny
 
 
 class IpAddressesC(Connector):
@@ -17,7 +15,7 @@ class IpAddressesC(Connector):
 
         Only ``NbApi.ipam.ip_addresses.get()`` is described in this documentation.
         Other models are implemented in a similar manner.
-        Exact parameters you can find in `Schema`_.
+        Exact parameters can be found in `Schema`_.
 
         NbApi parameters:
 
@@ -43,7 +41,7 @@ class IpAddressesC(Connector):
         :type family: int or List[int]
 
         :param status: Status.
-        :type parent: str or List[str]
+        :type status: str or List[str]
 
         :param role: Role.
         :type role: str or List[str]

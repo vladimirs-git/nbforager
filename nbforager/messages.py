@@ -28,7 +28,7 @@ class Msg:
         return f"<{name}: {self.line()}>"
 
     def line(self) -> str:
-        """Return line of message, ready for print."""
+        """Return line of message, ready for printing."""
         line = f"{self.level.upper()}: "
         line += f": {self.name}: " if self.name else ""
         line += f"{self.text}"
@@ -82,7 +82,7 @@ class Messages:
         self.items.append(message)
 
     def update(self, msgs: Union[Messages, List[Messages]]) -> None:
-        """Extend other Messages data to self.messages."""
+        """Extend self with data from other Messages objects."""
         msgs = msgs if isinstance(msgs, list) else [msgs]
         for msg in msgs:
             for msg_ in msg.items:
@@ -90,13 +90,13 @@ class Messages:
                     self.items.append(msg_)
 
     def is_warnings(self) -> bool:
-        """Return True if in messages has error or warning."""
+        """Return True if messages contain an error or warning."""
         if [o for o in self.items if o.level in ["error", "warning"]]:
             return True
         return False
 
     def is_error(self) -> bool:
-        """Return True if in messages has error."""
+        """Return True if messages contain an error."""
         if [o for o in self.items if o.level in ["error"]]:
             return True
         return False

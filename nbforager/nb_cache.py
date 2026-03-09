@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Tuple
 
 from nbforager.nb_tree import ONbTree, NbTree
-from nbforager.types_ import DAny, ODAny
+from nbforager.types import DAny, ODAny
 
 
 class NbCache:
@@ -88,7 +88,7 @@ class NbCache:
     def _create_dir(self) -> None:
         """Create directory for cache if cache file is specified.
 
-        :return: None. Create directory.
+        :return: None. Create the directory.
         """
         if not self.cache:
             return
@@ -99,9 +99,9 @@ class NbCache:
             logging.info(str(f"Directory created {root_dir}."))
 
     def _create_file(self) -> None:
-        """Create pickl file for cache with write permissions 666.
+        """Create pickle file for cache with write permissions 666.
 
-        :return: None. Update pickle file.
+        :return: None. Update the pickle file.
         """
         os.umask(0)
         descriptor = os.open(

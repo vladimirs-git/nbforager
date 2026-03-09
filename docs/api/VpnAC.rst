@@ -8,6 +8,7 @@ Vpn connectors
 .. py:function:: NbApi.vpn.ike_policies.delete(id)
 .. py:function:: NbApi.vpn.ike_policies.get(**params)
 .. py:function:: NbApi.vpn.ike_policies.get_count(**data)
+.. py:function:: NbApi.vpn.ike_policies.graphql(**data)
 .. py:function:: NbApi.vpn.ike_policies.update(**data)
 .. py:function:: NbApi.vpn.ike_policies.update_d(**data)
 
@@ -19,6 +20,7 @@ Vpn connectors
 .. py:function:: NbApi.vpn.ike_proposal.delete(id)
 .. py:function:: NbApi.vpn.ike_proposal.get(**params)
 .. py:function:: NbApi.vpn.ike_proposal.get_count(**data)
+.. py:function:: NbApi.vpn.ike_proposal.graphql(**data)
 .. py:function:: NbApi.vpn.ike_proposal.update(**data)
 .. py:function:: NbApi.vpn.ike_proposal.update_d(**data)
 
@@ -30,6 +32,7 @@ Vpn connectors
 .. py:function:: NbApi.vpn.ipsec_policies.delete(id)
 .. py:function:: NbApi.vpn.ipsec_policies.get(**params)
 .. py:function:: NbApi.vpn.ipsec_policies.get_count(**data)
+.. py:function:: NbApi.vpn.ipsec_policies.graphql(**data)
 .. py:function:: NbApi.vpn.ipsec_policies.update(**data)
 .. py:function:: NbApi.vpn.ipsec_policies.update_d(**data)
 
@@ -41,6 +44,7 @@ Vpn connectors
 .. py:function:: NbApi.vpn.ipsec_profiles.delete(id)
 .. py:function:: NbApi.vpn.ipsec_profiles.get(**params)
 .. py:function:: NbApi.vpn.ipsec_profiles.get_count(**data)
+.. py:function:: NbApi.vpn.ipsec_profiles.graphql(**data)
 .. py:function:: NbApi.vpn.ipsec_profiles.update(**data)
 .. py:function:: NbApi.vpn.ipsec_profiles.update_d(**data)
 
@@ -52,6 +56,7 @@ Vpn connectors
 .. py:function:: NbApi.vpn.ipsec_proposals.delete(id)
 .. py:function:: NbApi.vpn.ipsec_proposals.get(**params)
 .. py:function:: NbApi.vpn.ipsec_proposals.get_count(**data)
+.. py:function:: NbApi.vpn.ipsec_proposals.graphql(**data)
 .. py:function:: NbApi.vpn.ipsec_proposals.update(**data)
 .. py:function:: NbApi.vpn.ipsec_proposals.update_d(**data)
 
@@ -63,6 +68,7 @@ Vpn connectors
 .. py:function:: NbApi.vpn.l2vpn_terminations.delete(id)
 .. py:function:: NbApi.vpn.l2vpn_terminations.get(**params)
 .. py:function:: NbApi.vpn.l2vpn_terminations.get_count(**data)
+.. py:function:: NbApi.vpn.l2vpn_terminations.graphql(**data)
 .. py:function:: NbApi.vpn.l2vpn_terminations.update(**data)
 .. py:function:: NbApi.vpn.l2vpn_terminations.update_d(**data)
 
@@ -74,6 +80,7 @@ Vpn connectors
 .. py:function:: NbApi.vpn.l2vpns.delete(id)
 .. py:function:: NbApi.vpn.l2vpns.get(**params)
 .. py:function:: NbApi.vpn.l2vpns.get_count(**data)
+.. py:function:: NbApi.vpn.l2vpns.graphql(**data)
 .. py:function:: NbApi.vpn.l2vpns.update(**data)
 .. py:function:: NbApi.vpn.l2vpns.update_d(**data)
 
@@ -85,6 +92,7 @@ Vpn connectors
 .. py:function:: NbApi.vpn.tunnel_groups.delete(id)
 .. py:function:: NbApi.vpn.tunnel_groups.get(**params)
 .. py:function:: NbApi.vpn.tunnel_groups.get_count(**data)
+.. py:function:: NbApi.vpn.tunnel_groups.graphql(**data)
 .. py:function:: NbApi.vpn.tunnel_groups.update(**data)
 .. py:function:: NbApi.vpn.tunnel_groups.update_d(**data)
 
@@ -96,6 +104,7 @@ Vpn connectors
 .. py:function:: NbApi.vpn.tunnel_terminations.delete(id)
 .. py:function:: NbApi.vpn.tunnel_terminations.get(**params)
 .. py:function:: NbApi.vpn.tunnel_terminations.get_count(**data)
+.. py:function:: NbApi.vpn.tunnel_terminations.graphql(**data)
 .. py:function:: NbApi.vpn.tunnel_terminations.update(**data)
 .. py:function:: NbApi.vpn.tunnel_terminations.update_d(**data)
 
@@ -107,6 +116,7 @@ Vpn connectors
 .. py:function:: NbApi.vpn.tunnels.delete(id)
 .. py:function:: NbApi.vpn.tunnels.get(**params)
 .. py:function:: NbApi.vpn.tunnels.get_count(**data)
+.. py:function:: NbApi.vpn.tunnels.graphql(**data)
 .. py:function:: NbApi.vpn.tunnels.update(**data)
 .. py:function:: NbApi.vpn.tunnels.update_d(**data)
 

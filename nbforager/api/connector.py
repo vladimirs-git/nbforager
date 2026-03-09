@@ -9,11 +9,11 @@ from requests import Response
 from vhelpers import vdict
 
 from nbforager import helpers
-from nbforager.api.base_c import BaseC
-from nbforager.types_ import DAny, LDAny, LDList
+from nbforager.api.base_mc import BaseMC
+from nbforager.types import DAny, LDAny, LDList
 
 
-class Connector(BaseC):
+class Connector(BaseMC):
     """Connector to Netbox entry point for different models.
 
     For example, ``NbApi.ipam.ip_addresses.{method}``, where ``{method}``
@@ -30,7 +30,7 @@ class Connector(BaseC):
         :return: Session response.
 
             - <Response [201]> Object successfully created,
-            - <Response [400]> Object already exist.
+            - <Response [400]> Object already exists.
         :rtype: Response
         """
         response: Response = self._session.post(
@@ -128,13 +128,28 @@ class Connector(BaseC):
             raise ValueError("Count for loners parameters is not supported.")
         self._query_count(self.path, kwargs)
         data: DAny = self._results[0]
+        self._results.clear()
         return int(data["count"])
+
+    def graphql(self, fields: str, filters: str = "") -> LDAny:
+        """Request data from Netbox GraphQL API.
+
+        :param fields: Fields to include in the query,
+            e.g. ``id name tenant { id name }``.
+        :param filters: Parameters to filter Netbox objects,
+            e.g. ``{ status: STATUS_ACTIVE, name: {exact: "SITE1"}}``.
+
+        :return: List of dictionaries containing GraphQL objects related to app/model.
+        :rtype: List[dict]
+        :raises HTTPError: Response status != 200 or contains ERROR messages.
+        """
+        return self._graphql(path=self.path, fields=fields, filters=filters)
 
     # noinspection PyIncorrectDocstring
     def update(self, **kwargs) -> Response:
         """Update an object in Netbox.
 
-        :param id: Netbox object id to update.
+        :param id: Netbox object ID to update.
         :type id: int
 
         :param kwargs: Parameters to update an object in Netbox.
@@ -162,7 +177,7 @@ class Connector(BaseC):
     def update_d(self, **kwargs) -> DAny:
         """Update an object in Netbox.
 
-        :param id: Netbox object id to update.
+        :param id: Netbox object ID to update.
         :type id: int
 
         :param kwargs: Parameters to update an object in Netbox.

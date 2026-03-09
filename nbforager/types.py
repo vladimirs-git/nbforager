@@ -4,6 +4,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Set, TypeVar, Tuple, Union
 
+from requests import Response
+
 # 1 level
 DAny = Dict[str, Any]
 DInt = Dict[str, int]
@@ -18,6 +20,7 @@ LStr = List[str]
 LTInt2 = List[Tuple[int, int]]
 ODatetime = Optional[datetime]
 ODict = Optional[dict]
+OResponse = Optional[Response]
 Param = Tuple[str, Any]
 SInt = Set[int]
 SStr = Set[str]

@@ -4,8 +4,17 @@
 CHANGELOG
 =========
 
+2.0.0 (2026-03-09)
+------------------
+
+**Changed:** quality improvement
+
+**Added:** graphql
+
+
 1.2.0 (2026-02-22)
--------------------
+------------------
+>>>>>>> graphql3
 
 **Changed:** NbForager.join_tree(ipam_prefixes)
 
@@ -27,7 +36,7 @@ CHANGELOG
 1.0.14 (2025-10-04)
 -------------------
 
-**Fixed:** BaseC._retry_requests() return empty data if strict False, status 400
+**Fixed:** BaseMC._retry_requests() return empty data if strict False, status 400
 
 
 1.0.13 (2025-10-01)
@@ -151,7 +160,7 @@ CHANGELOG
 
 **Added:** helpers DEPENDENT_MODELS, dependency_ordered_paths()
 **Added:** NbApi.connectors()
-**Added:** BaseC._add_params_limit_offset()
+**Added:** BaseMC._add_params_limit_offset()
 **Fixed:** threading mode for nested URLs
 
 
@@ -205,7 +214,7 @@ CHANGELOG
 
 **Added:** helpers.object_type_to_am()
 
-**Fixed:** BaseC._query_count() offset
+**Fixed:** BaseMC._query_count() offset
 
 
 0.3.5 (2024-09-14)
@@ -263,13 +272,13 @@ CHANGELOG
 0.2.2 (2024-05-11)
 ------------------
 
-**Added:** BaseC._slices = ["device_id", ...]
+**Added:** BaseMC._slices = ["device_id", ...]
 
 
 0.2.1 (2024-03-29)
 ------------------
 
-**Fixed:** BaseC._slice_params_counters()
+**Fixed:** BaseMC._slice_params_counters()
 
 **Changed:** NbForager.clear(root, tree)
 

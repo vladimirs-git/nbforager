@@ -64,8 +64,8 @@ print()
 
 
 # get site name
-site3_1 = V3_PREFIX["site"]["name"]  # rasie TypeError if site is None
-site3_2 = V3_PREFIX.get("site", {}).get("name", "")  # rasie TypeError if site is None
+site3_1 = V3_PREFIX["site"]["name"]  # raise TypeError if site is None
+site3_2 = V3_PREFIX.get("site", {}).get("name", "")  # raise TypeError if site is None
 site3_3: str = str(dict(V3_PREFIX_.get("site") or {}).get("name") or "")  # not raise TypeError
 site3_4: str = str(dict(V4_PREFIX.get("site") or {}).get("name") or "")  # not raise TypeError
 print(f"{site3_1=}")
@@ -80,7 +80,7 @@ print()
 
 # parse site name
 try:
-    # rasie NbVersionError to deprecated model
+    # raise NbVersionError to deprecated model
     site4_1: str = NbValue(V3_PREFIX).str("site", "name")
     print(f"{site4_1=}")
 except Exception as ex:

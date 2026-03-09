@@ -8,6 +8,7 @@ Core connectors
 .. py:function:: NbApi.core.background_queues.delete(id)
 .. py:function:: NbApi.core.background_queues.get(**params)
 .. py:function:: NbApi.core.background_queues.get_count(**data)
+.. py:function:: NbApi.core.background_queues.graphql(**data)
 .. py:function:: NbApi.core.background_queues.update(**data)
 .. py:function:: NbApi.core.background_queues.update_d(**data)
 
@@ -19,6 +20,7 @@ Core connectors
 .. py:function:: NbApi.core.background_tasks.delete(id)
 .. py:function:: NbApi.core.background_tasks.get(**params)
 .. py:function:: NbApi.core.background_tasks.get_count(**data)
+.. py:function:: NbApi.core.background_tasks.graphql(**data)
 .. py:function:: NbApi.core.background_tasks.update(**data)
 .. py:function:: NbApi.core.background_tasks.update_d(**data)
 
@@ -30,6 +32,7 @@ Core connectors
 .. py:function:: NbApi.core.background_workers.delete(id)
 .. py:function:: NbApi.core.background_workers.get(**params)
 .. py:function:: NbApi.core.background_workers.get_count(**data)
+.. py:function:: NbApi.core.background_workers.graphql(**data)
 .. py:function:: NbApi.core.background_workers.update(**data)
 .. py:function:: NbApi.core.background_workers.update_d(**data)
 
@@ -41,6 +44,7 @@ Core connectors
 .. py:function:: NbApi.core.data_files.delete(id)
 .. py:function:: NbApi.core.data_files.get(**params)
 .. py:function:: NbApi.core.data_files.get_count(**data)
+.. py:function:: NbApi.core.data_files.graphql(**data)
 .. py:function:: NbApi.core.data_files.update(**data)
 .. py:function:: NbApi.core.data_files.update_d(**data)
 
@@ -52,6 +56,7 @@ Core connectors
 .. py:function:: NbApi.core.data_sources.delete(id)
 .. py:function:: NbApi.core.data_sources.get(**params)
 .. py:function:: NbApi.core.data_sources.get_count(**data)
+.. py:function:: NbApi.core.data_sources.graphql(**data)
 .. py:function:: NbApi.core.data_sources.update(**data)
 .. py:function:: NbApi.core.data_sources.update_d(**data)
 
@@ -63,6 +68,7 @@ Core connectors
 .. py:function:: NbApi.core.jobs.delete(id)
 .. py:function:: NbApi.core.jobs.get(**params)
 .. py:function:: NbApi.core.jobs.get_count(**data)
+.. py:function:: NbApi.core.jobs.graphql(**data)
 .. py:function:: NbApi.core.jobs.update(**data)
 .. py:function:: NbApi.core.jobs.update_d(**data)
 
@@ -74,6 +80,7 @@ Core connectors
 .. py:function:: NbApi.core.object_changes.delete(id)
 .. py:function:: NbApi.core.object_changes.get(**params)
 .. py:function:: NbApi.core.object_changes.get_count(**data)
+.. py:function:: NbApi.core.object_changes.graphql(**data)
 .. py:function:: NbApi.core.object_changes.update(**data)
 .. py:function:: NbApi.core.object_changes.update_d(**data)
 

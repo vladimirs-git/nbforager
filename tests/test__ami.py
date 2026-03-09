@@ -1,4 +1,4 @@
-"""Tests ami.py."""
+"""Tests nbforager/ami.py."""
 from typing import Any
 
 import pytest
@@ -93,6 +93,8 @@ def test__nested_urls(nb_objects, expected):
     ("/app/model/", ("app", "model")),
     ("app/model_group", ("app", "model_group")),
     ("app/model-group", ("app", "model_group")),
+    ("ipam/ip-addresses", ("ipam", "ip_addresses")),
+    ("ipam/ip_addresses", ("ipam", "ip_addresses")),
 ])
 def test__path_to_attrs(path, expected: Any):
     """ami.path_to_attrs()"""
@@ -104,19 +106,24 @@ def test__path_to_attrs(path, expected: Any):
             ami.path_to_attrs(path)
 
 
-@pytest.mark.parametrize("plural, expected", [
-    ("console_port_templates", "consoleporttemplate"),
-    ("console-port-templates", "consoleporttemplate"),
-    ("interfaces", "interface"),
-    ("virtual_chassis", "virtualchassis"),
-    ("ip_addresses", "ipaddress"),
-    ("prefixes", "prefix"),
-    ("interfaces", "interface"),
+@pytest.mark.parametrize("plural, splitter, expected", [
+    # splitter=""
+    ("console_port_templates", "", "consoleporttemplate"),
+    ("console-port-templates", "", "consoleporttemplate"),
+    ("interfaces", "", "interface"),
+    ("virtual-chassis", "", "virtualchassis"),
+    ("virtual_chassis", "", "virtualchassis"),
+    ("ip-addresses", "", "ipaddress"),
+    ("ip_addresses", "", "ipaddress"),
+    ("prefixes", "", "prefix"),
+    ("interfaces", "", "interface"),
+    # splitter="_"
+    ("ip-addresses", "_", "ip_address"),
+    ("ip_addresses", "_", "ip_address"),
 ])
-def test__model_singular(plural, expected):
+def test__model_singular(plural, splitter, expected):
     """ami.model_singular()."""
-    actual = ami.model_singular(plural=plural)
-
+    actual = ami.model_singular(plural=plural, splitter=splitter)
     assert actual == expected
 
 
@@ -299,13 +306,8 @@ def test__url_to_api_url(url, expected):
     ("https://nb/api", "https://nb/api"),
     ("https://nb", "https://nb"),
     ("", ""),
-
 ])
 def test__url_to_ui(url, expected):
     """ami.url_to_ui()"""
-    if isinstance(expected, str):
-        actual = ami.url_to_ui(url=url)
-        assert actual == expected
-    else:
-        with pytest.raises(expected):
-            ami.url_to_ui(url=url)
+    actual = ami.url_to_ui(url=url)
+    assert actual == expected

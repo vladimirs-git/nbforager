@@ -1,6 +1,6 @@
 """Constants for apps and models."""
 
-from nbforager.types_ import DLStr
+from nbforager.types import DLStr
 
 APPS = (
     "circuits",
@@ -281,4 +281,4 @@ DEPENDENT_MODELS: DLStr = {
     ],
     "wireless/wireless-links": ["extras/tags", "tenancy/tenants"],
 }
-"""Models dependency for Netbox v3.5."""
+"""Model dependencies for Netbox v3.5."""

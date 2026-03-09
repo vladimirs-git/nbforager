@@ -1,4 +1,4 @@
-"""Params nbforager.nb_forager.py."""
+"""Params nbforager/foragers/forager.py."""
 
 FIND = [
     ({}, [1, 2, 3, 4]),

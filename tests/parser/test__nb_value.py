@@ -4,14 +4,9 @@ import pytest
 
 from nbforager.exceptions import NbParserError
 from nbforager.parser.nb_value import NbValue
-from nbforager.types_ import DAny
+from nbforager.types import DAny
 from tests.parser import params__nb_value as p
-
-
-@pytest.fixture
-def nbv(params: DAny) -> NbValue:
-    """Create NbValue instance based on the params."""
-    return NbValue(**params)
+from tests.fixtures import nbv
 
 
 @pytest.mark.parametrize("params, expected", [

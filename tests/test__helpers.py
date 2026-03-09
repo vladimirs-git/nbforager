@@ -1,15 +1,16 @@
-"""Tests helpers.py."""
+"""Tests nbforager/helpers.py."""
 import json
 from typing import Any
 from urllib.parse import urlencode
 
 import dictdiffer
 import pytest
-from requests import Response
+from requests import Response, HTTPError
 
 from nbforager import helpers
 from tests import params__helpers as p
 
+# ============================= Response =============================
 
 @pytest.mark.parametrize("params, expected", [
     ({"id": 1}, {"id": 1}),
@@ -46,6 +47,39 @@ def test__decode_response_l(params, expected):
     diff = list(dictdiffer.diff(actual, expected))
     assert not diff
 
+
+@pytest.mark.parametrize("strict, status_code, text, error", [
+    # strict=False
+    (False, 100, "any", None),
+    (False, 200, "any", None),
+    (False, 300, "any", None),
+    (False, 400, "any", None),
+    (False, 403, "any", HTTPError),
+    (False, 500, "any", HTTPError),
+    (False, 600, "any", None),
+    # strict=True
+    (True, 100, "any", None),
+    (True, 200, "any", None),
+    (True, 300, "any", None),
+    (True, 400, "any", HTTPError),
+    (True, 403, "any", HTTPError),
+    (True, 500, "any", HTTPError),
+    (True, 600, "any", None),
+])
+def test_raise_for_status(strict, status_code, text, error):
+    """helpers.raise_for_status()."""
+    response = Response()
+    response.status_code = status_code
+    response._content = str.encode(text)
+
+    if error is None:
+        helpers.raise_for_status(response=response, strict=strict)
+    else:
+        with pytest.raises(error):
+            helpers.raise_for_status(response=response, strict=strict)
+
+
+# ============================== other ===============================
 
 @pytest.mark.parametrize("dependency, expected", [
     (helpers.DEPENDENT_MODELS, p.ORDERED_MODELS),

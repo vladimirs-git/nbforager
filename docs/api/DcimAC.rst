@@ -8,6 +8,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.cable_terminations.delete(id)
 .. py:function:: NbApi.dcim.cable_terminations.get(**params)
 .. py:function:: NbApi.dcim.cable_terminations.get_count(**data)
+.. py:function:: NbApi.dcim.cable_terminations.graphql(**data)
 .. py:function:: NbApi.dcim.cable_terminations.update(**data)
 .. py:function:: NbApi.dcim.cable_terminations.update_d(**data)
 
@@ -19,6 +20,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.cables.delete(id)
 .. py:function:: NbApi.dcim.cables.get(**params)
 .. py:function:: NbApi.dcim.cables.get_count(**data)
+.. py:function:: NbApi.dcim.cables.graphql(**data)
 .. py:function:: NbApi.dcim.cables.update(**data)
 .. py:function:: NbApi.dcim.cables.update_d(**data)
 
@@ -30,6 +32,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.connected_device.delete(id)
 .. py:function:: NbApi.dcim.connected_device.get(**params)
 .. py:function:: NbApi.dcim.connected_device.get_count(**data)
+.. py:function:: NbApi.dcim.connected_device.graphql(**data)
 .. py:function:: NbApi.dcim.connected_device.update(**data)
 .. py:function:: NbApi.dcim.connected_device.update_d(**data)
 
@@ -41,6 +44,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.console_port_templates.delete(id)
 .. py:function:: NbApi.dcim.console_port_templates.get(**params)
 .. py:function:: NbApi.dcim.console_port_templates.get_count(**data)
+.. py:function:: NbApi.dcim.console_port_templates.graphql(**data)
 .. py:function:: NbApi.dcim.console_port_templates.update(**data)
 .. py:function:: NbApi.dcim.console_port_templates.update_d(**data)
 
@@ -52,6 +56,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.console_ports.delete(id)
 .. py:function:: NbApi.dcim.console_ports.get(**params)
 .. py:function:: NbApi.dcim.console_ports.get_count(**data)
+.. py:function:: NbApi.dcim.console_ports.graphql(**data)
 .. py:function:: NbApi.dcim.console_ports.update(**data)
 .. py:function:: NbApi.dcim.console_ports.update_d(**data)
 
@@ -63,6 +68,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.console_server_port_templates.delete(id)
 .. py:function:: NbApi.dcim.console_server_port_templates.get(**params)
 .. py:function:: NbApi.dcim.console_server_port_templates.get_count(**data)
+.. py:function:: NbApi.dcim.console_server_port_templates.graphql(**data)
 .. py:function:: NbApi.dcim.console_server_port_templates.update(**data)
 .. py:function:: NbApi.dcim.console_server_port_templates.update_d(**data)
 
@@ -74,6 +80,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.console_server_ports.delete(id)
 .. py:function:: NbApi.dcim.console_server_ports.get(**params)
 .. py:function:: NbApi.dcim.console_server_ports.get_count(**data)
+.. py:function:: NbApi.dcim.console_server_ports.graphql(**data)
 .. py:function:: NbApi.dcim.console_server_ports.update(**data)
 .. py:function:: NbApi.dcim.console_server_ports.update_d(**data)
 
@@ -85,6 +92,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.device_bay_templates.delete(id)
 .. py:function:: NbApi.dcim.device_bay_templates.get(**params)
 .. py:function:: NbApi.dcim.device_bay_templates.get_count(**data)
+.. py:function:: NbApi.dcim.device_bay_templates.graphql(**data)
 .. py:function:: NbApi.dcim.device_bay_templates.update(**data)
 .. py:function:: NbApi.dcim.device_bay_templates.update_d(**data)
 
@@ -96,6 +104,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.device_bays.delete(id)
 .. py:function:: NbApi.dcim.device_bays.get(**params)
 .. py:function:: NbApi.dcim.device_bays.get_count(**data)
+.. py:function:: NbApi.dcim.device_bays.graphql(**data)
 .. py:function:: NbApi.dcim.device_bays.update(**data)
 .. py:function:: NbApi.dcim.device_bays.update_d(**data)
 
@@ -107,6 +116,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.device_roles.delete(id)
 .. py:function:: NbApi.dcim.device_roles.get(**params)
 .. py:function:: NbApi.dcim.device_roles.get_count(**data)
+.. py:function:: NbApi.dcim.device_roles.graphql(**data)
 .. py:function:: NbApi.dcim.device_roles.update(**data)
 .. py:function:: NbApi.dcim.device_roles.update_d(**data)
 
@@ -118,6 +128,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.device_types.delete(id)
 .. py:function:: NbApi.dcim.device_types.get(**params)
 .. py:function:: NbApi.dcim.device_types.get_count(**data)
+.. py:function:: NbApi.dcim.device_types.graphql(**data)
 .. py:function:: NbApi.dcim.device_types.update(**data)
 .. py:function:: NbApi.dcim.device_types.update_d(**data)
 
@@ -129,6 +140,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.devices.delete(id)
 .. py:function:: NbApi.dcim.devices.get(**params)
 .. py:function:: NbApi.dcim.devices.get_count(**data)
+.. py:function:: NbApi.dcim.devices.graphql(**data)
 .. py:function:: NbApi.dcim.devices.update(**data)
 .. py:function:: NbApi.dcim.devices.update_d(**data)
 
@@ -140,6 +152,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.front_port_templates.delete(id)
 .. py:function:: NbApi.dcim.front_port_templates.get(**params)
 .. py:function:: NbApi.dcim.front_port_templates.get_count(**data)
+.. py:function:: NbApi.dcim.front_port_templates.graphql(**data)
 .. py:function:: NbApi.dcim.front_port_templates.update(**data)
 .. py:function:: NbApi.dcim.front_port_templates.update_d(**data)
 
@@ -151,6 +164,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.front_ports.delete(id)
 .. py:function:: NbApi.dcim.front_ports.get(**params)
 .. py:function:: NbApi.dcim.front_ports.get_count(**data)
+.. py:function:: NbApi.dcim.front_ports.graphql(**data)
 .. py:function:: NbApi.dcim.front_ports.update(**data)
 .. py:function:: NbApi.dcim.front_ports.update_d(**data)
 
@@ -162,6 +176,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.interface_templates.delete(id)
 .. py:function:: NbApi.dcim.interface_templates.get(**params)
 .. py:function:: NbApi.dcim.interface_templates.get_count(**data)
+.. py:function:: NbApi.dcim.interface_templates.graphql(**data)
 .. py:function:: NbApi.dcim.interface_templates.update(**data)
 .. py:function:: NbApi.dcim.interface_templates.update_d(**data)
 
@@ -173,6 +188,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.interfaces.delete(id)
 .. py:function:: NbApi.dcim.interfaces.get(**params)
 .. py:function:: NbApi.dcim.interfaces.get_count(**data)
+.. py:function:: NbApi.dcim.interfaces.graphql(**data)
 .. py:function:: NbApi.dcim.interfaces.update(**data)
 .. py:function:: NbApi.dcim.interfaces.update_d(**data)
 
@@ -184,6 +200,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.inventory_item_roles.delete(id)
 .. py:function:: NbApi.dcim.inventory_item_roles.get(**params)
 .. py:function:: NbApi.dcim.inventory_item_roles.get_count(**data)
+.. py:function:: NbApi.dcim.inventory_item_roles.graphql(**data)
 .. py:function:: NbApi.dcim.inventory_item_roles.update(**data)
 .. py:function:: NbApi.dcim.inventory_item_roles.update_d(**data)
 
@@ -195,6 +212,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.inventory_item_templates.delete(id)
 .. py:function:: NbApi.dcim.inventory_item_templates.get(**params)
 .. py:function:: NbApi.dcim.inventory_item_templates.get_count(**data)
+.. py:function:: NbApi.dcim.inventory_item_templates.graphql(**data)
 .. py:function:: NbApi.dcim.inventory_item_templates.update(**data)
 .. py:function:: NbApi.dcim.inventory_item_templates.update_d(**data)
 
@@ -206,6 +224,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.inventory_items.delete(id)
 .. py:function:: NbApi.dcim.inventory_items.get(**params)
 .. py:function:: NbApi.dcim.inventory_items.get_count(**data)
+.. py:function:: NbApi.dcim.inventory_items.graphql(**data)
 .. py:function:: NbApi.dcim.inventory_items.update(**data)
 .. py:function:: NbApi.dcim.inventory_items.update_d(**data)
 
@@ -217,6 +236,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.locations.delete(id)
 .. py:function:: NbApi.dcim.locations.get(**params)
 .. py:function:: NbApi.dcim.locations.get_count(**data)
+.. py:function:: NbApi.dcim.locations.graphql(**data)
 .. py:function:: NbApi.dcim.locations.update(**data)
 .. py:function:: NbApi.dcim.locations.update_d(**data)
 
@@ -228,6 +248,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.mac_addresses.delete(id)
 .. py:function:: NbApi.dcim.mac_addresses.get(**params)
 .. py:function:: NbApi.dcim.mac_addresses.get_count(**data)
+.. py:function:: NbApi.dcim.mac_addresses.graphql(**data)
 .. py:function:: NbApi.dcim.mac_addresses.update(**data)
 .. py:function:: NbApi.dcim.mac_addresses.update_d(**data)
 
@@ -239,6 +260,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.manufacturers.delete(id)
 .. py:function:: NbApi.dcim.manufacturers.get(**params)
 .. py:function:: NbApi.dcim.manufacturers.get_count(**data)
+.. py:function:: NbApi.dcim.manufacturers.graphql(**data)
 .. py:function:: NbApi.dcim.manufacturers.update(**data)
 .. py:function:: NbApi.dcim.manufacturers.update_d(**data)
 
@@ -250,6 +272,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.module_bay_templates.delete(id)
 .. py:function:: NbApi.dcim.module_bay_templates.get(**params)
 .. py:function:: NbApi.dcim.module_bay_templates.get_count(**data)
+.. py:function:: NbApi.dcim.module_bay_templates.graphql(**data)
 .. py:function:: NbApi.dcim.module_bay_templates.update(**data)
 .. py:function:: NbApi.dcim.module_bay_templates.update_d(**data)
 
@@ -261,6 +284,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.module_bays.delete(id)
 .. py:function:: NbApi.dcim.module_bays.get(**params)
 .. py:function:: NbApi.dcim.module_bays.get_count(**data)
+.. py:function:: NbApi.dcim.module_bays.graphql(**data)
 .. py:function:: NbApi.dcim.module_bays.update(**data)
 .. py:function:: NbApi.dcim.module_bays.update_d(**data)
 
@@ -272,6 +296,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.module_type_profiles.delete(id)
 .. py:function:: NbApi.dcim.module_type_profiles.get(**params)
 .. py:function:: NbApi.dcim.module_type_profiles.get_count(**data)
+.. py:function:: NbApi.dcim.module_type_profiles.graphql(**data)
 .. py:function:: NbApi.dcim.module_type_profiles.update(**data)
 .. py:function:: NbApi.dcim.module_type_profiles.update_d(**data)
 
@@ -283,6 +308,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.module_types.delete(id)
 .. py:function:: NbApi.dcim.module_types.get(**params)
 .. py:function:: NbApi.dcim.module_types.get_count(**data)
+.. py:function:: NbApi.dcim.module_types.graphql(**data)
 .. py:function:: NbApi.dcim.module_types.update(**data)
 .. py:function:: NbApi.dcim.module_types.update_d(**data)
 
@@ -294,6 +320,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.modules.delete(id)
 .. py:function:: NbApi.dcim.modules.get(**params)
 .. py:function:: NbApi.dcim.modules.get_count(**data)
+.. py:function:: NbApi.dcim.modules.graphql(**data)
 .. py:function:: NbApi.dcim.modules.update(**data)
 .. py:function:: NbApi.dcim.modules.update_d(**data)
 
@@ -305,6 +332,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.platforms.delete(id)
 .. py:function:: NbApi.dcim.platforms.get(**params)
 .. py:function:: NbApi.dcim.platforms.get_count(**data)
+.. py:function:: NbApi.dcim.platforms.graphql(**data)
 .. py:function:: NbApi.dcim.platforms.update(**data)
 .. py:function:: NbApi.dcim.platforms.update_d(**data)
 
@@ -316,6 +344,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.power_feeds.delete(id)
 .. py:function:: NbApi.dcim.power_feeds.get(**params)
 .. py:function:: NbApi.dcim.power_feeds.get_count(**data)
+.. py:function:: NbApi.dcim.power_feeds.graphql(**data)
 .. py:function:: NbApi.dcim.power_feeds.update(**data)
 .. py:function:: NbApi.dcim.power_feeds.update_d(**data)
 
@@ -327,6 +356,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.power_outlet_templates.delete(id)
 .. py:function:: NbApi.dcim.power_outlet_templates.get(**params)
 .. py:function:: NbApi.dcim.power_outlet_templates.get_count(**data)
+.. py:function:: NbApi.dcim.power_outlet_templates.graphql(**data)
 .. py:function:: NbApi.dcim.power_outlet_templates.update(**data)
 .. py:function:: NbApi.dcim.power_outlet_templates.update_d(**data)
 
@@ -338,6 +368,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.power_outlets.delete(id)
 .. py:function:: NbApi.dcim.power_outlets.get(**params)
 .. py:function:: NbApi.dcim.power_outlets.get_count(**data)
+.. py:function:: NbApi.dcim.power_outlets.graphql(**data)
 .. py:function:: NbApi.dcim.power_outlets.update(**data)
 .. py:function:: NbApi.dcim.power_outlets.update_d(**data)
 
@@ -349,6 +380,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.power_panels.delete(id)
 .. py:function:: NbApi.dcim.power_panels.get(**params)
 .. py:function:: NbApi.dcim.power_panels.get_count(**data)
+.. py:function:: NbApi.dcim.power_panels.graphql(**data)
 .. py:function:: NbApi.dcim.power_panels.update(**data)
 .. py:function:: NbApi.dcim.power_panels.update_d(**data)
 
@@ -360,6 +392,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.power_port_templates.delete(id)
 .. py:function:: NbApi.dcim.power_port_templates.get(**params)
 .. py:function:: NbApi.dcim.power_port_templates.get_count(**data)
+.. py:function:: NbApi.dcim.power_port_templates.graphql(**data)
 .. py:function:: NbApi.dcim.power_port_templates.update(**data)
 .. py:function:: NbApi.dcim.power_port_templates.update_d(**data)
 
@@ -371,6 +404,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.power_ports.delete(id)
 .. py:function:: NbApi.dcim.power_ports.get(**params)
 .. py:function:: NbApi.dcim.power_ports.get_count(**data)
+.. py:function:: NbApi.dcim.power_ports.graphql(**data)
 .. py:function:: NbApi.dcim.power_ports.update(**data)
 .. py:function:: NbApi.dcim.power_ports.update_d(**data)
 
@@ -382,6 +416,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.rack_reservations.delete(id)
 .. py:function:: NbApi.dcim.rack_reservations.get(**params)
 .. py:function:: NbApi.dcim.rack_reservations.get_count(**data)
+.. py:function:: NbApi.dcim.rack_reservations.graphql(**data)
 .. py:function:: NbApi.dcim.rack_reservations.update(**data)
 .. py:function:: NbApi.dcim.rack_reservations.update_d(**data)
 
@@ -393,6 +428,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.rack_roles.delete(id)
 .. py:function:: NbApi.dcim.rack_roles.get(**params)
 .. py:function:: NbApi.dcim.rack_roles.get_count(**data)
+.. py:function:: NbApi.dcim.rack_roles.graphql(**data)
 .. py:function:: NbApi.dcim.rack_roles.update(**data)
 .. py:function:: NbApi.dcim.rack_roles.update_d(**data)
 
@@ -404,6 +440,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.rack_types.delete(id)
 .. py:function:: NbApi.dcim.rack_types.get(**params)
 .. py:function:: NbApi.dcim.rack_types.get_count(**data)
+.. py:function:: NbApi.dcim.rack_types.graphql(**data)
 .. py:function:: NbApi.dcim.rack_types.update(**data)
 .. py:function:: NbApi.dcim.rack_types.update_d(**data)
 
@@ -415,6 +452,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.racks.delete(id)
 .. py:function:: NbApi.dcim.racks.get(**params)
 .. py:function:: NbApi.dcim.racks.get_count(**data)
+.. py:function:: NbApi.dcim.racks.graphql(**data)
 .. py:function:: NbApi.dcim.racks.update(**data)
 .. py:function:: NbApi.dcim.racks.update_d(**data)
 
@@ -426,6 +464,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.rear_port_templates.delete(id)
 .. py:function:: NbApi.dcim.rear_port_templates.get(**params)
 .. py:function:: NbApi.dcim.rear_port_templates.get_count(**data)
+.. py:function:: NbApi.dcim.rear_port_templates.graphql(**data)
 .. py:function:: NbApi.dcim.rear_port_templates.update(**data)
 .. py:function:: NbApi.dcim.rear_port_templates.update_d(**data)
 
@@ -437,6 +476,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.rear_ports.delete(id)
 .. py:function:: NbApi.dcim.rear_ports.get(**params)
 .. py:function:: NbApi.dcim.rear_ports.get_count(**data)
+.. py:function:: NbApi.dcim.rear_ports.graphql(**data)
 .. py:function:: NbApi.dcim.rear_ports.update(**data)
 .. py:function:: NbApi.dcim.rear_ports.update_d(**data)
 
@@ -448,6 +488,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.regions.delete(id)
 .. py:function:: NbApi.dcim.regions.get(**params)
 .. py:function:: NbApi.dcim.regions.get_count(**data)
+.. py:function:: NbApi.dcim.regions.graphql(**data)
 .. py:function:: NbApi.dcim.regions.update(**data)
 .. py:function:: NbApi.dcim.regions.update_d(**data)
 
@@ -459,6 +500,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.site_groups.delete(id)
 .. py:function:: NbApi.dcim.site_groups.get(**params)
 .. py:function:: NbApi.dcim.site_groups.get_count(**data)
+.. py:function:: NbApi.dcim.site_groups.graphql(**data)
 .. py:function:: NbApi.dcim.site_groups.update(**data)
 .. py:function:: NbApi.dcim.site_groups.update_d(**data)
 
@@ -470,6 +512,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.sites.delete(id)
 .. py:function:: NbApi.dcim.sites.get(**params)
 .. py:function:: NbApi.dcim.sites.get_count(**data)
+.. py:function:: NbApi.dcim.sites.graphql(**data)
 .. py:function:: NbApi.dcim.sites.update(**data)
 .. py:function:: NbApi.dcim.sites.update_d(**data)
 
@@ -481,6 +524,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.virtual_chassis.delete(id)
 .. py:function:: NbApi.dcim.virtual_chassis.get(**params)
 .. py:function:: NbApi.dcim.virtual_chassis.get_count(**data)
+.. py:function:: NbApi.dcim.virtual_chassis.graphql(**data)
 .. py:function:: NbApi.dcim.virtual_chassis.update(**data)
 .. py:function:: NbApi.dcim.virtual_chassis.update_d(**data)
 
@@ -492,6 +536,7 @@ Dcim connectors
 .. py:function:: NbApi.dcim.virtual_device_contexts.delete(id)
 .. py:function:: NbApi.dcim.virtual_device_contexts.get(**params)
 .. py:function:: NbApi.dcim.virtual_device_contexts.get_count(**data)
+.. py:function:: NbApi.dcim.virtual_device_contexts.graphql(**data)
 .. py:function:: NbApi.dcim.virtual_device_contexts.update(**data)
 .. py:function:: NbApi.dcim.virtual_device_contexts.update_d(**data)
 

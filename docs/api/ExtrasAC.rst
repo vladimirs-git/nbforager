@@ -8,6 +8,7 @@ Extras connectors
 .. py:function:: NbApi.extras.bookmarks.delete(id)
 .. py:function:: NbApi.extras.bookmarks.get(**params)
 .. py:function:: NbApi.extras.bookmarks.get_count(**data)
+.. py:function:: NbApi.extras.bookmarks.graphql(**data)
 .. py:function:: NbApi.extras.bookmarks.update(**data)
 .. py:function:: NbApi.extras.bookmarks.update_d(**data)
 
@@ -19,6 +20,7 @@ Extras connectors
 .. py:function:: NbApi.extras.config_contexts.delete(id)
 .. py:function:: NbApi.extras.config_contexts.get(**params)
 .. py:function:: NbApi.extras.config_contexts.get_count(**data)
+.. py:function:: NbApi.extras.config_contexts.graphql(**data)
 .. py:function:: NbApi.extras.config_contexts.update(**data)
 .. py:function:: NbApi.extras.config_contexts.update_d(**data)
 
@@ -30,6 +32,7 @@ Extras connectors
 .. py:function:: NbApi.extras.config_templates.delete(id)
 .. py:function:: NbApi.extras.config_templates.get(**params)
 .. py:function:: NbApi.extras.config_templates.get_count(**data)
+.. py:function:: NbApi.extras.config_templates.graphql(**data)
 .. py:function:: NbApi.extras.config_templates.update(**data)
 .. py:function:: NbApi.extras.config_templates.update_d(**data)
 
@@ -41,6 +44,7 @@ Extras connectors
 .. py:function:: NbApi.extras.content_types.delete(id)
 .. py:function:: NbApi.extras.content_types.get(**params)
 .. py:function:: NbApi.extras.content_types.get_count(**data)
+.. py:function:: NbApi.extras.content_types.graphql(**data)
 .. py:function:: NbApi.extras.content_types.update(**data)
 .. py:function:: NbApi.extras.content_types.update_d(**data)
 
@@ -52,6 +56,7 @@ Extras connectors
 .. py:function:: NbApi.extras.custom_field_choice_sets.delete(id)
 .. py:function:: NbApi.extras.custom_field_choice_sets.get(**params)
 .. py:function:: NbApi.extras.custom_field_choice_sets.get_count(**data)
+.. py:function:: NbApi.extras.custom_field_choice_sets.graphql(**data)
 .. py:function:: NbApi.extras.custom_field_choice_sets.update(**data)
 .. py:function:: NbApi.extras.custom_field_choice_sets.update_d(**data)
 
@@ -63,6 +68,7 @@ Extras connectors
 .. py:function:: NbApi.extras.custom_fields.delete(id)
 .. py:function:: NbApi.extras.custom_fields.get(**params)
 .. py:function:: NbApi.extras.custom_fields.get_count(**data)
+.. py:function:: NbApi.extras.custom_fields.graphql(**data)
 .. py:function:: NbApi.extras.custom_fields.update(**data)
 .. py:function:: NbApi.extras.custom_fields.update_d(**data)
 
@@ -74,6 +80,7 @@ Extras connectors
 .. py:function:: NbApi.extras.custom_links.delete(id)
 .. py:function:: NbApi.extras.custom_links.get(**params)
 .. py:function:: NbApi.extras.custom_links.get_count(**data)
+.. py:function:: NbApi.extras.custom_links.graphql(**data)
 .. py:function:: NbApi.extras.custom_links.update(**data)
 .. py:function:: NbApi.extras.custom_links.update_d(**data)
 
@@ -85,6 +92,7 @@ Extras connectors
 .. py:function:: NbApi.extras.event_rules.delete(id)
 .. py:function:: NbApi.extras.event_rules.get(**params)
 .. py:function:: NbApi.extras.event_rules.get_count(**data)
+.. py:function:: NbApi.extras.event_rules.graphql(**data)
 .. py:function:: NbApi.extras.event_rules.update(**data)
 .. py:function:: NbApi.extras.event_rules.update_d(**data)
 
@@ -96,6 +104,7 @@ Extras connectors
 .. py:function:: NbApi.extras.export_templates.delete(id)
 .. py:function:: NbApi.extras.export_templates.get(**params)
 .. py:function:: NbApi.extras.export_templates.get_count(**data)
+.. py:function:: NbApi.extras.export_templates.graphql(**data)
 .. py:function:: NbApi.extras.export_templates.update(**data)
 .. py:function:: NbApi.extras.export_templates.update_d(**data)
 
@@ -107,6 +116,7 @@ Extras connectors
 .. py:function:: NbApi.extras.image_attachments.delete(id)
 .. py:function:: NbApi.extras.image_attachments.get(**params)
 .. py:function:: NbApi.extras.image_attachments.get_count(**data)
+.. py:function:: NbApi.extras.image_attachments.graphql(**data)
 .. py:function:: NbApi.extras.image_attachments.update(**data)
 .. py:function:: NbApi.extras.image_attachments.update_d(**data)
 
@@ -118,6 +128,7 @@ Extras connectors
 .. py:function:: NbApi.extras.journal_entries.delete(id)
 .. py:function:: NbApi.extras.journal_entries.get(**params)
 .. py:function:: NbApi.extras.journal_entries.get_count(**data)
+.. py:function:: NbApi.extras.journal_entries.graphql(**data)
 .. py:function:: NbApi.extras.journal_entries.update(**data)
 .. py:function:: NbApi.extras.journal_entries.update_d(**data)
 
@@ -129,6 +140,7 @@ Extras connectors
 .. py:function:: NbApi.extras.notification_groups.delete(id)
 .. py:function:: NbApi.extras.notification_groups.get(**params)
 .. py:function:: NbApi.extras.notification_groups.get_count(**data)
+.. py:function:: NbApi.extras.notification_groups.graphql(**data)
 .. py:function:: NbApi.extras.notification_groups.update(**data)
 .. py:function:: NbApi.extras.notification_groups.update_d(**data)
 
@@ -140,6 +152,7 @@ Extras connectors
 .. py:function:: NbApi.extras.notifications.delete(id)
 .. py:function:: NbApi.extras.notifications.get(**params)
 .. py:function:: NbApi.extras.notifications.get_count(**data)
+.. py:function:: NbApi.extras.notifications.graphql(**data)
 .. py:function:: NbApi.extras.notifications.update(**data)
 .. py:function:: NbApi.extras.notifications.update_d(**data)
 
@@ -151,6 +164,7 @@ Extras connectors
 .. py:function:: NbApi.extras.object_changes.delete(id)
 .. py:function:: NbApi.extras.object_changes.get(**params)
 .. py:function:: NbApi.extras.object_changes.get_count(**data)
+.. py:function:: NbApi.extras.object_changes.graphql(**data)
 .. py:function:: NbApi.extras.object_changes.update(**data)
 .. py:function:: NbApi.extras.object_changes.update_d(**data)
 
@@ -162,6 +176,7 @@ Extras connectors
 .. py:function:: NbApi.extras.object_types.delete(id)
 .. py:function:: NbApi.extras.object_types.get(**params)
 .. py:function:: NbApi.extras.object_types.get_count(**data)
+.. py:function:: NbApi.extras.object_types.graphql(**data)
 .. py:function:: NbApi.extras.object_types.update(**data)
 .. py:function:: NbApi.extras.object_types.update_d(**data)
 
@@ -173,6 +188,7 @@ Extras connectors
 .. py:function:: NbApi.extras.reports.delete(id)
 .. py:function:: NbApi.extras.reports.get(**params)
 .. py:function:: NbApi.extras.reports.get_count(**data)
+.. py:function:: NbApi.extras.reports.graphql(**data)
 .. py:function:: NbApi.extras.reports.update(**data)
 .. py:function:: NbApi.extras.reports.update_d(**data)
 
@@ -184,6 +200,7 @@ Extras connectors
 .. py:function:: NbApi.extras.saved_filters.delete(id)
 .. py:function:: NbApi.extras.saved_filters.get(**params)
 .. py:function:: NbApi.extras.saved_filters.get_count(**data)
+.. py:function:: NbApi.extras.saved_filters.graphql(**data)
 .. py:function:: NbApi.extras.saved_filters.update(**data)
 .. py:function:: NbApi.extras.saved_filters.update_d(**data)
 
@@ -195,6 +212,7 @@ Extras connectors
 .. py:function:: NbApi.extras.scripts.delete(id)
 .. py:function:: NbApi.extras.scripts.get(**params)
 .. py:function:: NbApi.extras.scripts.get_count(**data)
+.. py:function:: NbApi.extras.scripts.graphql(**data)
 .. py:function:: NbApi.extras.scripts.update(**data)
 .. py:function:: NbApi.extras.scripts.update_d(**data)
 
@@ -206,6 +224,7 @@ Extras connectors
 .. py:function:: NbApi.extras.subscriptions.delete(id)
 .. py:function:: NbApi.extras.subscriptions.get(**params)
 .. py:function:: NbApi.extras.subscriptions.get_count(**data)
+.. py:function:: NbApi.extras.subscriptions.graphql(**data)
 .. py:function:: NbApi.extras.subscriptions.update(**data)
 .. py:function:: NbApi.extras.subscriptions.update_d(**data)
 
@@ -217,6 +236,7 @@ Extras connectors
 .. py:function:: NbApi.extras.table_configs.delete(id)
 .. py:function:: NbApi.extras.table_configs.get(**params)
 .. py:function:: NbApi.extras.table_configs.get_count(**data)
+.. py:function:: NbApi.extras.table_configs.graphql(**data)
 .. py:function:: NbApi.extras.table_configs.update(**data)
 .. py:function:: NbApi.extras.table_configs.update_d(**data)
 
@@ -228,6 +248,7 @@ Extras connectors
 .. py:function:: NbApi.extras.tagged_objects.delete(id)
 .. py:function:: NbApi.extras.tagged_objects.get(**params)
 .. py:function:: NbApi.extras.tagged_objects.get_count(**data)
+.. py:function:: NbApi.extras.tagged_objects.graphql(**data)
 .. py:function:: NbApi.extras.tagged_objects.update(**data)
 .. py:function:: NbApi.extras.tagged_objects.update_d(**data)
 
@@ -239,6 +260,7 @@ Extras connectors
 .. py:function:: NbApi.extras.tags.delete(id)
 .. py:function:: NbApi.extras.tags.get(**params)
 .. py:function:: NbApi.extras.tags.get_count(**data)
+.. py:function:: NbApi.extras.tags.graphql(**data)
 .. py:function:: NbApi.extras.tags.update(**data)
 .. py:function:: NbApi.extras.tags.update_d(**data)
 
@@ -250,6 +272,7 @@ Extras connectors
 .. py:function:: NbApi.extras.webhooks.delete(id)
 .. py:function:: NbApi.extras.webhooks.get(**params)
 .. py:function:: NbApi.extras.webhooks.get_count(**data)
+.. py:function:: NbApi.extras.webhooks.graphql(**data)
 .. py:function:: NbApi.extras.webhooks.update(**data)
 .. py:function:: NbApi.extras.webhooks.update_d(**data)
 

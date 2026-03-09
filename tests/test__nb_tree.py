@@ -1,4 +1,4 @@
-"""Tests nb_tree.py."""
+"""Tests nbforager/nb_tree.py."""
 import difflib
 from typing import Any
 
@@ -6,7 +6,7 @@ import pytest
 
 from nbforager import nb_tree, NbApi
 from nbforager.nb_tree import NbTree
-from nbforager.types_ import DAny, LStr
+from nbforager.types import DAny, LStr
 from tests import functions as func
 from tests import params as p
 

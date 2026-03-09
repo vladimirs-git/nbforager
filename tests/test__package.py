@@ -1,11 +1,11 @@
-"""unittests package"""
+"""Tests package."""
 import ast
 import re
 from pathlib import Path
 
 from vhelpers import vdate, vdict, vpath, vre, vlist
 
-from nbforager.types_ import LStr, LPath
+from nbforager.types import LStr, LPath
 
 ROOT = Path(__file__).parent.parent
 PYPROJECT_D = vdict.pyproject_d(ROOT)

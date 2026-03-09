@@ -8,11 +8,11 @@ from pydantic import BaseModel, Field
 from vhelpers import vstr
 
 from nbforager import ami
-from nbforager.types_ import DiDAny, LStr, DAny, T2Str
+from nbforager.types import DiDAny, LStr, DAny, T2Str
 
 
 class BaseTree(BaseModel):
-    """Base for BbTree models."""
+    """Base for NbTree models."""
 
     def __repr__(self):
         """__repr__."""
@@ -296,7 +296,7 @@ def insert_tree(src: NbTree, dst: NbTree) -> None:
 
 
 def join_tree(tree: NbTree) -> NbTree:
-    """Assemble Netbox objects in tree within itself.
+    """Assemble Netbox objects in the tree within itself.
 
     The Netbox objects are represented as a multidimensional dictionary.
     :param tree: NbTree object to join the data in.
@@ -324,12 +324,12 @@ def join_tree(tree: NbTree) -> NbTree:
 
 
 def missed_urls(urls: LStr, tree: NbTree) -> LStr:
-    """Return URLs to objects that are missed in the tree.
+    """Return URLs of objects that are missing from the tree.
 
     :param urls: A list of URLs to filter.
     :param tree: NbTree object to check URLs inside.
 
-    :return: A list of URLs that are missed in the tree.
+    :return: A list of URLs of objects that are missing from the tree.
     """
     urls_: LStr = []
     for url in urls:
@@ -387,9 +387,9 @@ def object_type_to_am(object_type: str, path: bool = False) -> T2Str:
 
 
 def _get_child(child: DAny, tree: NbTree) -> DAny:
-    """Search child Netbox object in the model data to insert (replace) it in the parent.
+    """Search for a child Netbox object in the model data to insert or replace it in the parent.
 
-    :param child: Netbox object that require dependency update.
+    :param child: Netbox object that requires a dependency update.
     :param tree: NbTree object, contains model data (Netbox objects).
 
     :return: Child dictionary from the model that needs to be inserted into the parent dictionary.

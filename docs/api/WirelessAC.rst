@@ -8,6 +8,7 @@ Wireless connectors
 .. py:function:: NbApi.wireless.wireless_lan_groups.delete(id)
 .. py:function:: NbApi.wireless.wireless_lan_groups.get(**params)
 .. py:function:: NbApi.wireless.wireless_lan_groups.get_count(**data)
+.. py:function:: NbApi.wireless.wireless_lan_groups.graphql(**data)
 .. py:function:: NbApi.wireless.wireless_lan_groups.update(**data)
 .. py:function:: NbApi.wireless.wireless_lan_groups.update_d(**data)
 
@@ -19,6 +20,7 @@ Wireless connectors
 .. py:function:: NbApi.wireless.wireless_lans.delete(id)
 .. py:function:: NbApi.wireless.wireless_lans.get(**params)
 .. py:function:: NbApi.wireless.wireless_lans.get_count(**data)
+.. py:function:: NbApi.wireless.wireless_lans.graphql(**data)
 .. py:function:: NbApi.wireless.wireless_lans.update(**data)
 .. py:function:: NbApi.wireless.wireless_lans.update_d(**data)
 
@@ -30,6 +32,7 @@ Wireless connectors
 .. py:function:: NbApi.wireless.wireless_links.delete(id)
 .. py:function:: NbApi.wireless.wireless_links.get(**params)
 .. py:function:: NbApi.wireless.wireless_links.get_count(**data)
+.. py:function:: NbApi.wireless.wireless_links.graphql(**data)
 .. py:function:: NbApi.wireless.wireless_links.update(**data)
 .. py:function:: NbApi.wireless.wireless_links.update_d(**data)
 

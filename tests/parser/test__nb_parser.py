@@ -1,18 +1,12 @@
-"""Tests nbforager.parser.nb_parser"""
+"""Tests nbforager/parser/nb_parser.py"""
 
 import pytest
 
 from nbforager.exceptions import NbParserError, NbVersionError
 from nbforager.parser import nb_parser
-from nbforager.parser.nb_parser import NbParser
-from nbforager.types_ import LStr, DAny
+from nbforager.types import LStr
 from tests.parser import params__nb_parser as p
-
-
-@pytest.fixture
-def nbp(params: DAny) -> NbParser:
-    """Create NbValue instance based on the params."""
-    return NbParser(**params)
+from tests.fixtures import nbp
 
 
 @pytest.mark.parametrize("keys, params, expected", [
@@ -185,7 +179,6 @@ def test__dict__deprecated(caplog, nbp, keys: LStr, params, expected):
     else:
         with pytest.raises(expected):
             nbp.dict(*keys)
-
 
 
 @pytest.mark.parametrize("keys, params, expected", [

@@ -1,7 +1,7 @@
 """Users connectors."""
 
 from nbforager.api.connector import Connector
-from nbforager.types_ import DAny
+from nbforager.types import DAny
 
 
 class UsersAC:

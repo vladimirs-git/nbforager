@@ -1,24 +1,12 @@
-"""Tests nbforager.foragers.joiner.py."""
+"""Tests nbforager/foragers/joiner.py."""
 import pytest
 from netports import IPv4
 
-from nbforager import nb_tree
-from nbforager.api.base_c import BaseC
+from nbforager.api.base_mc import BaseMC
 from nbforager.foragers.joiner import Joiner
-from nbforager.nb_tree import NbTree
-from nbforager.types_ import LStr, DAny
-from tests import functions as func
+from nbforager.types import LStr, DAny
 from tests import params as p
-
-
-@pytest.fixture
-def joiner() -> Joiner:
-    """Initialize Joiner with root data."""
-    tree: NbTree = func.full_tree()
-    tree = nb_tree.join_tree(tree)
-    joiner_ = Joiner(tree=tree)
-    joiner_.init_extra_keys()
-    return joiner_
+from tests.foragers.fixtures__joiner import joiner
 
 
 @pytest.mark.parametrize("model, idx, network", [
@@ -48,7 +36,7 @@ def test__join_dcim_devices(joiner: Joiner, idx, exp_hostname, exp_intfs, exp_ad
 
     # extra_keys
     nb_device: DAny = joiner.tree.dcim.devices[idx]
-    extra_keys: LStr = BaseC._extra_keys["dcim/devices/"]
+    extra_keys: LStr = BaseMC._extra_keys["dcim/devices/"]
     for key in extra_keys:
         isinstance(nb_device[key], dict)
 

@@ -6,22 +6,19 @@ from netports import IPv4
 from vhelpers import vlist
 
 from nbforager import ami
-from nbforager.api.base_c import BaseC
+from nbforager.api.base_mc import BaseMC
 from nbforager.nb_tree import NbTree
 from nbforager.parser import nb_parser
 from nbforager.parser.nb_value import NbValue
-from nbforager.types_ import LDAny, DAny, LStr, DiDAny, LInt, DiLDAny, SInt
+from nbforager.types import LDAny, DAny, LStr, DiDAny, LInt, DiLDAny, SInt
 
 
 class Joiner:
-    """Helper methods are used to create additional keys in Netbox objects,
-
-    representing them similarly to the WEB UI.
-    """
+    """Create additional keys in Netbox objects to represent them similarly to the WEB UI."""
 
     def __init__(self, tree: NbTree):
         """Initialize Joiner.
-        :param NbTree tree: Contains Netbox that need to be updated similar to the WEB UI.
+        :param NbTree tree: NbTree object containing Netbox data to be updated to match the WEB UI.
         """
         self.tree = tree
 
@@ -38,7 +35,7 @@ class Joiner:
             ("virtualization", "interfaces"),
         ]:
             key = ami.attr_to_model(f"{app}/{model}/")
-            extra_keys: LStr = BaseC._extra_keys[key]  # pylint: disable=W0212
+            extra_keys: LStr = BaseMC._extra_keys[key]  # pylint: disable=W0212
             objects_d: DiDAny = getattr(getattr(self.tree, app), model)
             for object_d in objects_d.values():
                 for _key in extra_keys:
@@ -116,7 +113,7 @@ class Joiner:
         app = "dcim"
         model = "devices"
         # noinspection PyProtectedMember
-        extra_keys: LStr = BaseC._extra_keys["dcim/devices/"]  # pylint: disable=W0212
+        extra_keys: LStr = BaseMC._extra_keys["dcim/devices/"]  # pylint: disable=W0212
         extra_keys = [s for s in extra_keys if s != "_vc_members"]
         extra_models: LStr = [s.lstrip("_") for s in extra_keys]
         nbf_devices: DiDAny = getattr(getattr(self.tree, app), model)
@@ -156,7 +153,7 @@ class Joiner:
     def _join_ip_addresses(self, intf_ids: LInt, app: str) -> None:
         """Add NbTree.ipam.ip_address data to NbTree.dcim.interfaces._ip_addresses or VM.
 
-        :param intf_ids: Interface IDs that was joined in device/VM.
+        :param intf_ids: Interface IDs that were joined to the device/VM.
         :param app: Application name: "dcim", "virtualization"
 
         :return: None. Update NbTree.ipam.ip_addresses.
@@ -344,7 +341,7 @@ class Joiner:
         """Group ipam/prefixes by depth counter.
 
         :return: A dictionary of prefixes where the key represents the depth
-            and the value represents a list of imap/prefixes at that depth.
+            and the value represents a list of ipam/prefixes at that depth.
         """
         nb_prefixes: LDAny = self._filter_prefixes_ip4()
         depth_prefixes_dl: DiLDAny = {d["_depth"]: [] for d in nb_prefixes}

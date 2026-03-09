@@ -1,8 +1,8 @@
-"""Params."""
+"""Params nbforager/parser/nb_parser.py."""
 from copy import deepcopy
 
 from nbforager.exceptions import NbParserError
-from nbforager.types_ import DAny
+from nbforager.types import DAny
 
 # ====================== universal get methods =======================
 

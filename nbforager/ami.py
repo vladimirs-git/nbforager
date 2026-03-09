@@ -7,8 +7,8 @@ from urllib.parse import ParseResult
 from vhelpers import vlist, vint, vre
 
 from nbforager.exceptions import NbApiError
-from nbforager.types_ import LStr, LDAny
-from nbforager.types_ import T2Str, T3Str, T3StrInt
+from nbforager.types import LStr, LDAny
+from nbforager.types import T2Str, T3Str, T3StrInt
 
 
 def am_to_object_type(app: str, model: str) -> str:
@@ -91,7 +91,7 @@ def model_to_attr(model: str) -> str:
 
 
 def nested_urls(nb_objects: LDAny) -> LStr:
-    """Get a list of URLs from a Netbox nested objects.
+    """Get a list of URLs from Netbox nested objects.
 
     :param nb_objects: A list of Netbox objects.
 
@@ -123,20 +123,25 @@ def path_to_attrs(path: str) -> T2Str:
     :return: Application and model attribute names.
 
     :example:
-        path_to_attrs("ipam/ip-addresses") -> "ipam", "ip_addresses"
+        path_to_attrs("ipam/ip-addresses") -> "ipam", "ipaddresses"
     """
     app, model = path.strip("/").split("/")
     model = model_to_attr(model)
     return app, model
 
 
-def model_singular(plural: str) -> str:
+def model_singular(plural: str, splitter: str = "") -> str:
     """Convert a plural model name to a singular model name.
 
     :param plural: A plural model name.
+    :param splitter: A character to split the plural name, default is empty string.
     :return: A singular model name.
+    :example:
+        model_singular("ip_addresses") -> "ipaddress"
     """
-    singular = plural.replace("_", "").replace("-", "")
+    singular = plural.replace("_", splitter)
+    singular = singular.replace("-", splitter)
+
     if singular.endswith("ies"):
         singular = singular[:-3] + "y"  # entries -> entry
     elif singular.endswith("ses"):
@@ -201,14 +206,14 @@ def url_to_ami_items(url: str) -> T3Str:
         return not_ami
 
     # model
-    path = path[len(app):].lstrip("/")
+    path = path[len(app) :].lstrip("/")
     model = vre.find1(f"^({re_item})({re_end})", path)
     if not model:
         return not_ami
 
     # not id
     re_not_id = r"\D+"
-    path = path[len(model):].lstrip("/")
+    path = path[len(model) :].lstrip("/")
     not_id = vre.find1(f"^({re_not_id})", path)
     if not_id:
         return not_ami
@@ -223,14 +228,14 @@ def url_to_ami(url: str, path: bool = False) -> T3StrInt:
     """Convert URL of app/model/id to attribute names.
 
     :param url: URL of app/model/id.
-    :param path: If True, return model as item of path, else return madel as attribute.
+    :param path: If True, return model as item of path, else return model as attribute.
     :return: Tuple of application attribute name, model attribute name and object ID.
 
     :example:
         url_to_ami("https://domain.com/api/ipam/ip-addresses/1") -> "ipam", "ip_addresses", 1
     """
     app, model, idx = url_to_ami_items(url)
-    expected = "expected app/modem/id format"
+    expected = "expected app/model/id format"
 
     if not app or app.isdigit():
         raise NbApiError(f"Invalid {app=} in {url=}, {expected}.")
@@ -249,7 +254,7 @@ def url_to_am_path(url: str) -> str:
     """Convert URL to path app/model.
 
     :param url: A string representing the Netbox API URL.
-    :return: A string representing the app/mode/ path.
+    :return: A string representing the app/model/ path.
 
     :example:
         url_to_am_path("https://domain.com/api/ipam/vrf/1") -> "ipam/vrf/"
@@ -264,7 +269,7 @@ def url_to_ami_path(url: str) -> str:
     """Convert URL to path app/model/id.
 
     :param url: A string representing the Netbox API URL.
-    :return: A string representing the app/mode/id path.
+    :return: A string representing the app/model/id path.
 
     :example:
         url_to_ami_path("https://domain.com/api/ipam/vrf/1") -> "ipam/vrf/1/"
@@ -292,7 +297,7 @@ def url_to_ami_url(url: str) -> str:
 
 
 def url_to_api_url(url: str) -> str:
-    """Convert Netbox UI URl to API URL.
+    """Convert Netbox UI URL to API URL.
 
     :param url: A string representing the Netbox UI URL.
     :return: A string representing the Netbox API URL.
@@ -309,7 +314,7 @@ def url_to_api_url(url: str) -> str:
 
 
 def url_to_object_type(url: str) -> str:
-    """Convert url to object_type.
+    """Convert URL to object_type.
 
     :param url: URL to Netbox object.
     :return: Object type.
@@ -323,7 +328,7 @@ def url_to_object_type(url: str) -> str:
 
 
 def url_to_ui(url: str) -> str:
-    """Convert Netbox API URl to UI URL.
+    """Convert Netbox API URL to UI URL.
 
     :param url: A string representing the Netbox API URL.
     :return: A string representing the Netbox UI URL.
@@ -335,3 +340,40 @@ def url_to_ui(url: str) -> str:
     url = url.replace("/api/core/object-changes/", "/api/core/changelog/", 1)
     url = url.replace("/api/", "/", 1)
     return url
+
+
+def graphql_query(path: str, fields: str = "", filters: str = "") -> str:
+    """Build a GraphQL query string based on app/model path.
+
+    :param path: app/model path,
+        e.g. ``dcim/sites``.
+    :param fields: Fields to include in the query,
+        e.g. ``id name tenant { id name }``.
+    :param filters: Parameters to filter Netbox objects,
+        e.g. ``{ status: STATUS_ACTIVE, name: {exact: "SITE1"}}``.
+
+    :return: String representing the GraphQL query.
+    """
+    query_l: LStr = []
+
+    # model
+    _, model = path_to_attrs(path)
+    model: str = model_singular(model)
+    model = f"{model}_list"
+    query_l.append(model)
+
+    # filters
+    if filters:
+        filters = f"( filters: {filters} )"
+        query_l.append(filters)
+
+    # fields
+    if not fields:
+        fields = "id"
+    fields = f"{{ {fields} }}"
+    query_l.append(fields)
+
+    # build query
+    query = " ".join(query_l)
+    query = f"query {{ {query} }}"
+    return query

@@ -1,7 +1,7 @@
 """Plugins connectors."""
 
 from nbforager.api.connector import Connector
-from nbforager.types_ import LDAny
+from nbforager.types import LDAny
 
 
 class PluginsAC:

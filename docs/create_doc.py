@@ -5,7 +5,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 from nbforager.nb_forager import NbForager
-from nbforager.types_ import DAny, LStr
+from nbforager.types import DAny, LStr
 
 NBF = NbForager(host="netbox")
 

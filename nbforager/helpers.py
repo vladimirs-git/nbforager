@@ -2,17 +2,20 @@
 
 import itertools
 import json
+import logging
 import re
 from copy import deepcopy
 from typing import Any
 from urllib.parse import ParseResult, urlencode, urlparse, parse_qs
 
-from requests import Response
+from requests import Response, HTTPError
 from vhelpers import vlist, vparam
 
 from nbforager.constants import DEPENDENT_MODELS
-from nbforager.types_ import LStr, LDAny, LValue, LParam, LDList, DList, DLStr, ODLStr, DDDLInt
-from nbforager.types_ import LTInt2, DAny, SeqStr, SStr, TValues, TLists
+from nbforager.types import DAny, LDAny, LStr, SStr, LDList, DList, DLStr, ODLStr
+from nbforager.types import LTInt2, SeqStr, DDDLInt, LValue, TValues, TLists, LParam
+
+# ============================= Response =============================
 
 
 def decode_response_d(response: Response) -> DAny:
@@ -37,8 +40,44 @@ def decode_response_l(response: Response) -> LDAny:
     return items
 
 
+def raise_for_status(response: Response, strict: bool) -> None:
+    """Handle server errors based on the response status code.
+
+    When querying objects by tag, if there are no tags present
+    the Netbox API response returns a status_code=400.
+    If strict is False and the status is 400, empty data should be returned.
+
+    :param response: The response object to evaluate.
+    :param strict: Whether to raise an HTTPError for status code 400
+        or log a warning and return empty data.
+
+    :return: None. Raises ConnectionError for various server error conditions.
+    :raises HTTPError: Response status is not 2xx.
+    """
+    # 4xx – Client errors
+    if 400 <= response.status_code < 500:
+        if response.status_code == 403:  # Invalid token
+            response.raise_for_status()
+
+        # Invalid input data
+        # When querying objects by tag, if there are no tags present
+        # the Netbox API response returns a status_code=400
+        msg = f"{response.status_code} Client Error: {response.text} for url: {response.url}"
+        if strict:
+            raise HTTPError(msg, response=response)
+        logging.warning(msg)
+        return
+
+    response.raise_for_status()
+
+
+# ============================== other ===============================
+
+
 def dependency_ordered_paths(dependency: ODLStr = None) -> LStr:
-    """Order paths based on dependencies. Models with the lowes count of dependencies will be first.
+    """Order paths based on dependencies.
+
+    Models with the lowest count of dependencies will be first.
 
     :param dependency: Dictionary representing dependencies,
         where key is the parent model and value is a list of child models.
@@ -110,7 +149,7 @@ def make_combinations(need_split: SeqStr, params_d: DList) -> LDList:
 def change_params_or(params_ld: LDList) -> LDList:
     """Change ``parameter`` with name ``or_{parameter}``.
 
-    :param params_ld: Parameters that need to update.
+    :param params_ld: Parameters that need to be updated.
     :return: Updated parameters.
     """
     params_ld_: LDList = []
@@ -151,7 +190,7 @@ def _get_keys_need_split(need_split: SeqStr, params_d: DList) -> SStr:
 def generate_slices(url: str, max_len: int, key: str, values: LValue) -> LTInt2:
     """Generate start and end indexes of parameters, ready for URL slicing.
 
-    :param url: URL that need to split.
+    :param url: URL that needs to be split.
     :param max_len: Maximum length of URL.
     :param key: The key of the parameter that needs to be sliced.
     :param values: The values of the parameter that need to be sliced.
@@ -180,10 +219,10 @@ def slice_params_d(url: str, max_len: int, key: str, params_d: DList) -> LDList:
 
     If the length of the URL exceeds maximum allowed (due to a large number of parameters),
     then need split (slice) the request into multiple parts.
-    :param url: URL that need to split.
+    :param url: URL that needs to be split.
     :param max_len: Maximum length of URL.
     :param key: The key of the parameter that needs to be sliced.
-    :param params_d: Filter parameters, where one of key/value need be sliced.
+    :param params_d: Filter parameters, where one of the key/value pairs needs to be sliced.
 
     :return: Sliced parameters.
 
@@ -214,7 +253,7 @@ def slice_params_d(url: str, max_len: int, key: str, params_d: DList) -> LDList:
 def slice_params_ld(url: str, max_len: int, keys: LStr, params_ld: LDList) -> LDList:
     """Split params into different lists if slicing is required.
 
-    :param url: URL that need to split.
+    :param url: URL that needs to be split.
     :param max_len: Maximum length of URL.
     :param keys: The keys of the parameters that could be sliced.
     :param params_ld: A list of parameters.
@@ -264,41 +303,41 @@ def join_urls(urls: LStr) -> LStr:
     items = []
     for url in sorted(urls):
         url_l = url.split("/")
-        url_base = "/".join(url_l[:-3])
+        url_api = "/".join(url_l[:-3])
         app, model, digit = url_l[-3:]
-        item = (url_base, app, model, digit)
+        item = (url_api, app, model, digit)
         items.append(item)
 
     # create dict
     data_uam: DDDLInt = {}
-    for url_base, app, model, _ in items:
-        data_uam.setdefault(url_base, {}).setdefault(app, {}).setdefault(model, [])
+    for url_api, app, model, _ in items:
+        data_uam.setdefault(url_api, {}).setdefault(app, {}).setdefault(model, [])
 
     # append ids
-    for url_base, app, model, digit in items:
-        data_uam[url_base][app][model].append(int(digit))
+    for url_api, app, model, digit in items:
+        data_uam[url_api][app][model].append(int(digit))
 
     # join urls
     urls_: LStr = []
-    for url_base, data_am in data_uam.items():
+    for url_api, data_am in data_uam.items():
         for app, data_m in data_am.items():
             for model, ids in data_m.items():
                 params = urlencode({"id": sorted(set(ids))}, doseq=True)
-                url = f"{url_base}/{app}/{model}?{params}"
+                url = f"{url_api}/{app}/{model}?{params}"
                 urls_.append(url)
     return urls_
 
 
 def slice_url(url: str, max_len: int) -> LStr:
-    """Split (slice) URL to multiple URLs if length is greater than max_len.
+    """Split (slice) URL into multiple URLs if length is greater than max_len.
 
-    :param url: URL that need to split.
+    :param url: URL that needs to be split.
     :param max_len: Maximum length of URL.
 
     :return: Sliced URLs.
     """
     url_o: ParseResult = urlparse(url)
-    url_base = f"{url_o.scheme}://{url_o.netloc}{url_o.path}"
+    url_api = f"{url_o.scheme}://{url_o.netloc}{url_o.path}"
     query_s: str = urlparse(url).query
     params_d: DLStr = parse_qs(query_s)
     key = get_key_of_longest_value(params_d)
@@ -307,7 +346,7 @@ def slice_url(url: str, max_len: int) -> LStr:
     params_w_offset = [*params_common, ("offset", 1000), ("limit", 1000)]
 
     slices: LTInt2 = generate_slices(
-        url=f"{url_base}?{urlencode(params_w_offset)}",
+        url=f"{url_api}?{urlencode(params_w_offset)}",
         max_len=max_len,
         key=key,
         values=values,
@@ -318,7 +357,7 @@ def slice_url(url: str, max_len: int) -> LStr:
     for start, end in slices:
         params_l: LParam = params_common + [(key, s) for s in values[start:end]]
         query_s = urlencode(params_l, doseq=True)
-        url_ = f"{url_base}?{query_s}"
+        url_ = f"{url_api}?{query_s}"
         urls.append(url_)
 
     return urls
@@ -386,7 +425,7 @@ def generate_offsets(count: int, limit: int, params_d: DAny, /) -> LDAny:
     :return: A list of dictionaries with offset and other parameters.
     """
     if count <= 0 or limit <= 0:
-        raise ValueError(f"{count=} {limit=}, value higher that 1 expected.")
+        raise ValueError(f"{count=} {limit=}, value higher than 1 expected.")
 
     params: LDAny = []
     offset = 0

@@ -15,7 +15,7 @@ from nbforager.api.vpn import VpnAC
 from nbforager.api.wireless import WirelessAC
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
-from nbforager.types_ import LStr
+from nbforager.types import LStr
 
 UConnector = Union[
     CircuitsAC,
@@ -52,14 +52,14 @@ class BaseAF:
         return f"<{name}: {count}>"
 
     def count(self) -> int:
-        """Count of the Netbox objects in the self root model.
+        """Count Netbox objects in the root model.
 
         :return: Count of the Netbox objects.
         """
         return getattr(self.root, self.app).count()
 
     def get(self, nested: bool = False, **kwargs) -> None:
-        """Get all objects from the Netbox, add objects to root.
+        """Get all objects from Netbox, add objects to root.
 
         :param bool nested: True - Request base and nested objects,
             False - Request only base objects. Default is `False`.

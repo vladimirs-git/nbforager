@@ -1,5 +1,3 @@
-# pylint: disable=too-many-public-methods
-
 """NbValue."""
 
 import re
@@ -9,7 +7,7 @@ from netports.ipv4 import RE_PREFIX, RE_IP
 from nbforager import ami
 from nbforager.exceptions import NbParserError
 from nbforager.parser.nb_parser import NbParser, check_strict
-from nbforager.types_ import LStr, LInt, LDAny
+from nbforager.types import LStr, LInt, LDAny
 
 
 class NbValue(NbParser):
@@ -281,7 +279,7 @@ class NbValue(NbParser):
     def device_role_id(self) -> int:
         """dcim/devices.device_role.id.
 
-        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+        Provide compatibility for Netbox >= v4.2 and Netbox < v4.2.
 
         :return: Role ID.
         :raise NbParserError: if strict=True and object has no value.
@@ -301,7 +299,7 @@ class NbValue(NbParser):
     def device_role_name(self) -> str:
         """dcim/devices.device_role.name.
 
-        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+        Provide compatibility for Netbox >= v4.2 and Netbox < v4.2.
 
         :return: Role name.
         :raise NbParserError: if strict=True and object has no value.
@@ -321,7 +319,7 @@ class NbValue(NbParser):
     def device_role_slug(self) -> str:
         """dcim/devices.device_role.slug.
 
-        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+        Provide compatibility for Netbox >= v4.2 and Netbox < v4.2.
 
         :return: Role slug.
         :raise NbParserError: if strict=True and object has no value.
@@ -382,7 +380,7 @@ class NbValue(NbParser):
 
     @check_strict
     def group_name(self) -> str:
-        """imap/vlans.group.name."""
+        """ipam/vlans.group.name."""
         return self.str("group", "name")
 
     def id_(self) -> int:
@@ -529,7 +527,7 @@ class NbValue(NbParser):
     def primary_ip_address(self) -> str:
         """dcim/devices.primary_ip.address.
 
-        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+        Provide compatibility for Netbox >= v4.2 and Netbox < v4.2.
 
         :return: primary_ip address.
         :raise NbParserError: if strict=True and object has no value.
@@ -546,7 +544,7 @@ class NbValue(NbParser):
     def primary_ip_family(self) -> int:
         """dcim/devices.primary_ip.family.
 
-        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+        Provide compatibility for Netbox >= v4.2 and Netbox < v4.2.
 
         :return: primary_ip family.
         :raise NbParserError: if strict=True and object has no value.
@@ -572,7 +570,7 @@ class NbValue(NbParser):
     def primary_ip4_address(self) -> str:
         """dcim/devices/primary_ip4/address.
 
-        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+        Provide compatibility for Netbox >= v4.2 and Netbox < v4.2.
 
         :return: primary_ip4 address.
         :raise NbParserError: if strict=True and object has no value.
@@ -589,7 +587,7 @@ class NbValue(NbParser):
     def primary_ip4_family(self) -> int:
         """dcim/devices/primary_ip4/family.
 
-        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+        Provide compatibility for Netbox >= v4.2 and Netbox < v4.2.
 
         :return: primary_ip4 family.
         :raise NbParserError: if strict=True and object has no value.
@@ -701,7 +699,7 @@ class NbValue(NbParser):
     def site_id(self) -> int:
         """ipam/prefixes/site/id, dcim/devices/sites/id.
 
-        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+        Provide compatibility for Netbox >= v4.2 and Netbox < v4.2.
 
         :return: Site ID.
         :raise NbParserError: if strict=True and object has no value.
@@ -725,7 +723,7 @@ class NbValue(NbParser):
     def site_name(self) -> str:
         """ipam/prefixes/site/name, dcim/devices/sites/name.
 
-        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+        Provide compatibility for Netbox >= v4.2 and Netbox < v4.2.
 
         Note: Different models may have different upper or lower case:
             - sites/name="SITE1",
@@ -754,7 +752,7 @@ class NbValue(NbParser):
     def site_slug(self) -> str:
         """ipam/prefixes/site/slug, dcim/devices/sites/slug.
 
-        Provide compatability for Netbox >= v4.2 and Netbox < v4.2.
+        Provide compatibility for Netbox >= v4.2 and Netbox < v4.2.
 
         :return: Site slug.
         :raise NbParserError: if strict=True and object has no value.

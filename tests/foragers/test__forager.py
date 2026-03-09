@@ -1,53 +1,16 @@
-"""Tests forager.py."""
-from typing import Any, Tuple
+"""Tests nbforager/foragers/forager.py."""
+from typing import Any
 
-import dictdiffer  # type: ignore
+import dictdiffer
 import pytest
 import requests_mock
 from requests_mock import Mocker
 
-from nbforager import nb_tree
 from nbforager.nb_forager import NbForager
-from nbforager.types_ import LT2StrDAny, DAny
 from tests import params as p
 from tests.foragers import params__forager as pf
-from tests.functions import full_tree
-
-
-@pytest.fixture
-def nbf() -> NbForager:
-    """Initialize NbForager without data."""
-    return NbForager(host="netbox")
-
-
-@pytest.fixture
-def nbf_r() -> NbForager:
-    """Initialize NbForager with NbForager.root data."""
-    nbf_ = NbForager(host="netbox")
-    nb_tree.insert_tree(src=full_tree(), dst=nbf_.root)
-    return nbf_
-
-
-@pytest.fixture
-def nbf_t() -> NbForager:
-    """Initialize NbForager."""
-    nbf_ = NbForager(host="netbox")
-    nb_tree.insert_tree(src=full_tree(), dst=nbf_.tree)
-    return nbf_
-
-
-@pytest.fixture
-def connector_results(nbf: NbForager) -> Tuple[NbForager, LT2StrDAny]:
-    """Fixture with common connector_results test data."""
-    nb_termination: DAny = {"url": "circuit/circuit-terminations/1"}
-    nbf.api.circuits.circuit_terminations._results = [nb_termination]
-
-    nb_vrf: DAny = {"url": "ipam/vrfs/1"}
-    nbf.api.ipam.vrfs._results = [nb_vrf]
-
-    params_termination = ("circuits/circuit-terminations", {"id": [1, 2]})
-    params_vrf = ("ipam/vrfs", {"id": [1, 2]})
-    return nbf, [params_termination, params_vrf]
+from tests.fixtures import nbf_, nbf_r, nbf_t
+from tests.foragers.fixtures__forager import connector_results
 
 
 def test__interval():
@@ -63,6 +26,7 @@ def test__threads():
 
     expected = 2
     assert nbf.threads == expected
+    assert nbf.api._base_c.threads == expected
     assert nbf.ipam.vrfs.threads == expected
     assert nbf.api.ipam.vrfs.threads == expected
 
@@ -70,29 +34,30 @@ def test__threads():
 
     expected = 3
     assert nbf.threads == expected
+    assert nbf.api._base_c.threads == expected
     assert nbf.ipam.vrfs.threads == expected
     assert nbf.api.ipam.vrfs.threads == expected
 
 
-def test__count(nbf: NbForager):
+def test__count(nbf_: NbForager):
     """Forager.count()."""
-    nbf.circuits.circuit_terminations.root_d.update({1: {}})
-    nbf.dcim.device_roles.root_d.update({1: {}, 2: {}})
-    nbf.ipam.aggregates.root_d.update({1: {}, 2: {}, 3: {}})
-    nbf.tenancy.tenant_groups.root_d.update({1: {}, 2: {}, 3: {}, 4: {}})
+    nbf_.circuits.circuit_terminations.root_d.update({1: {}})
+    nbf_.dcim.device_roles.root_d.update({1: {}, 2: {}})
+    nbf_.ipam.aggregates.root_d.update({1: {}, 2: {}, 3: {}})
+    nbf_.tenancy.tenant_groups.root_d.update({1: {}, 2: {}, 3: {}, 4: {}})
 
-    assert nbf.circuits.circuit_terminations.count() == 1
-    assert nbf.circuits.circuit_types.count() == 0
-    assert nbf.dcim.device_roles.count() == 2
-    assert nbf.dcim.device_types.count() == 0
-    assert nbf.ipam.aggregates.count() == 3
-    assert nbf.ipam.asn_ranges.count() == 0
-    assert nbf.tenancy.tenant_groups.count() == 4
-    assert nbf.tenancy.tenants.count() == 0
+    assert nbf_.circuits.circuit_terminations.count() == 1
+    assert nbf_.circuits.circuit_types.count() == 0
+    assert nbf_.dcim.device_roles.count() == 2
+    assert nbf_.dcim.device_types.count() == 0
+    assert nbf_.ipam.aggregates.count() == 3
+    assert nbf_.ipam.asn_ranges.count() == 0
+    assert nbf_.tenancy.tenant_groups.count() == 4
+    assert nbf_.tenancy.tenants.count() == 0
 
-    assert len(nbf.root.circuits.circuit_terminations) == 1
-    assert len(nbf.circuits.circuit_terminations.root_d) == 1
-    assert f"{nbf.circuits.circuit_terminations!r}" == "<CircuitTerminationsF: 1>"
+    assert len(nbf_.root.circuits.circuit_terminations) == 1
+    assert len(nbf_.circuits.circuit_terminations.root_d) == 1
+    assert f"{nbf_.circuits.circuit_terminations!r}" == "<CircuitTerminationsF: 1>"
 
 
 @pytest.mark.parametrize("path, expected", [
@@ -106,15 +71,15 @@ def test__count(nbf: NbForager):
     ("circuits/typo", AttributeError),
     ("circuits", ValueError),
 ])
-def test__get_connector(nbf: NbForager, path, expected: Any):
-    """Forager.get_connector()."""
+def test__connector_by_path(nbf_: NbForager, path, expected: Any):
+    """Forager.connector_by_path()."""
     if isinstance(expected, str):
-        connector = nbf.ipam.vrfs.get_connector(path)
+        connector = nbf_.ipam.vrfs.connector_by_path(path)
         actual = connector.__class__.__name__
         assert actual == expected
     else:
         with pytest.raises(expected):
-            nbf.ipam.vrfs.get_connector(path)
+            nbf_.ipam.vrfs.connector_by_path(path)
 
 
 @pytest.mark.parametrize("nb_objects, nbf_data, expected", [
@@ -127,11 +92,11 @@ def test__get_connector(nbf: NbForager, path, expected: Any):
     # bordr condition
     ([], {}, []),
 ])
-def test__collect_nested_urls(nbf, nb_objects, nbf_data, expected):
+def test__collect_nested_urls(nbf_, nb_objects, nbf_data, expected):
     """Forager._collect_nested_urls()."""
-    nbf.root.ipam.vrfs.update(nbf_data)
+    nbf_.root.ipam.vrfs.update(nbf_data)
 
-    actual = nbf.ipam.vrfs._collect_nested_urls(nb_objects=nb_objects)
+    actual = nbf_.ipam.vrfs._collect_nested_urls(nb_objects=nb_objects)
     assert actual == expected
 
 
@@ -162,17 +127,17 @@ def test__pop_connector_results(connector_results):
     ("circuits/typo", AttributeError),
     ("circuits", ValueError),
 ])
-def test__get_root_data(nbf: NbForager, path, expected: Any):
+def test__get_root_data(nbf_: NbForager, path, expected: Any):
     """Forager._get_root_data()."""
-    nbf.root.circuits.circuit_terminations[1] = {"name": "A"}
-    nbf.root.circuits.circuits[1] = {"name": "B"}
+    nbf_.root.circuits.circuit_terminations[1] = {"name": "A"}
+    nbf_.root.circuits.circuits[1] = {"name": "B"}
     if isinstance(expected, str):
-        data = nbf.ipam.vrfs._get_root_data(path)
+        data = nbf_.ipam.vrfs._get_root_data(path)
         actual = data[1]["name"]
         assert actual == expected
     else:
         with pytest.raises(expected):
-            nbf.ipam.vrfs.get_connector(path)
+            nbf_.ipam.vrfs.connector_by_path(path)
 
 
 @pytest.fixture

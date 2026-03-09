@@ -1,9 +1,9 @@
-"""Get all objects from the Netbox."""
+"""Get all objects from Netbox."""
 import logging
 from datetime import datetime
 
 from nbforager import NbApi
-from nbforager.types_ import LStr
+from nbforager.types import LStr
 
 # Enable logging DEBUG mode
 logging.getLogger().setLevel(logging.DEBUG)

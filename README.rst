@@ -15,7 +15,7 @@ Overview
 Python package designed to help work with the `Netbox`_ REST API.
 
 - `NbApi`_ Request data from Netbox using filter parameters identical to those in the Web UI filter form. Filter parameters use the ``OR`` operator.
-- `NbForager`_ The REST API returns objects that contain a brief representation of related objects. NbForager replaces brief data with full and objects look like a recursive multidimensional dictionary.
+- `NbForager`_ The REST API returns objects that contain a brief representation of related objects. NbForager replaces brief data with full objects, which look like a recursive multidimensional dictionary.
 - `NbParser`_ Extract typed values from a Netbox object dictionary by using a chain of keys.
 
 Versions
@@ -52,10 +52,10 @@ or from github.com repository
 
 
 NbForager demonstration.
-Assemble Netbox objects within self as a multidimensional dictionary.
+Assemble Netbox objects within itself as a multidimensional dictionary.
 
-Request the main object. All nested objects also are requested.
-Assemble multidimensional dictionary.
+Request the main object. All nested objects are also requested.
+Assemble a multidimensional dictionary.
 
 .. code:: python
 
@@ -125,7 +125,7 @@ Request objects using filtering parameters. Assemble multidimensional dictionary
     #  ...
 
     # Assemble objects within self as multidimensional dictionary.
-    # Note that the device now includes site region and all other data.
+    # Note that the device now includes the site region and all other data.
     tree = nbf.join_tree()
     device = tree.dcim.devices[88]
     pprint(device)

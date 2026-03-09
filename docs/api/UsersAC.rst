@@ -8,6 +8,7 @@ Users connectors
 .. py:function:: NbApi.users.config.delete(id)
 .. py:function:: NbApi.users.config.get(**params)
 .. py:function:: NbApi.users.config.get_count(**data)
+.. py:function:: NbApi.users.config.graphql(**data)
 .. py:function:: NbApi.users.config.update(**data)
 .. py:function:: NbApi.users.config.update_d(**data)
 
@@ -19,6 +20,7 @@ Users connectors
 .. py:function:: NbApi.users.groups.delete(id)
 .. py:function:: NbApi.users.groups.get(**params)
 .. py:function:: NbApi.users.groups.get_count(**data)
+.. py:function:: NbApi.users.groups.graphql(**data)
 .. py:function:: NbApi.users.groups.update(**data)
 .. py:function:: NbApi.users.groups.update_d(**data)
 
@@ -30,6 +32,7 @@ Users connectors
 .. py:function:: NbApi.users.permissions.delete(id)
 .. py:function:: NbApi.users.permissions.get(**params)
 .. py:function:: NbApi.users.permissions.get_count(**data)
+.. py:function:: NbApi.users.permissions.graphql(**data)
 .. py:function:: NbApi.users.permissions.update(**data)
 .. py:function:: NbApi.users.permissions.update_d(**data)
 
@@ -41,6 +44,7 @@ Users connectors
 .. py:function:: NbApi.users.tokens.delete(id)
 .. py:function:: NbApi.users.tokens.get(**params)
 .. py:function:: NbApi.users.tokens.get_count(**data)
+.. py:function:: NbApi.users.tokens.graphql(**data)
 .. py:function:: NbApi.users.tokens.update(**data)
 .. py:function:: NbApi.users.tokens.update_d(**data)
 
@@ -52,6 +56,7 @@ Users connectors
 .. py:function:: NbApi.users.users.delete(id)
 .. py:function:: NbApi.users.users.get(**params)
 .. py:function:: NbApi.users.users.get_count(**data)
+.. py:function:: NbApi.users.users.graphql(**data)
 .. py:function:: NbApi.users.users.update(**data)
 .. py:function:: NbApi.users.users.update_d(**data)
 

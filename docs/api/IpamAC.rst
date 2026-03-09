@@ -8,6 +8,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.aggregates.delete(id)
 .. py:function:: NbApi.ipam.aggregates.get(**params)
 .. py:function:: NbApi.ipam.aggregates.get_count(**data)
+.. py:function:: NbApi.ipam.aggregates.graphql(**data)
 .. py:function:: NbApi.ipam.aggregates.update(**data)
 .. py:function:: NbApi.ipam.aggregates.update_d(**data)
 
@@ -19,6 +20,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.asn_ranges.delete(id)
 .. py:function:: NbApi.ipam.asn_ranges.get(**params)
 .. py:function:: NbApi.ipam.asn_ranges.get_count(**data)
+.. py:function:: NbApi.ipam.asn_ranges.graphql(**data)
 .. py:function:: NbApi.ipam.asn_ranges.update(**data)
 .. py:function:: NbApi.ipam.asn_ranges.update_d(**data)
 
@@ -30,6 +32,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.asns.delete(id)
 .. py:function:: NbApi.ipam.asns.get(**params)
 .. py:function:: NbApi.ipam.asns.get_count(**data)
+.. py:function:: NbApi.ipam.asns.graphql(**data)
 .. py:function:: NbApi.ipam.asns.update(**data)
 .. py:function:: NbApi.ipam.asns.update_d(**data)
 
@@ -41,6 +44,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.fhrp_group_assignments.delete(id)
 .. py:function:: NbApi.ipam.fhrp_group_assignments.get(**params)
 .. py:function:: NbApi.ipam.fhrp_group_assignments.get_count(**data)
+.. py:function:: NbApi.ipam.fhrp_group_assignments.graphql(**data)
 .. py:function:: NbApi.ipam.fhrp_group_assignments.update(**data)
 .. py:function:: NbApi.ipam.fhrp_group_assignments.update_d(**data)
 
@@ -52,6 +56,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.fhrp_groups.delete(id)
 .. py:function:: NbApi.ipam.fhrp_groups.get(**params)
 .. py:function:: NbApi.ipam.fhrp_groups.get_count(**data)
+.. py:function:: NbApi.ipam.fhrp_groups.graphql(**data)
 .. py:function:: NbApi.ipam.fhrp_groups.update(**data)
 .. py:function:: NbApi.ipam.fhrp_groups.update_d(**data)
 
@@ -63,6 +68,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.ip_addresses.delete(id)
 .. py:function:: NbApi.ipam.ip_addresses.get(**params)
 .. py:function:: NbApi.ipam.ip_addresses.get_count(**data)
+.. py:function:: NbApi.ipam.ip_addresses.graphql(**data)
 .. py:function:: NbApi.ipam.ip_addresses.update(**data)
 .. py:function:: NbApi.ipam.ip_addresses.update_d(**data)
 
@@ -74,6 +80,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.ip_ranges.delete(id)
 .. py:function:: NbApi.ipam.ip_ranges.get(**params)
 .. py:function:: NbApi.ipam.ip_ranges.get_count(**data)
+.. py:function:: NbApi.ipam.ip_ranges.graphql(**data)
 .. py:function:: NbApi.ipam.ip_ranges.update(**data)
 .. py:function:: NbApi.ipam.ip_ranges.update_d(**data)
 
@@ -85,6 +92,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.l2vpn_terminations.delete(id)
 .. py:function:: NbApi.ipam.l2vpn_terminations.get(**params)
 .. py:function:: NbApi.ipam.l2vpn_terminations.get_count(**data)
+.. py:function:: NbApi.ipam.l2vpn_terminations.graphql(**data)
 .. py:function:: NbApi.ipam.l2vpn_terminations.update(**data)
 .. py:function:: NbApi.ipam.l2vpn_terminations.update_d(**data)
 
@@ -96,6 +104,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.l2vpns.delete(id)
 .. py:function:: NbApi.ipam.l2vpns.get(**params)
 .. py:function:: NbApi.ipam.l2vpns.get_count(**data)
+.. py:function:: NbApi.ipam.l2vpns.graphql(**data)
 .. py:function:: NbApi.ipam.l2vpns.update(**data)
 .. py:function:: NbApi.ipam.l2vpns.update_d(**data)
 
@@ -107,6 +116,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.prefixes.delete(id)
 .. py:function:: NbApi.ipam.prefixes.get(**params)
 .. py:function:: NbApi.ipam.prefixes.get_count(**data)
+.. py:function:: NbApi.ipam.prefixes.graphql(**data)
 .. py:function:: NbApi.ipam.prefixes.update(**data)
 .. py:function:: NbApi.ipam.prefixes.update_d(**data)
 
@@ -118,6 +128,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.rirs.delete(id)
 .. py:function:: NbApi.ipam.rirs.get(**params)
 .. py:function:: NbApi.ipam.rirs.get_count(**data)
+.. py:function:: NbApi.ipam.rirs.graphql(**data)
 .. py:function:: NbApi.ipam.rirs.update(**data)
 .. py:function:: NbApi.ipam.rirs.update_d(**data)
 
@@ -129,6 +140,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.roles.delete(id)
 .. py:function:: NbApi.ipam.roles.get(**params)
 .. py:function:: NbApi.ipam.roles.get_count(**data)
+.. py:function:: NbApi.ipam.roles.graphql(**data)
 .. py:function:: NbApi.ipam.roles.update(**data)
 .. py:function:: NbApi.ipam.roles.update_d(**data)
 
@@ -140,6 +152,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.route_targets.delete(id)
 .. py:function:: NbApi.ipam.route_targets.get(**params)
 .. py:function:: NbApi.ipam.route_targets.get_count(**data)
+.. py:function:: NbApi.ipam.route_targets.graphql(**data)
 .. py:function:: NbApi.ipam.route_targets.update(**data)
 .. py:function:: NbApi.ipam.route_targets.update_d(**data)
 
@@ -151,6 +164,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.service_templates.delete(id)
 .. py:function:: NbApi.ipam.service_templates.get(**params)
 .. py:function:: NbApi.ipam.service_templates.get_count(**data)
+.. py:function:: NbApi.ipam.service_templates.graphql(**data)
 .. py:function:: NbApi.ipam.service_templates.update(**data)
 .. py:function:: NbApi.ipam.service_templates.update_d(**data)
 
@@ -162,6 +176,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.services.delete(id)
 .. py:function:: NbApi.ipam.services.get(**params)
 .. py:function:: NbApi.ipam.services.get_count(**data)
+.. py:function:: NbApi.ipam.services.graphql(**data)
 .. py:function:: NbApi.ipam.services.update(**data)
 .. py:function:: NbApi.ipam.services.update_d(**data)
 
@@ -173,6 +188,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.vlan_groups.delete(id)
 .. py:function:: NbApi.ipam.vlan_groups.get(**params)
 .. py:function:: NbApi.ipam.vlan_groups.get_count(**data)
+.. py:function:: NbApi.ipam.vlan_groups.graphql(**data)
 .. py:function:: NbApi.ipam.vlan_groups.update(**data)
 .. py:function:: NbApi.ipam.vlan_groups.update_d(**data)
 
@@ -184,6 +200,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.vlan_translation_policies.delete(id)
 .. py:function:: NbApi.ipam.vlan_translation_policies.get(**params)
 .. py:function:: NbApi.ipam.vlan_translation_policies.get_count(**data)
+.. py:function:: NbApi.ipam.vlan_translation_policies.graphql(**data)
 .. py:function:: NbApi.ipam.vlan_translation_policies.update(**data)
 .. py:function:: NbApi.ipam.vlan_translation_policies.update_d(**data)
 
@@ -195,6 +212,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.vlan_translation_rules.delete(id)
 .. py:function:: NbApi.ipam.vlan_translation_rules.get(**params)
 .. py:function:: NbApi.ipam.vlan_translation_rules.get_count(**data)
+.. py:function:: NbApi.ipam.vlan_translation_rules.graphql(**data)
 .. py:function:: NbApi.ipam.vlan_translation_rules.update(**data)
 .. py:function:: NbApi.ipam.vlan_translation_rules.update_d(**data)
 
@@ -206,6 +224,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.vlans.delete(id)
 .. py:function:: NbApi.ipam.vlans.get(**params)
 .. py:function:: NbApi.ipam.vlans.get_count(**data)
+.. py:function:: NbApi.ipam.vlans.graphql(**data)
 .. py:function:: NbApi.ipam.vlans.update(**data)
 .. py:function:: NbApi.ipam.vlans.update_d(**data)
 
@@ -217,6 +236,7 @@ Ipam connectors
 .. py:function:: NbApi.ipam.vrfs.delete(id)
 .. py:function:: NbApi.ipam.vrfs.get(**params)
 .. py:function:: NbApi.ipam.vrfs.get_count(**data)
+.. py:function:: NbApi.ipam.vrfs.graphql(**data)
 .. py:function:: NbApi.ipam.vrfs.update(**data)
 .. py:function:: NbApi.ipam.vrfs.update_d(**data)
 

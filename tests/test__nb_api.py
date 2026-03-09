@@ -1,11 +1,10 @@
-"""Tests nb_pai.py."""
+"""Tests nbforager/api/nb_pai.py."""
 import difflib
 import inspect
 from copy import copy
 from typing import Any
 
 import pytest
-import requests_mock
 from _pytest.monkeypatch import MonkeyPatch
 from netports.types_ import LStr
 from requests import Response, Session
@@ -15,52 +14,17 @@ from nbforager import ami
 from nbforager.exceptions import NbApiError
 from nbforager.nb_api import NbApi
 from nbforager.nb_tree import NbTree
-from nbforager.types_ import DAny, LDAny
-from tests.api import params__nb_api as p
-from tests.api.test__base_c import mock_session
+from nbforager.types import DAny, LDAny
+from tests.fixtures import api, api_, mock_session
+from tests import params__nb_api as p
+from tests.fixtures__nb_api import mock_get, mock_get_d, mock_requests_status
 
 
-@pytest.fixture
-def api():
-    """Initialize API"""
-    return NbApi(host="netbox")
-
-
-@pytest.fixture
-def mock_get():
-    """Mock Session GET."""
-    vrf1 = {"id": 1, "url": "https://netbox/api/ipam/vrfs/1/", "name": "VRF 1"}
-    vrf2 = {"id": 2, "url": "https://netbox/api/ipam/vrfs/2/", "name": "VRF 1"}
-    with requests_mock.Mocker() as mock:
-        mock.get(url="https://netbox/api/ipam/vrfs/", json={"results": [vrf1, vrf2]})
-        yield mock
-
-
-@pytest.fixture
-def mock_get_d():
-    """Mock Session GET."""
-    vrf1 = {"id": 1, "url": "https://netbox/api/ipam/vrfs/1/", "name": "VRF 1"}
-    with requests_mock.Mocker() as mock:
-        mock.get(
-            url="https://netbox/api/ipam/vrfs/?id=1&limit=1000&offset=0",
-            json={"results": [vrf1]},
-        )
-        yield mock
-
-
-@pytest.fixture
-def mock_requests_status():
-    """Mock request for vrf searching."""
-    with requests_mock.Mocker() as mock:
-        mock.get("https://netbox/api/status/", json={"netbox-version": "3.6.5"})
-        yield mock
-
-
-def test__app_model(api: NbApi):
+def test__app_model(api_):
     """NbApi has the same models as NbTree object"""
     tree = NbTree()
     for app in tree.apps():
-        app_o = getattr(api, app)
+        app_o = getattr(api_, app)
         actual = ami.attr_name(obj=app_o)
         assert actual == app
 
@@ -78,47 +42,96 @@ def test__app_model(api: NbApi):
             assert actual == expected
 
 
-def test__init__(api: NbApi):
+def test__init__(api_):
     """NbApi.__init__()."""
-    actual = list(inspect.signature(type(api).__init__).parameters)
+    actual = list(inspect.signature(type(api_).__init__).parameters)
 
     expected = p.ATTRS
     assert set(actual).symmetric_difference(set(expected)) == set()
     assert actual == expected
 
-
-def test__copy__(api: NbApi):
+@pytest.mark.parametrize("params", [
+    ({"host": "nb", "token": "token", "scheme": "http", "port": 2, "verify": False, "limit": 2,
+      "url_length": 2, "threads": 2, "interval": 2, "timeout": 2, "max_retries": 2, "sleep": 2,
+      "strict": True, "extended_get": False, "loners": {"a": "a"}}),
+])
+def test__copy__(api, params):
     """NbApi.__copy__()."""
-    api_: NbApi = copy(api)
+    api2 = copy(api)
 
-    actual = api_.host
-    expected = "netbox"
+    assert api2.host == "nb"
+    # connector
+    assert api2._base_c.host == "nb"
+    assert api2._base_c.token == "token"
+    assert api2._base_c.scheme == "http"
+    assert api2._base_c.port == 2
+    assert api2._base_c.verify is False
+    assert api2._base_c.limit == 2
+    assert api2._base_c.url_length == 2
+    assert api2._base_c.threads == 2
+    assert api2._base_c.interval == 2
+    assert api2._base_c.timeout == 2
+    assert api2._base_c.max_retries == 2
+    assert api2._base_c.sleep == 2
+    assert api2._base_c.strict is True
+    assert api2._base_c.extended_get is False
+    assert api2._base_c.loners == {"a": "a"}
+    # app/model
+    assert api2.host == "nb"
+    assert api2.ipam.vrfs.host == "nb"
+    assert api2.ipam.vrfs.token == "token"
+    assert api2.ipam.vrfs.scheme == "http"
+    assert api2.ipam.vrfs.port == 2
+    assert api2.ipam.vrfs.verify is False
+    assert api2.ipam.vrfs.limit == 2
+    assert api2.ipam.vrfs.url_length == 2
+    assert api2.ipam.vrfs.threads == 2
+    assert api2.ipam.vrfs.interval == 2
+    assert api2.ipam.vrfs.timeout == 2
+    assert api2.ipam.vrfs.max_retries == 2
+    assert api2.ipam.vrfs.sleep == 2
+    assert api2.ipam.vrfs.strict is True
+    assert api2.ipam.vrfs.extended_get is False
+    assert api2.ipam.vrfs.loners == {"a": "a"}
+    assert api2.ipam.vrfs.extended_get is False
+    assert api2.ipam.vrfs.loners == {"a": "a"}
+
+
+@pytest.mark.parametrize("params, expected", [
+    ({}, "https://nb/api/"),
+    ({"scheme": "https"}, "https://nb/api/"),
+    ({"scheme": "http"}, "http://nb/api/"),
+])
+def test__url(api, params, expected):
+    """NbApi.url."""
+    actual = api.url
+
     assert actual == expected
 
 
 @pytest.mark.parametrize("params, expected", [
-    ({"host": "netbox"}, "https://netbox/api/"),
-    ({"host": "netbox", "scheme": "https"}, "https://netbox/api/"),
-    ({"host": "netbox", "scheme": "http"}, "http://netbox/api/"),
+    ({}, "https://nb/api/"),
+    ({"scheme": "https"}, "https://nb/api/"),
+    ({"scheme": "http"}, "http://nb/api/"),
 ])
-def test__url(params, expected):
-    """NbApi.url."""
-    api = NbApi(**params)
-    actual = api.url
+def test__url_api(api, params, expected):
+    """NbApi.url_api."""
+    actual = api.url_api
+
     assert actual == expected
 
 
-@pytest.mark.parametrize("params, threads, expected", [
-    ({"host": "netbox"}, 2, 2),
+@pytest.mark.parametrize("threads, expected", [
+    (2, 2),
 ])
-def test__threads(api, params, threads, expected):
+def test__threads(api_, threads, expected):
     """NbApi.threads() setter."""
-    assert api.threads == 1
+    assert api_.threads == 1
 
-    api.threads = threads
+    api_.threads = threads
 
-    assert api.threads == expected
-    assert api.dcim.devices.threads == expected
+    assert api_.threads == expected
+    assert api_.dcim.devices.threads == expected
 
 
 # ============================= methods ==============================
@@ -126,9 +139,9 @@ def test__threads(api, params, threads, expected):
 @pytest.mark.parametrize("expected", [
     p.APPS,
 ])
-def test__apps(api: NbApi, expected):
+def test__apps(api_, expected):
     """NbApi.apps()."""
-    actual = api.apps()
+    actual = api_.apps()
 
     assert actual == expected
 
@@ -136,9 +149,9 @@ def test__apps(api: NbApi, expected):
 @pytest.mark.parametrize("expected", [
     p.APP_MODELS,
 ])
-def test__app_models(api: NbApi, expected):
+def test__app_models(api_, expected):
     """NbApi.app_models()."""
-    actual = api.app_models()
+    actual = api_.app_models()
 
     actual_ = [str(t) for t in actual]
     expected_ = [str(t) for t in expected]
@@ -150,9 +163,9 @@ def test__app_models(api: NbApi, expected):
 @pytest.mark.parametrize("expected", [
     p.APP_PATHS,
 ])
-def test__app_paths(api: NbApi, expected):
+def test__app_paths(api_, expected):
     """NbApi.app_paths()."""
-    actual = api.app_paths()
+    actual = api_.app_paths()
 
     assert actual == expected
 
@@ -168,23 +181,23 @@ def test__app_paths(api: NbApi, expected):
     ("circuits/typo", AttributeError),
     ("circuits", ValueError),
 ])
-def test__get_connector(api: NbApi, path, expected: Any):
-    """Forager.get_connector()."""
+def test__connector_by_path(api_, path, expected: Any):
+    """Forager.connector_by_path()."""
     if isinstance(expected, str):
-        connector = api.get_connector(path)
+        connector = api_.connector_by_path(path)
         actual = connector.__class__.__name__
         assert actual == expected
     else:
         with pytest.raises(expected):
-            api.get_connector(path)
+            api_.connector_by_path(path)
 
 
 @pytest.mark.parametrize("expected", [
     p.CONNECTORS,
 ])
-def test__connectors(api: NbApi, expected):
+def test__connectors(api_, expected):
     """NbApi.connectors()."""
-    generator_ = api.connectors()
+    generator_ = api_.connectors()
 
     actual = [o.__class__.__name__ for o in list(generator_)]
     assert actual == expected
@@ -193,27 +206,22 @@ def test__connectors(api: NbApi, expected):
 @pytest.mark.parametrize("host, expected", [
     ("netbox2", "netbox2"),
 ])
-def test__copy(api: NbApi, host, expected):
+def test__copy(api_, host, expected):
     """NbApi.copy()."""
-    api_: NbApi = api.copy(host=host)
+    api2: NbApi = api_.copy(host=host)
 
-    actual = api_.host
+    actual = api2.host
     assert actual == expected
 
 
 @pytest.mark.parametrize("params, expected", [
     ({"url": "https://domain.com/ipam/vrfs/", "key": "value"}, [1, 2]),
 ])
-def test__get(
-        api: NbApi,
-        mock_get: Mocker,  # pylint: disable=unused-argument
-        params,
-        expected,
-):
+def test__get(api_, mock_get: Mocker, params, expected):
     """NbApi.get()."""
-    api = NbApi(host="netbox")
+    api_ = NbApi(host="netbox")
 
-    objects: LDAny = api.get(**params)
+    objects: LDAny = api_.get(**params)
 
     actual = [d["id"] for d in objects]
     assert actual == expected
@@ -222,16 +230,11 @@ def test__get(
 @pytest.mark.parametrize("params, expected", [
     ({"url": "https://domain.com/ipam/vrfs/1/", "key": "value"}, 1),
 ])
-def test__get_d(
-        api: NbApi,
-        mock_get_d: Mocker,  # pylint: disable=unused-argument
-        params,
-        expected,
-):
+def test__get_d(api_, mock_get_d: Mocker, params, expected):
     """NbApi.get_d()."""
-    api = NbApi(host="netbox")
+    api_ = NbApi(host="netbox")
 
-    result: DAny = api.get_d(**params)
+    result: DAny = api_.get_d(**params)
 
     actual = result["id"]
     assert actual == expected
@@ -243,22 +246,17 @@ def test__get_d(
     ({"id": 1, "url": "https://domain.com/ipam/typo/", "key": "value"}, AttributeError),
     ({"id": 1, "url": "https://domain.com/ipam/", "key": "value"}, NbApiError),
 ])
-def test__create(
-        api: NbApi,
-        monkeypatch: MonkeyPatch,
-        params: DAny,
-        expected: Any,
-):
+def test__create(api_, monkeypatch: MonkeyPatch, params: DAny, expected: Any):
     """NbApi.create()."""
     monkeypatch.setattr(Session, "post", mock_session(expected))
     if isinstance(expected, int):
-        response: Response = api.create(**params)
+        response: Response = api_.create(**params)
 
         actual = response.status_code
         assert actual == expected
     else:
         with pytest.raises(expected):
-            api.create(**params)
+            api_.create(**params)
 
 
 # noinspection DuplicatedCode
@@ -267,23 +265,18 @@ def test__create(
     ({"id": 1, "url": "https://domain.com/ipam/typo/", "key": "value"}, AttributeError),
     ({"id": 1, "url": "https://domain.com/ipam/", "key": "value"}, NbApiError),
 ])
-def test__create_d(
-        api: NbApi,
-        monkeypatch: MonkeyPatch,
-        params: DAny,
-        expected: Any,
-):
+def test__create_d(api_, monkeypatch: MonkeyPatch, params: DAny, expected: Any):
     """NbApi.create_d()."""
     content = '{"1": {"id": "1"}}'
     monkeypatch.setattr(Session, "post", mock_session(status_code=expected, content=content))
     if isinstance(expected, int):
-        actual: DAny = api.create_d(**params)
+        actual: DAny = api_.create_d(**params)
 
         expected = {"1": {"id": "1"}}
         assert actual == expected
     else:
         with pytest.raises(expected):
-            api.create_d(**params)
+            api_.create_d(**params)
 
 
 @pytest.mark.parametrize("url, expected", [
@@ -291,22 +284,17 @@ def test__create_d(
     ("https://domain.com/ipam/ip-addresses/9", 404),
     ("https://domain.com/ipam/ip-addresses/", ValueError),
 ])
-def test__delete(
-        api: NbApi,
-        monkeypatch: MonkeyPatch,
-        url: str,
-        expected: Any,
-):
+def test__delete(api_, monkeypatch: MonkeyPatch, url: str, expected: Any):
     """NbApi.delete()."""
     monkeypatch.setattr(Session, "delete", mock_session(expected))
     if isinstance(expected, int):
-        response: Response = api.delete(url=url)
+        response: Response = api_.delete(url=url)
 
         actual = response.status_code
         assert actual == expected
     else:
         with pytest.raises(expected):
-            api.delete(url=url)
+            api_.delete(url=url)
 
 
 @pytest.mark.parametrize("params, expected", [
@@ -317,28 +305,20 @@ def test__delete(
     ({"url": "https://domain.com/ipam/typo/", "key": "value"}, AttributeError),
     ({"url": "https://domain.com/ipam/", "key": "value"}, NbApiError),
 ])
-def test__update(
-        api: NbApi,
-        monkeypatch: MonkeyPatch,
-        params: DAny,
-        expected: Any,
-):
+def test__update(api_, monkeypatch: MonkeyPatch, params: DAny, expected: Any):
     """NbApi.update()."""
     monkeypatch.setattr(Session, "patch", mock_session(expected))
     if isinstance(expected, int):
-        response: Response = api.update(**params)
+        response: Response = api_.update(**params)
 
         actual = response.status_code
         assert actual == expected
     else:
         with pytest.raises(expected):
-            api.update(**params)
+            api_.update(**params)
 
 
-def test__version(
-        api: NbApi,
-        mock_requests_status: Mocker,  # pylint: disable=unused-argument
-):
+def test__version(api_, mock_requests_status: Mocker):
     """NbApi.version()."""
-    actual = api.version()
+    actual = api_.version()
     assert actual == "3.6.5"

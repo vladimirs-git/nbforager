@@ -1,8 +1,7 @@
-# pylint: disable=too-many-lines
 """Parameters for tests."""
 from copy import deepcopy
 
-from nbforager.types_ import DAny
+from nbforager.types import DAny
 
 HOSTNAME1 = "DEVICE1"
 HOSTNAME2 = "DEVICE2"

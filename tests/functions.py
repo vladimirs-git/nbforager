@@ -1,4 +1,4 @@
-"""Helpers for tests."""
+"""Function helpers for tests."""
 from copy import deepcopy
 
 from nbforager.nb_tree import (
@@ -11,7 +11,7 @@ from nbforager.nb_tree import (
     VirtualizationM,
     WirelessM,
 )
-from nbforager.types_ import DiDAny, LInt
+from nbforager.types import DiDAny, LInt
 from tests import params as p
 
 

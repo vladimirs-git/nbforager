@@ -8,7 +8,7 @@ from netports import SwVersion
 from vhelpers import vstr, vlist
 
 from nbforager.exceptions import NbParserError, NbVersionError
-from nbforager.types_ import DAny, Int, Str, LDAny, TLists, SeqUIntStr, ODAny, LT3Str, LStr
+from nbforager.types import DAny, Int, Str, LDAny, TLists, SeqUIntStr, ODAny, LT3Str, LStr
 
 VERSION_NB = "4.2"
 """Minimum supported Netbox version."""
@@ -182,7 +182,6 @@ class NbParser:
         self._raise_deprecated_type(keys=list(keys), type_req=dict)
         return self._get_keys(type_=dict, keys=keys)
 
-
     def float(self, *keys) -> float:
         """Get float value by keys.
 
@@ -212,7 +211,6 @@ class NbParser:
 
         if isinstance(data, int):
             return float(data)
-
 
         if isinstance(data, str) and not set(data).difference(set("0123456789.")):
             return float(data)
@@ -286,7 +284,7 @@ class NbParser:
         return self._get_keys(type_=str, keys=keys)
 
     def _raise_deprecated_key(self, key: Str) -> None:
-        """Log and rasie error if the key is deprecated for specific app/model.
+        """Log and raise error if the key is deprecated for specific app/model.
 
         :param key: First key in the chain of keys.
         :return: None. Log error and raise NbVersionError.
@@ -348,9 +346,9 @@ class NbParser:
         return None
 
     def _raise_deprecated_type(self, keys: LStr, type_req: Type) -> None:
-        """Log and rasie error if the type is deprecated for specific app/model.
+        """Log and raise error if the type is deprecated for specific app/model.
 
-        :param keys: Keys chain to get interested value.
+        :param keys: Chain of keys to retrieve the desired value.
         :return: None. Log error and raise NbVersionError.
         :raise NbVersionError: If the type is deprecated for specific app/model.
         """
@@ -425,7 +423,7 @@ class NbParser:
 
     @check_in_strict_manner
     def strict_list(self, *keys) -> List:
-        """Get string value by keys in strict manner, value is mandatory.
+        """Get list value by keys in strict manner, value is mandatory.
 
         Useful when strict=False, but you need to obtain a value in a strict manner.
         :param keys: Chaining dictionary keys to retrieve the desired value.

@@ -1,4 +1,4 @@
-"""Tests foragers."""
+"""Tests nbforager/nb_forager.py."""
 import inspect
 from pathlib import Path
 from unittest.mock import Mock
@@ -8,45 +8,21 @@ import pytest
 import requests_mock
 from _pytest.monkeypatch import MonkeyPatch
 
-from nbforager import ami, nb_forager, nb_tree
+from nbforager import ami, nb_forager
 from nbforager.nb_api import NbApi
 from nbforager.nb_cache import NbCache
 from nbforager.nb_forager import NbForager
 from nbforager.nb_tree import NbTree
 from tests import functions as func
 from tests import params as p
+from tests.fixtures import nbf, nbf_, nbf_r
 
 
-@pytest.fixture
-def nbf() -> NbForager:
-    """Initialize NbForager without data."""
-    return NbForager(host="netbox")
-
-
-@pytest.fixture
-def nbf_r() -> NbForager:
-    """Initialize NbForager with NbForager.root data."""
-    nbf_ = NbForager(host="netbox")
-    tree: NbTree = func.full_tree()
-    nb_tree.insert_tree(src=tree, dst=nbf_.root)
-    return nbf_
-
-
-@pytest.fixture
-def nbf_t() -> NbForager:
-    """Initialize NbForager with NbForager.tree data."""
-    nbf_ = NbForager(host="netbox")
-    tree: NbTree = func.full_tree()
-
-    nb_tree.insert_tree(src=tree, dst=nbf_.tree)
-    return nbf_
-
-
-def test__app_model(nbf: NbForager):
+def test__app_model(nbf_: NbForager):
     """NbForager has the same models as NbTree object"""
     tree = NbTree()
     for app in tree.apps():
-        app_o = getattr(nbf, app)
+        app_o = getattr(nbf_, app)
         actual = ami.attr_name(app_o)
         assert actual == app
 
@@ -64,9 +40,9 @@ def test__app_model(nbf: NbForager):
             assert actual == expected
 
 
-def test__init(nbf: NbForager):
+def test__init(nbf_: NbForager):
     """NbForager.__init__()."""
-    actual = list(inspect.signature(type(nbf).__init__).parameters)
+    actual = list(inspect.signature(type(nbf_).__init__).parameters)
     expected = [
         "self",
         "host",
@@ -89,24 +65,24 @@ def test__init(nbf: NbForager):
     ]
     assert actual == expected
 
-    assert nbf.api.host == "netbox"
-    assert nbf.api.ipam.aggregates.host == "netbox"
-    assert nbf.api.ipam.aggregates.token == ""
-    assert nbf.api.ipam.aggregates.scheme == "https"
-    assert nbf.api.ipam.aggregates.port == 443
-    assert nbf.api.ipam.aggregates.verify is True
-    assert nbf.api.ipam.aggregates.limit == 1000
-    assert nbf.api.ipam.aggregates.url_length == 2047
-    assert nbf.api.ipam.aggregates.threads == 1
-    assert nbf.api.ipam.aggregates.interval == 0.0
-    assert nbf.api.ipam.aggregates.timeout == 60
-    assert nbf.api.ipam.aggregates.max_retries == 0
-    assert nbf.api.ipam.aggregates.sleep == 10
-    assert nbf.api.ipam.aggregates._loners == ["q", "family", "prefix"]
-    assert nbf.cache == "netbox.pickle"
+    assert nbf_.api.host == "nb"
+    assert nbf_.api.ipam.aggregates.host == "nb"
+    assert nbf_.api.ipam.aggregates.token == ""
+    assert nbf_.api.ipam.aggregates.scheme == "https"
+    assert nbf_.api.ipam.aggregates.port == 443
+    assert nbf_.api.ipam.aggregates.verify is True
+    assert nbf_.api.ipam.aggregates.limit == 1000
+    assert nbf_.api.ipam.aggregates.url_length == 2047
+    assert nbf_.api.ipam.aggregates.threads == 1
+    assert nbf_.api.ipam.aggregates.interval == 0.0
+    assert nbf_.api.ipam.aggregates.timeout == 60
+    assert nbf_.api.ipam.aggregates.max_retries == 0
+    assert nbf_.api.ipam.aggregates.sleep == 10
+    assert nbf_.api.ipam.aggregates._loners == ["q", "family", "prefix"]
+    assert nbf_.cache == "nb.pickle"
 
     params = {
-        "host": "netbox",
+        "host": "nb",
         "token": "token",
         "scheme": "http",
         "port": "8080",
@@ -124,26 +100,26 @@ def test__init(nbf: NbForager):
         "loners": {"any": ["a1"]},
         "cache": "1.pickle"
     }
-    nbf = NbForager(**params)  # type: ignore
-    assert nbf.api.host == "netbox"
-    assert nbf.api.ipam.aggregates.host == "netbox"
-    assert nbf.api.ipam.aggregates.token == "token"
-    assert nbf.api.ipam.aggregates.scheme == "http"
-    assert nbf.api.ipam.aggregates.port == 8080
-    assert nbf.api.ipam.aggregates.verify is False
-    assert nbf.api.ipam.aggregates.limit == 1
-    assert nbf.api.ipam.aggregates.url_length == 1
-    assert nbf.api.ipam.aggregates.threads == 2
-    assert nbf.api.ipam.aggregates.interval == 1.0
-    assert nbf.api.ipam.aggregates.timeout == 1
-    assert nbf.api.ipam.aggregates.max_retries == 1
-    assert nbf.api.ipam.aggregates.sleep == 1
-    assert nbf.api.ipam.aggregates._loners == ["a1"]
-    assert nbf.cache == "1.pickle"
+    nbf2 = NbForager(**params)  # type: ignore
+    assert nbf2.api.host == "nb"
+    assert nbf2.api.ipam.aggregates.host == "nb"
+    assert nbf2.api.ipam.aggregates.token == "token"
+    assert nbf2.api.ipam.aggregates.scheme == "http"
+    assert nbf2.api.ipam.aggregates.port == 8080
+    assert nbf2.api.ipam.aggregates.verify is False
+    assert nbf2.api.ipam.aggregates.limit == 1
+    assert nbf2.api.ipam.aggregates.url_length == 1
+    assert nbf2.api.ipam.aggregates.threads == 2
+    assert nbf2.api.ipam.aggregates.interval == 1.0
+    assert nbf2.api.ipam.aggregates.timeout == 1
+    assert nbf2.api.ipam.aggregates.max_retries == 1
+    assert nbf2.api.ipam.aggregates.sleep == 1
+    assert nbf2.api.ipam.aggregates._loners == ["a1"]
+    assert nbf2.cache == "1.pickle"
 
     api = NbApi(**params)  # type: ignore
-    assert api.host == "netbox"
-    assert api.ipam.aggregates.host == "netbox"
+    assert api.host == "nb"
+    assert api.ipam.aggregates.host == "nb"
     assert api.ipam.aggregates.token == "token"
     assert api.ipam.aggregates.scheme == "http"
     assert api.ipam.aggregates.port == 8080
@@ -161,79 +137,78 @@ def test__init(nbf: NbForager):
     assert diff == {"cache"}
 
 
-def test__host(nbf: NbForager):
+def test__host(nbf_: NbForager):
     """NbForager.host."""
-    assert nbf.host == "netbox"
-    assert nbf.api.host == "netbox"
-    assert nbf.api.ipam.vrfs.host == "netbox"
+    assert nbf_.host == "nb"
+    assert nbf_.api.host == "nb"
+    assert nbf_.api.ipam.vrfs.host == "nb"
 
 
 @pytest.mark.parametrize("params, expected", [
-    ({"host": "netbox"}, "https://netbox/api/"),
-    ({"host": "netbox", "scheme": "https"}, "https://netbox/api/"),
-    ({"host": "netbox", "scheme": "http"}, "http://netbox/api/"),
+    ({}, "https://nb/api/"),
+    ({"scheme": "https"}, "https://nb/api/"),
+    ({"scheme": "http"}, "http://nb/api/"),
 ])
-def test__url(params, expected):
+def test__url(nbf, params, expected):
     """NbForager.url."""
-    nbf = NbForager(**params)
     assert nbf.url == expected
     assert nbf.api.url == expected
 
 
-def test__count(nbf: NbForager):
+def test__count(nbf_: NbForager):
     """NbForager.count()."""
-    assert nbf.count() == 0
+    assert nbf_.count() == 0
 
-    nbf.circuits.circuit_terminations.root_d.update({1: {}})
-    nbf.dcim.device_roles.root_d.update({1: {}, 3: {}})
-    nbf.ipam.aggregates.root_d.update({1: {}, 2: {}, 3: {}})
-    nbf.tenancy.tenant_groups.root_d.update({1: {}, 2: {}, 3: {}, 4: {}})
-    assert nbf.count() == 10
+    nbf_.circuits.circuit_terminations.root_d.update({1: {}})
+    nbf_.dcim.device_roles.root_d.update({1: {}, 3: {}})
+    nbf_.ipam.aggregates.root_d.update({1: {}, 2: {}, 3: {}})
+    nbf_.tenancy.tenant_groups.root_d.update({1: {}, 2: {}, 3: {}, 4: {}})
+    assert nbf_.count() == 10
 
-    assert len(nbf.root.circuits.circuit_terminations) == 1
-    assert len(nbf.circuits.circuit_terminations.root_d) == 1
-    assert f"{nbf!r}" == "<NbForager: circuits=1, dcim=2, ipam=3, tenancy=4>"
+    assert len(nbf_.root.circuits.circuit_terminations) == 1
+    assert len(nbf_.circuits.circuit_terminations.root_d) == 1
+    assert f"{nbf_!r}" == "<NbForager: circuits=1, dcim=2, ipam=3, tenancy=4>"
 
 
-def test__clear(nbf: NbForager):
+def test__clear(nbf_: NbForager):
     """NbForager.clear()."""
-    nbf.root.ipam.vrfs.update(func.vrf_d([1]))
-    nbf.join_tree()
-    assert [d["id"] for d in nbf.root.ipam.vrfs.values()] == [1]
-    assert [d["id"] for d in nbf.tree.ipam.vrfs.values()] == [1]
+    nbf_.root.ipam.vrfs.update(func.vrf_d([1]))
+    nbf_.join_tree()
+    assert [d["id"] for d in nbf_.root.ipam.vrfs.values()] == [1]
+    assert [d["id"] for d in nbf_.tree.ipam.vrfs.values()] == [1]
 
-    nbf.clear(root=False, tree=False)
-    assert [d["id"] for d in nbf.root.ipam.vrfs.values()] == [1]
-    assert [d["id"] for d in nbf.tree.ipam.vrfs.values()] == [1]
+    nbf_.clear(root=False, tree=False)
+    assert [d["id"] for d in nbf_.root.ipam.vrfs.values()] == [1]
+    assert [d["id"] for d in nbf_.tree.ipam.vrfs.values()] == [1]
 
-    nbf.clear(root=False)
-    assert [d["id"] for d in nbf.root.ipam.vrfs.values()] == [1]
-    assert [d["id"] for d in nbf.tree.ipam.vrfs.values()] == []
+    nbf_.clear(root=False)
+    assert [d["id"] for d in nbf_.root.ipam.vrfs.values()] == [1]
+    assert [d["id"] for d in nbf_.tree.ipam.vrfs.values()] == []
 
-    nbf.clear(tree=False)
-    assert [d["id"] for d in nbf.root.ipam.vrfs.values()] == []
-    assert [d["id"] for d in nbf.tree.ipam.vrfs.values()] == []
+    nbf_.clear(tree=False)
+    assert [d["id"] for d in nbf_.root.ipam.vrfs.values()] == []
+    assert [d["id"] for d in nbf_.tree.ipam.vrfs.values()] == []
 
 
-def test__copy(nbf: NbForager):
+def test__copy(nbf_: NbForager):
     """NbForager.copy()."""
-    nbf.root.ipam.vrfs.update(func.vrf_d([1]))
+    nbf_.root.ipam.vrfs.update(func.vrf_d([1]))
 
-    copy_ = nbf.copy()
-    assert nbf.count() == 1
+    copy_ = nbf_.copy()
+    assert nbf_.count() == 1
     assert copy_.count() == 1
 
-    nbf.root.ipam.vrfs.update(func.vrf_d([2]))
+    nbf_.root.ipam.vrfs.update(func.vrf_d([2]))
     copy_.root.ipam.vrfs.update(func.vrf_d([3, 4]))
-    assert nbf.count() == 2
-    assert [d["id"] for d in nbf.root.ipam.vrfs.values()] == [1, 2]
-    assert [d["id"] for d in nbf.ipam.vrfs.root_d.values()] == [1, 2]
+    assert nbf_.count() == 2
+    assert [d["id"] for d in nbf_.root.ipam.vrfs.values()] == [1, 2]
+    assert [d["id"] for d in nbf_.ipam.vrfs.root_d.values()] == [1, 2]
     assert copy_.count() == 3
     assert [d["id"] for d in copy_.root.ipam.vrfs.values()] == [1, 3, 4]
     assert [d["id"] for d in copy_.ipam.vrfs.root_d.values()] == [1, 3, 4]
 
 
-def test__read_cache(nbf: NbForager):
+def test__read_cache(nbf_: NbForager):
     """NbForager.read_cache()."""
     tree = NbTree()
     tree.ipam.vrfs.update(func.vrf_d([1]))  # pylint: disable=E1101
@@ -241,28 +216,28 @@ def test__read_cache(nbf: NbForager):
     return_value = {"tree": tree.model_dump(), "status": {"meta": meta}}
     patch("pathlib.Path.open", mock_open()).start()
     patch("pickle.load", return_value=return_value).start()
-    assert nbf.root.ipam.vrfs == {}
+    assert nbf_.root.ipam.vrfs == {}
 
-    nbf.read_cache()
-    assert nbf.root.ipam.vrfs[1]["id"] == 1
-    assert nbf.status["meta"] == meta
+    nbf_.read_cache()
+    assert nbf_.root.ipam.vrfs[1]["id"] == 1
+    assert nbf_.status["meta"] == meta
 
 
-def test__write_cache(nbf: NbForager, monkeypatch: MonkeyPatch):
+def test__write_cache(nbf_: NbForager, monkeypatch: MonkeyPatch):
     """NbForager.write_cache()."""
     monkeypatch.setattr(Path, "open", Mock())
     monkeypatch.setattr(NbCache, "_create_dir", Mock())
     monkeypatch.setattr(NbCache, "_create_file", Mock())
-    nbf.write_cache()
+    nbf_.write_cache()
 
 
-def test__get_status(nbf: NbForager):
+def test__get_status(nbf_: NbForager):
     """NbForager.get_status()."""
     with requests_mock.Mocker() as mock:
-        mock.get("https://netbox/api/status/", json={"netbox-version": "3.6.5"})
+        mock.get("https://nb/api/status/", json={"netbox-version": "3.6.5"})
 
-        nbf.get_status()
-        actual = nbf.status
+        nbf_.get_status()
+        actual = nbf_.status
         assert actual == {"netbox-version": "3.6.5"}
 
 
@@ -314,10 +289,10 @@ def test__join_tree(nbf_r: NbForager):
     ("", "0.0.0"),
     ("3.6.5", "3.6.5"),
 ])
-def test__version(nbf: NbForager, version, expected):
+def test__version(nbf_: NbForager, version, expected):
     """NbForager.version()."""
-    nbf.status = {"netbox-version": version}
-    actual = nbf.version()
+    nbf_.status = {"netbox-version": version}
+    actual = nbf_.version()
     assert actual == expected
 
 

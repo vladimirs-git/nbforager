@@ -4,7 +4,7 @@ from typing import Dict
 
 from pydantic import BaseModel, Field
 
-from nbforager.types_ import DList
+from nbforager.types import DList
 
 
 class ParamPath(BaseModel):
