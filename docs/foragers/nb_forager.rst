@@ -26,9 +26,10 @@ Forager methods
 
 .. autoclass:: nbforager.foragers.forager.Forager
   :members:
+    get,
+    graphql,
     count,
     find_root,
     find_rse,
     find_tree,
-    get,
   :class-doc-from: class

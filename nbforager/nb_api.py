@@ -164,8 +164,8 @@ class NbApi:
         self.status = StatusC(**params)
         self.tenancy = TenancyAC(**params)
         self.users = UsersAC(**params)
-        self.vpn = VpnAC(**params)
         self.virtualization = VirtualizationAC(**params)
+        self.vpn = VpnAC(**params)
         self.wireless = WirelessAC(**params)
 
     def __repr__(self) -> str:

@@ -26,6 +26,8 @@ Connector methods
     create_d,
     delete,
     get,
+    get_count,
+    graphql,
     update,
     update_d,
   :class-doc-from: class
