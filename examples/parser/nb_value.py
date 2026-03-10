@@ -16,7 +16,7 @@ print(tags)
 # ["alpha", "bravo", "golf"]
 
 # Get the tag slug using the NbValue object.
-parser = NbValue(data=site)
-tags = parser.tags()
+nbv = NbValue(data=site)
+tags = nbv.tag_slugs()
 print(tags)
 # ["alpha", "bravo", "golf"]

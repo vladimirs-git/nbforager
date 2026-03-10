@@ -635,14 +635,14 @@ def test__site_slug__version(params: DAny, data, expected):
     ({"data": {"tags": None}, "strict": True}, NbParserError),
     ({"data": None, "strict": True}, NbParserError),
 ])
-def test__tags(nbv, params, expected):
-    """NbValue.tags()."""
+def test__tag_slugs(nbv, params, expected):
+    """NbValue.tag_slugs()."""
     if isinstance(expected, list):
-        actual = nbv.tags()
+        actual = nbv.tag_slugs()
         assert actual == expected
     else:
         with pytest.raises(expected):
-            nbv.tags()
+            nbv.tag_slugs()
 
 
 @pytest.mark.parametrize("params, expected", [

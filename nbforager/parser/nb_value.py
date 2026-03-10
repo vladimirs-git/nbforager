@@ -782,7 +782,7 @@ class NbValue(NbParser):
         """ipam/prefixes.status.value"""
         return self.str("status", "value")
 
-    def tags(self) -> LStr:
+    def tag_slugs(self) -> LStr:
         """app/model.tags.0.slug.
 
         :return: Slugs of tag.
