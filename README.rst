@@ -22,6 +22,7 @@ Versions
 
 - nbforager ``<1`` is designed for Netbox ``v3`` (checked with Python >= v3.8, Netbox v3.5.4)
 - nbforager ``>=1,<3`` is designed for Netbox ``>=v4.2`` (checked with Python >= v3.8, Netbox v4.3.3)
+- nbforager ``>=2.1,<3`` is designed for Netbox ``>=v4.2`` (checked with Python >= v3.11, Netbox v4.3.3)
 
 Fully documented on `Read the Docs`_.
 
@@ -31,7 +32,7 @@ Fully documented on `Read the Docs`_.
 Requirements
 ============
 
-Python >=3.8
+Python >=3.11
 
 
 Quickstart
