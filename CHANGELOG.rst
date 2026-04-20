@@ -4,7 +4,7 @@
 CHANGELOG
 =========
 
-2.1.0 (2026-04-20)
+2.1.1 (2026-04-20)
 ------------------
 
 **Changed:** dependency python-3.11 vhelpers-0.8.0

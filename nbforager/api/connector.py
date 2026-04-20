@@ -6,7 +6,6 @@ import json
 from typing import Generator
 
 from requests import Response
-from vhelpers import vdict
 
 from nbforager import helpers
 from nbforager.api.base_mc import BaseMC
@@ -160,7 +159,7 @@ class Connector(BaseMC):
             - <Response [400]> Invalid data.
         :rtype: Response
         """
-        id_ = vdict.pop(data=kwargs, key="id")
+        id_ = kwargs.pop("id")
         if not id_:
             raise ValueError("id is required in the data.")
 
