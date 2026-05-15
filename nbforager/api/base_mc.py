@@ -174,6 +174,8 @@ class BaseMC(BaseC):
         if self.threads > 1:
             counts_w_params: LDAny = self._query_pages_count(params_ld)
             params_ld_: LDAny = self._slice_params_counters(counts_w_params)
+            if not params_ld_:
+                params_ld_ = [{}]
             self._query_threads(method=self._query_data_thread, params_ld=params_ld_)
         # loop
         else:
@@ -494,15 +496,17 @@ class BaseMC(BaseC):
         :param results: List of dicts with params_d and related counts of objects.
         :return: Sliced parameters.
         """
-        params: LDAny = []
+        params_ld: LDAny = []
+
         for result in results:
             count = result["count"]
             params_d = result["params_d"]
             if not result["count"]:
                 continue
             params_: LDAny = helpers.generate_offsets(count, self.limit, params_d)
-            params.extend(params_)
-        return params
+            params_ld.extend(params_)
+
+        return params_ld
 
     # =========================== helpers ===========================
 

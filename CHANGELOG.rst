@@ -4,6 +4,12 @@
 CHANGELOG
 =========
 
+2.1.2 (2026-05-15)
+------------------
+
+**Fixed:** BaseMC._slice_params_counters() return [{}] if no slices
+
+
 2.1.1 (2026-04-20)
 ------------------
 

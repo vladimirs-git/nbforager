@@ -89,7 +89,7 @@ def test__graphql(api_, monkeypatch: MonkeyPatch, params, content, expected):
 
 @pytest.mark.parametrize("data, expected", [
     ({"id": 1, "status": "active"}, 200),
-    ({}, ValueError),
+    ({}, KeyError),
 ])
 def test__update(api_, monkeypatch: MonkeyPatch, data: DAny, expected: Any):
     """Connector.update()."""
